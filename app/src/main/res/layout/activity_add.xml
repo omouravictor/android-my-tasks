@@ -6,51 +6,76 @@
     android:layout_height="match_parent"
     tools:context=".AddActivity">
 
-    <EditText
-        android:id="@+id/etName"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/inputLayoutTask"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
         android:layout_marginTop="150dp"
         android:layout_marginEnd="25dp"
-        android:width="200dp"
-        android:ems="10"
-        android:hint="Nome"
-        android:minHeight="48dp"
+        android:hint="Tarefa"
+        app:counterEnabled="true"
+        app:counterMaxLength="50"
+        app:endIconMode="clear_text"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <EditText
-        android:id="@+id/etDate"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/inputEditTextTask"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:minHeight="70dp"
+            android:inputType="textCapSentences"
+            android:maxLength="50" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/inputLayoutDate"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
-        android:layout_marginTop="25dp"
         android:layout_marginEnd="25dp"
-        android:width="200dp"
-        android:cursorVisible="false"
-        android:ems="10"
-        android:focusable="false"
         android:hint="Data de expiração"
-        android:minHeight="48dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etName" />
+        app:layout_constraintTop_toBottomOf="@+id/inputLayoutTask">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/inputEditTextDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:maxLength="50" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/clearBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="25dp"
+        android:width="150dp"
+        android:text="Limpar"
+        android:textAllCaps="false"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/inputLayoutDate" />
 
     <Button
         android:id="@+id/addButton"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
         android:layout_marginTop="25dp"
         android:layout_marginEnd="25dp"
-        android:width="200dp"
-        android:textAllCaps="false"
+        android:width="150dp"
         android:text="Adicionar"
+        android:textAllCaps="false"
+        android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etDate" />
+        app:layout_constraintTop_toBottomOf="@+id/inputLayoutDate" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
