@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.text.InputType;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -27,6 +29,10 @@ public class AddActivity extends AppCompatActivity {
         etDate = findViewById(R.id.inputEditTextDate);
         etFocus = findViewById(R.id.etFocus);
         btnClear = findViewById(R.id.btnClear);
+
+        // Enables textMultiLine EditText with ActionDone button (without Enter button)
+        etTask.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        etTask.setRawInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
     }
 
     private void setListeners() {

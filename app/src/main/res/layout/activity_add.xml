@@ -26,6 +26,7 @@
             android:id="@+id/inputEditTextTask"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:inputType="textMultiLine"
             android:maxLength="50"
             android:minHeight="70dp" />
     </com.google.android.material.textfield.TextInputLayout>
