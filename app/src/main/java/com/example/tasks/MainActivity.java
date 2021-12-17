@@ -21,11 +21,9 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recyclerView);
         add_button = findViewById(R.id.add_button);
-        add_button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, AddActivity.class);
-                startActivity(intent);
-            }
+        add_button.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, AddActivity.class);
+            startActivity(intent);
         });
     }
 }
