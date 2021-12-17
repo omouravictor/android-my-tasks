@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -14,8 +15,8 @@ import java.util.Calendar;
 
 public class AddActivity extends AppCompatActivity {
 
-    EditText etTask, etDate;
-    Button clearBtn;
+    EditText etTask, etDate, etFocus;
+    Button btnClear;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,9 +30,11 @@ public class AddActivity extends AppCompatActivity {
 
         etTask = findViewById(R.id.inputEditTextTask);
         etDate = findViewById(R.id.inputEditTextDate);
-        clearBtn = findViewById(R.id.clearBtn);
+        etFocus = findViewById(R.id.etFocus);
+        btnClear = findViewById(R.id.btnClear);
 
         etDate.setOnClickListener((v) -> {
+            etFocus.requestFocus();
             DatePickerDialog datePickerDialog = new DatePickerDialog(
                     AddActivity.this, (view, year, month, day) -> {
                 month = month + 1;
@@ -41,10 +44,10 @@ public class AddActivity extends AppCompatActivity {
             datePickerDialog.show();
         });
 
-        clearBtn.setOnClickListener((v) -> {
-            Toast.makeText(getApplicationContext(), "Exemplo Toast", Toast.LENGTH_SHORT).show();
-//            etTask.setText("");
-//            etDate.setText("");
+        btnClear.setOnClickListener((v) -> {
+            etTask.setText("");
+            etDate.setText("");
+            etFocus.requestFocus();
         });
     }
 }

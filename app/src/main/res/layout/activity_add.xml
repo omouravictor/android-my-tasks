@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="140dp"
         android:layout_marginEnd="25dp"
         android:hint="Tarefa"
         app:counterEnabled="true"
@@ -26,9 +26,8 @@
             android:id="@+id/inputEditTextTask"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:minHeight="70dp"
-            android:inputType="textCapSentences"
-            android:maxLength="50" />
+            android:maxLength="50"
+            android:minHeight="70dp" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -53,7 +52,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:id="@+id/clearBtn"
+        android:id="@+id/btnClear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
@@ -66,7 +65,7 @@
         app:layout_constraintTop_toBottomOf="@+id/inputLayoutDate" />
 
     <Button
-        android:id="@+id/addButton"
+        android:id="@+id/btnAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
@@ -77,5 +76,12 @@
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/inputLayoutDate" />
+
+    <EditText
+        android:id="@+id/etFocus"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
