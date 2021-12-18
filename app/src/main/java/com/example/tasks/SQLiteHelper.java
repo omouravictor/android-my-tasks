@@ -1,8 +1,11 @@
 package com.example.tasks;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -27,7 +30,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         String query = "CREATE TABLE " + TABLE_NAME +
                 " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_NAME + " TEXT, " +
-                COLUMN_SLA_DATE + " DATE);";
+                COLUMN_SLA_DATE + " TEXT);";
         db.execSQL(query);
     }
 
@@ -35,6 +38,21 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
+    }
+
+    public void addTask(TaskModel task) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(COLUMN_NAME, task.getName());
+        cv.put(COLUMN_SLA_DATE, task.getSlaDate());
+
+        long result = db.insert(TABLE_NAME, null, cv);
+
+        if (result == -1)
+            Toast.makeText(context, "Falha ao inserir a tarefa.", Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(context, "Tarefa adicionada com sucesso!", Toast.LENGTH_SHORT).show();
     }
 
 }

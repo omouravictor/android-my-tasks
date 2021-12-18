@@ -14,7 +14,7 @@ import java.util.Calendar;
 public class AddActivity extends AppCompatActivity {
 
     EditText etTask, etDate, etFocus;
-    Button btnClear;
+    Button btnClear, btnAdd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +29,7 @@ public class AddActivity extends AppCompatActivity {
         etDate = findViewById(R.id.inputEditTextDate);
         etFocus = findViewById(R.id.etFocus);
         btnClear = findViewById(R.id.btnClear);
+        btnAdd = findViewById(R.id.btnAdd);
 
         // Enables textMultiLine EditText with ActionDone button (without Enter button)
         etTask.setImeOptions(EditorInfo.IME_ACTION_DONE);
@@ -56,6 +57,12 @@ public class AddActivity extends AppCompatActivity {
             etTask.setText("");
             etDate.setText("");
             etFocus.requestFocus();
+        });
+
+        btnAdd.setOnClickListener((v) -> {
+            SQLiteHelper myDB = new SQLiteHelper (AddActivity.this);
+            TaskModel task = new TaskModel(etTask.getText().toString(), etDate.getText().toString());
+            myDB.addTask(task);
         });
     }
 }
