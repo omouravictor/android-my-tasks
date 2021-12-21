@@ -1,16 +1,10 @@
 package com.example.tasks;
 
-import java.text.DateFormat;
-import java.util.Date;
-
 public class TaskModel {
 
     private int id;
     private String name;
     private String slaDate;
-
-    public TaskModel() {
-    }
 
     public TaskModel(int id, String name, String slaDate) {
         this.id = id;
