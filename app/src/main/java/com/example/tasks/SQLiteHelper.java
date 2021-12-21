@@ -9,9 +9,11 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
+
 public class SQLiteHelper extends SQLiteOpenHelper {
 
-    private Context context;
+    private final Context context;
     private static final String DATABASE_NAME = "Task.db";
     private static final int DATABASE_VERSION = 1;
 
@@ -27,10 +29,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String query = "CREATE TABLE " + TABLE_NAME +
-                " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COLUMN_NAME + " TEXT, " +
-                COLUMN_SLA_DATE + " TEXT);";
+        String query = ("CREATE TABLE " + TABLE_NAME + "("
+                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COLUMN_NAME + " TEXT,"
+                + COLUMN_SLA_DATE + " TEXT" + ")");
         db.execSQL(query);
     }
 
@@ -48,6 +50,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_SLA_DATE, task.getSlaDate());
 
         long result = db.insert(TABLE_NAME, null, cv);
+        db.close();
 
         if (result == -1)
             Toast.makeText(context, "Falha ao inserir a tarefa.", Toast.LENGTH_SHORT).show();
@@ -55,4 +58,26 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             Toast.makeText(context, "Tarefa adicionada com sucesso!", Toast.LENGTH_SHORT).show();
     }
 
+    public ArrayList<TaskModel> getAllTasks() {
+        ArrayList<TaskModel> allTasks = new ArrayList<>();
+        String query = "SELECT * FROM " + TABLE_NAME;
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor;
+
+        if (db != null) {
+            cursor = db.rawQuery(query, null);
+            while (cursor.moveToNext()) {
+                TaskModel task = new TaskModel(
+                        cursor.getInt(0),
+                        cursor.getString(1),
+                        cursor.getString(2)
+                );
+                allTasks.add(task);
+            }
+            cursor.close();
+        }
+
+        return allTasks;
+    }
 }
