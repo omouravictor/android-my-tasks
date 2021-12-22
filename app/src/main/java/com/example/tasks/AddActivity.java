@@ -3,11 +3,13 @@ package com.example.tasks;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.Calendar;
 
@@ -60,9 +62,21 @@ public class AddActivity extends AppCompatActivity {
         });
 
         btnAdd.setOnClickListener((v) -> {
-            SQLiteHelper myDB = new SQLiteHelper (AddActivity.this);
-            TaskModel task = new TaskModel(etTask.getText().toString(), etDate.getText().toString());
-            myDB.addTask(task);
+            if (etTask.getText().toString().equals("") || etDate.getText().toString().equals("")) {
+                Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
+            } else {
+                SQLiteHelper myDB = new SQLiteHelper(AddActivity.this);
+                TaskModel task = new TaskModel(etTask.getText().toString(), etDate.getText().toString());
+                long result = myDB.addTask(task);
+                if (result == -1) {
+                    Toast.makeText(this, "Falha ao inserir a tarefa.", Toast.LENGTH_SHORT).show();
+                } else {
+                    btnAdd.setClickable(false);
+                    Intent intent = new Intent(this, MainActivity.class);
+                    startActivity(intent);
+                    Toast.makeText(this, "Tarefa adicionada com sucesso!", Toast.LENGTH_SHORT).show();
+                }
+            }
         });
     }
 }
