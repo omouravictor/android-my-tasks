@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         startRecyclerView();
 
         btnAdd.setOnClickListener(view -> {
-            Intent intent = new Intent(MainActivity.this, AddActivity.class);
+            Intent intent = new Intent(this, AddActivity.class);
             startActivity(intent);
         });
     }
