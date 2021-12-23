@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
 
+    private final Context context;
     private static final String DATABASE_NAME = "Task.db";
     private static final int DATABASE_VERSION = 1;
 
@@ -22,6 +24,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     public SQLiteHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     @Override
@@ -39,7 +42,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public long addTask(TaskModel task) {
+    public void createTask(TaskModel task) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
@@ -49,7 +52,27 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         long result = db.insert(TABLE_NAME, null, cv);
         db.close();
 
-        return result;
+        if (result == -1)
+            Toast.makeText(context, "Falha ao criar a tarefa.", Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(context, "Tarefa adicionada com sucesso!", Toast.LENGTH_SHORT).show();
+
+    }
+
+    public void updateTask(TaskModel updatedTask) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(COLUMN_NAME, updatedTask.getName());
+        cv.put(COLUMN_SLA_DATE, updatedTask.getSlaDate());
+
+        long result = db.update(TABLE_NAME, cv, "id=" + updatedTask.getId(), null);
+        db.close();
+
+        if (result == -1)
+            Toast.makeText(context, "Falha ao atualizar a tarefa.", Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(context, "Tarefa atualizada com sucesso!", Toast.LENGTH_SHORT).show();
     }
 
     public ArrayList<TaskModel> getAllTasks() {
