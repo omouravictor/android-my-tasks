@@ -1,7 +1,6 @@
 package com.example.tasks;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,13 +14,11 @@ import java.util.ArrayList;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
 
-    private final Context context;
-    Activity activity;
+    private final Activity mainActivity;
     private final ArrayList<TaskModel> allTasks;
 
-    public TaskAdapter(Activity activity, Context context, ArrayList<TaskModel> items) {
-        this.activity = activity;
-        this.context = context;
+    public TaskAdapter(Activity activity, ArrayList<TaskModel> items) {
+        this.mainActivity = activity;
         this.allTasks = items;
     }
 
@@ -29,7 +26,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     @Override
     public TaskViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new TaskViewHolder(
-                LayoutInflater.from(context).inflate(R.layout.my_row, parent, false)
+                LayoutInflater.from(mainActivity).inflate(R.layout.my_row, parent, false)
         );
     }
 
@@ -40,11 +37,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         holder.tvTask.setText(task.getName());
         holder.tvSlaDate.setText(task.getSlaDate());
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, UpdateActivity.class);
+            Intent intent = new Intent(mainActivity, UpdateActivity.class);
             intent.putExtra("id", task.getId());
             intent.putExtra("name", task.getName());
             intent.putExtra("slaDate", task.getSlaDate());
-            activity.startActivityForResult(intent, 1);
+            mainActivity.startActivityForResult(intent, 1);
         });
     }
 
