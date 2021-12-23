@@ -43,7 +43,7 @@ public class AddActivity extends AppCompatActivity {
         final int currentMonth = calendar.get(Calendar.MONTH);
         final int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
 
-        etDate.setOnClickListener((v) -> {
+        etDate.setOnClickListener(v -> {
             DatePickerDialog datePickerDialog = new DatePickerDialog(
                     this, (view, year, month, day) -> {
                 month = month + 1;
@@ -54,13 +54,13 @@ public class AddActivity extends AppCompatActivity {
             etFocus.requestFocus();
         });
 
-        btnClear.setOnClickListener((v) -> {
+        btnClear.setOnClickListener(v -> {
             etTask.setText("");
             etDate.setText("");
             etFocus.requestFocus();
         });
 
-        btnAdd.setOnClickListener((v) -> {
+        btnAdd.setOnClickListener(v -> {
             if (etTask.getText().toString().equals("") || etDate.getText().toString().equals("")) {
                 Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
             } else {
