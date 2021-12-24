@@ -22,6 +22,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         this.allTasks = items;
     }
 
+    public void addTask(TaskModel task) {
+        allTasks.add(task);
+        notifyItemInserted(getItemCount());
+    }
+
     @NonNull
     @Override
     public TaskViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
