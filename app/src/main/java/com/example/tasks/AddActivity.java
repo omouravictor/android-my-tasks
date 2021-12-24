@@ -72,12 +72,11 @@ public class AddActivity extends AppCompatActivity {
                 if (result == -1)
                     Toast.makeText(this, "Falha ao criar a tarefa.", Toast.LENGTH_SHORT).show();
                 else {
-                    Toast.makeText(this, "Tarefa adicionada com sucesso!", Toast.LENGTH_SHORT).show();
+                    task.setId(result);
                     Intent taskData = new Intent();
-                    taskData.putExtra("id", result);
-                    taskData.putExtra("name", task.getName());
-                    taskData.putExtra("slaDate", task.getSlaDate());
+                    taskData.putExtra("task", task);
                     setResult(1, taskData);
+                    Toast.makeText(this, "Tarefa adicionada com sucesso!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
