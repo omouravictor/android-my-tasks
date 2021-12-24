@@ -1,6 +1,9 @@
 package com.example.tasks;
 
-public class TaskModel {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class TaskModel implements Parcelable {
 
     private long id;
     private String name;
@@ -18,6 +21,36 @@ public class TaskModel {
     public TaskModel(String name, String slaDate) {
         this.name = name;
         this.slaDate = slaDate;
+    }
+
+    protected TaskModel(Parcel in) {
+        id = in.readLong();
+        name = in.readString();
+        slaDate = in.readString();
+    }
+
+    public static final Creator<TaskModel> CREATOR = new Creator<TaskModel>() {
+        @Override
+        public TaskModel createFromParcel(Parcel in) {
+            return new TaskModel(in);
+        }
+
+        @Override
+        public TaskModel[] newArray(int size) {
+            return new TaskModel[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(name);
+        dest.writeString(slaDate);
     }
 
     public long getId() {
@@ -43,4 +76,5 @@ public class TaskModel {
     public void setSlaDate(String dateSLA) {
         this.slaDate = dateSLA;
     }
+
 }
