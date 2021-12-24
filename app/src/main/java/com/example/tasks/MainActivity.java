@@ -2,7 +2,6 @@ package com.example.tasks;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,8 +12,7 @@ import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
-
-    ActivityResultLauncher<Intent> addActivityResultLauncher;
+    ActivityResultLauncher<Intent> mainActivityResult;
     FloatingActionButton btnAdd;
     RecyclerView recyclerView;
     TaskAdapter adapter;
@@ -26,37 +24,43 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         startVariables();
         startRecyclerView();
+        startMainActivityResult();
+
+        adapter.setOnClickListenerInterface(position -> v -> {
+            Intent intent = new Intent(this, UpdateActivity.class);
+            TaskModel task = adapter.getTask(position);
+            intent.putExtra("task", task);
+            intent.putExtra("position", position);
+            mainActivityResult.launch(intent);
+        });
 
         btnAdd.setOnClickListener(view -> {
             Intent intent = new Intent(this, AddActivity.class);
-            addActivityResultLauncher.launch(intent);
+            mainActivityResult.launch(intent);
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 2)
-            recreate();
+    public void startMainActivityResult() {
+        mainActivityResult = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() != RESULT_CANCELED) {
+                        TaskModel taskIntentData = result.getData().getParcelableExtra("task");
+                        if (result.getResultCode() == 1) {
+                            adapter.addTask(taskIntentData);
+                        } else if (result.getResultCode() == 2) {
+                            int updatedPosition = result.getData().getIntExtra("position", 0);
+                            adapter.updateTask(updatedPosition, taskIntentData);
+                        }
+                    }
+                }
+        );
     }
 
     private void startVariables() {
         myDB = new SQLiteHelper(this);
-        adapter = new TaskAdapter(this, myDB.getAllTasks());
+        adapter = new TaskAdapter(myDB.getAllTasks());
         btnAdd = findViewById(R.id.btnAdd);
-        addActivityResultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == 1) {
-                        Intent taskData = result.getData();
-                        adapter.addTask(new TaskModel(
-                                taskData.getLongExtra("id", 0),
-                                taskData.getStringExtra("name"),
-                                taskData.getStringExtra("slaDate")
-                        ));
-                    }
-                }
-        );
     }
 
     private void startRecyclerView() {
