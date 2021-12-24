@@ -3,6 +3,7 @@ package com.example.tasks;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.inputmethod.EditorInfo;
@@ -14,16 +15,17 @@ import java.util.Calendar;
 
 public class UpdateActivity extends AppCompatActivity {
 
-    TaskModel taskToBeUpdated = new TaskModel();
     EditText etTask, etDate, etFocus;
     Button btnClear, btnUpdate;
+    TaskModel updatedTask;
+    int updatedPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update);
         startVariables();
-        setIntentData();
+        getAndSetIntentData();
         setListeners();
     }
 
@@ -66,17 +68,28 @@ public class UpdateActivity extends AppCompatActivity {
             if (etTask.getText().toString().equals("") || etDate.getText().toString().equals("")) {
                 Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
             } else {
-                taskToBeUpdated.setId(getIntent().getLongExtra("id", 0));
-                taskToBeUpdated.setName(etTask.getText().toString());
-                taskToBeUpdated.setSlaDate(etDate.getText().toString());
+                updatedTask.setName(etTask.getText().toString());
+                updatedTask.setSlaDate(etDate.getText().toString());
                 SQLiteHelper myDB = new SQLiteHelper(this);
-                myDB.updateTask(taskToBeUpdated);
+                long result = myDB.updateTask(updatedTask);
+
+                if (result == -1)
+                    Toast.makeText(this, "Falha ao atualizar a tarefa.", Toast.LENGTH_SHORT).show();
+                else {
+                    Toast.makeText(this, "Tarefa atualizada com sucesso!", Toast.LENGTH_SHORT).show();
+                    Intent taskData = new Intent();
+                    taskData.putExtra("task", updatedTask);
+                    taskData.putExtra("position", updatedPosition);
+                    setResult(2, taskData);
+                }
             }
         });
     }
 
-    private void setIntentData() {
-        etTask.setText(getIntent().getStringExtra("name"));
-        etDate.setText(getIntent().getStringExtra("slaDate"));
+    private void getAndSetIntentData() {
+        updatedPosition = getIntent().getIntExtra("position", 0);
+        updatedTask = getIntent().getParcelableExtra("task");
+        etTask.setText(updatedTask.getName());
+        etDate.setText(updatedTask.getSlaDate());
     }
 }
