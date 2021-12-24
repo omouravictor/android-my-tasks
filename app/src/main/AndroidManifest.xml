@@ -12,13 +12,11 @@
         <activity
             android:name=".UpdateActivity"
             android:exported="true"
-            android:label="Atualizar Tarefa"
-            android:parentActivityName=".MainActivity" />
+            android:label="Atualizar Tarefa" />
         <activity
             android:name=".AddActivity"
             android:exported="true"
-            android:label="Adicionar Tarefa"
-            android:parentActivityName=".MainActivity" />
+            android:label="Adicionar Tarefa" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
