@@ -30,7 +30,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String query = ("CREATE TABLE " + TABLE_NAME + "("
-                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COLUMN_ID + " LONG PRIMARY KEY AUTOINCREMENT,"
                 + COLUMN_NAME + " TEXT,"
                 + COLUMN_SLA_DATE + " TEXT" + ")");
         db.execSQL(query);
@@ -42,7 +42,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void createTask(TaskModel task) {
+    public long createTask(TaskModel task) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
@@ -52,11 +52,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         long result = db.insert(TABLE_NAME, null, cv);
         db.close();
 
-        if (result == -1)
-            Toast.makeText(context, "Falha ao criar a tarefa.", Toast.LENGTH_SHORT).show();
-        else
-            Toast.makeText(context, "Tarefa adicionada com sucesso!", Toast.LENGTH_SHORT).show();
-
+        return result;
     }
 
     public void updateTask(TaskModel updatedTask) {
@@ -86,7 +82,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             cursor = db.rawQuery(query, null);
             while (cursor.moveToNext()) {
                 TaskModel task = new TaskModel(
-                        cursor.getInt(0),
+                        cursor.getLong(0),
                         cursor.getString(1),
                         cursor.getString(2)
                 );
