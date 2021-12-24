@@ -1,7 +1,5 @@
 package com.example.tasks;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +12,15 @@ import java.util.ArrayList;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
 
-    private final Activity mainActivity;
     private final ArrayList<TaskModel> allTasks;
+    private AdapterInterface adapterInterface;
 
-    public TaskAdapter(Activity activity, ArrayList<TaskModel> items) {
-        this.mainActivity = activity;
+    public TaskAdapter(ArrayList<TaskModel> items) {
         this.allTasks = items;
+    }
+
+    public void setOnClickListenerInterface(AdapterInterface adapterInterface) {
+        this.adapterInterface = adapterInterface;
     }
 
     public void addTask(TaskModel task) {
@@ -27,11 +28,20 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         notifyItemInserted(getItemCount());
     }
 
+    public void updateTask(int position, TaskModel updatedTask) {
+        allTasks.set(position, updatedTask);
+        notifyItemChanged(position);
+    }
+
+    public TaskModel getTask(int position) {
+        return allTasks.get(position);
+    }
+
     @NonNull
     @Override
     public TaskViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new TaskViewHolder(
-                LayoutInflater.from(mainActivity).inflate(R.layout.my_row, parent, false)
+                LayoutInflater.from(parent.getContext()).inflate(R.layout.my_row, parent, false)
         );
     }
 
@@ -41,13 +51,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         holder.tvId.setText(String.valueOf(task.getId()));
         holder.tvTask.setText(task.getName());
         holder.tvSlaDate.setText(task.getSlaDate());
-        holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(mainActivity, UpdateActivity.class);
-            intent.putExtra("id", task.getId());
-            intent.putExtra("name", task.getName());
-            intent.putExtra("slaDate", task.getSlaDate());
-            mainActivity.startActivityForResult(intent, 2);
-        });
+        holder.itemView.setOnClickListener(adapterInterface.getOnClickListener(position));
     }
 
     @Override
