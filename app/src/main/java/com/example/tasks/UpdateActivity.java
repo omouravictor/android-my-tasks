@@ -66,6 +66,7 @@ public class UpdateActivity extends AppCompatActivity {
             if (etTask.getText().toString().equals("") || etDate.getText().toString().equals("")) {
                 Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
             } else {
+                taskToBeUpdated.setId(getIntent().getLongExtra("id", 0));
                 taskToBeUpdated.setName(etTask.getText().toString());
                 taskToBeUpdated.setSlaDate(etDate.getText().toString());
                 SQLiteHelper myDB = new SQLiteHelper(this);
@@ -75,11 +76,7 @@ public class UpdateActivity extends AppCompatActivity {
     }
 
     private void setIntentData() {
-        int idIntent = getIntent().getIntExtra("id", 0);
-        String nameIntent = getIntent().getStringExtra("name");
-        String slaDateIntent = getIntent().getStringExtra("slaDate");
-        taskToBeUpdated.setId(idIntent);
-        etTask.setText(nameIntent);
-        etDate.setText(slaDateIntent);
+        etTask.setText(getIntent().getStringExtra("name"));
+        etDate.setText(getIntent().getStringExtra("slaDate"));
     }
 }
