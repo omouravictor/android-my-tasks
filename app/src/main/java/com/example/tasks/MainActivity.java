@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1)
+        if (requestCode == 2)
             recreate();
     }
 
@@ -47,7 +47,14 @@ public class MainActivity extends AppCompatActivity {
         addActivityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    recreate();
+                    if (result.getResultCode() == 1) {
+                        Intent taskData = result.getData();
+                        adapter.addTask(new TaskModel(
+                                taskData.getLongExtra("id", 0),
+                                taskData.getStringExtra("name"),
+                                taskData.getStringExtra("slaDate")
+                        ));
+                    }
                 }
         );
     }
