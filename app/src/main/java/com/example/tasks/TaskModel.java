@@ -2,14 +2,14 @@ package com.example.tasks;
 
 public class TaskModel {
 
-    private int id;
+    private long id;
     private String name;
     private String slaDate;
 
     public TaskModel() {
     }
 
-    public TaskModel(int id, String name, String slaDate) {
+    public TaskModel(long id, String name, String slaDate) {
         this.id = id;
         this.name = name;
         this.slaDate = slaDate;
@@ -20,11 +20,11 @@ public class TaskModel {
         this.slaDate = slaDate;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
