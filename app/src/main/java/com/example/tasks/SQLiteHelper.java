@@ -14,7 +14,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "Task.db";
     private static final int DATABASE_VERSION = 1;
-
     private static final String TABLE_NAME = "tb_tasks";
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_NAME = "name";
@@ -66,6 +65,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<TaskModel> getAllTasks() {
+
         ArrayList<TaskModel> allTasks = new ArrayList<>();
         String query = "SELECT * FROM " + TABLE_NAME;
         SQLiteDatabase db = this.getReadableDatabase();

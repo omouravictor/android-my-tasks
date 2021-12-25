@@ -19,24 +19,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         this.allTasks = items;
     }
 
-    public void setOnClickListenerInterface(AdapterInterface adapterInterface) {
-        this.adapterInterface = adapterInterface;
-    }
-
-    public void addTask(TaskModel task) {
-        allTasks.add(task);
-        notifyItemInserted(getItemCount());
-    }
-
-    public void updateTask(int position, TaskModel updatedTask) {
-        allTasks.set(position, updatedTask);
-        notifyItemChanged(position);
-    }
-
-    public TaskModel getTask(int position) {
-        return allTasks.get(position);
-    }
-
     @NonNull
     @Override
     public TaskViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -69,5 +51,23 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             tvTask = itemView.findViewById(R.id.tvTask);
             tvSlaDate = itemView.findViewById(R.id.tvSlaDate);
         }
+    }
+
+    public void setOnClickListenerInterface(AdapterInterface adapterInterface) {
+        this.adapterInterface = adapterInterface;
+    }
+
+    public void addTask(TaskModel task) {
+        allTasks.add(task);
+        notifyItemInserted(getItemCount());
+    }
+
+    public void updateTask(int position, TaskModel updatedTask) {
+        allTasks.set(position, updatedTask);
+        notifyItemChanged(position);
+    }
+
+    public TaskModel getTask(int position) {
+        return allTasks.get(position);
     }
 }

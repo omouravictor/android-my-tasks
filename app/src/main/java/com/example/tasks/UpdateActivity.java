@@ -24,12 +24,14 @@ public class UpdateActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update);
-        startVariables();
+        initView();
         getAndSetIntentData();
-        setListeners();
+        setOnClickEtDateListener();
+        setOnClickBtnClearListener();
+        setOnClickBtnUpdateListener();
     }
 
-    private void startVariables() {
+    private void initView() {
         etTask = findViewById(R.id.inputEditTextTask2);
         etDate = findViewById(R.id.inputEditTextDate2);
         etFocus = findViewById(R.id.etFocus2);
@@ -41,13 +43,20 @@ public class UpdateActivity extends AppCompatActivity {
         etTask.setRawInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
     }
 
-    private void setListeners() {
+    private void getAndSetIntentData() {
+        updatedPosition = getIntent().getIntExtra("position", 0);
+        updatedTask = getIntent().getParcelableExtra("task");
+        etTask.setText(updatedTask.getName());
+        etDate.setText(updatedTask.getSlaDate());
+    }
+
+    public void setOnClickEtDateListener() {
         Calendar calendar = Calendar.getInstance();
         final int currentYear = calendar.get(Calendar.YEAR);
         final int currentMonth = calendar.get(Calendar.MONTH);
         final int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
 
-        etDate.setOnClickListener((v) -> {
+        etDate.setOnClickListener(v -> {
             DatePickerDialog datePickerDialog = new DatePickerDialog(
                     this, (view, year, month, day) -> {
                 month = month + 1;
@@ -57,13 +66,17 @@ public class UpdateActivity extends AppCompatActivity {
             datePickerDialog.show();
             etFocus.requestFocus();
         });
+    }
 
-        btnClear.setOnClickListener((v) -> {
+    public void setOnClickBtnClearListener() {
+        btnClear.setOnClickListener(v -> {
             etTask.setText("");
             etDate.setText("");
             etFocus.requestFocus();
         });
+    }
 
+    public void setOnClickBtnUpdateListener() {
         btnUpdate.setOnClickListener((v) -> {
             if (etTask.getText().toString().equals("") || etDate.getText().toString().equals("")) {
                 Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
@@ -86,10 +99,4 @@ public class UpdateActivity extends AppCompatActivity {
         });
     }
 
-    private void getAndSetIntentData() {
-        updatedPosition = getIntent().getIntExtra("position", 0);
-        updatedTask = getIntent().getParcelableExtra("task");
-        etTask.setText(updatedTask.getName());
-        etDate.setText(updatedTask.getSlaDate());
-    }
 }

@@ -12,6 +12,7 @@ import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
+
     ActivityResultLauncher<Intent> mainActivityResult;
     FloatingActionButton btnAdd;
     RecyclerView recyclerView;
@@ -22,22 +23,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        startVariables();
-        startRecyclerView();
+        initView();
+        setAdapterOnClickListener();
+        setBtnAddOnClickListener();
+    }
+
+    private void initView() {
+        btnAdd = findViewById(R.id.btnAdd);
+        recyclerView = findViewById(R.id.recyclerView);
+        myDB = new SQLiteHelper(this);
+        adapter = new TaskAdapter(myDB.getAllTasks());
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
         startMainActivityResult();
-
-        adapter.setOnClickListenerInterface(position -> v -> {
-            Intent intent = new Intent(this, UpdateActivity.class);
-            TaskModel task = adapter.getTask(position);
-            intent.putExtra("task", task);
-            intent.putExtra("position", position);
-            mainActivityResult.launch(intent);
-        });
-
-        btnAdd.setOnClickListener(view -> {
-            Intent intent = new Intent(this, AddActivity.class);
-            mainActivityResult.launch(intent);
-        });
     }
 
     public void startMainActivityResult() {
@@ -57,15 +55,21 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
-    private void startVariables() {
-        myDB = new SQLiteHelper(this);
-        adapter = new TaskAdapter(myDB.getAllTasks());
-        btnAdd = findViewById(R.id.btnAdd);
+    public void setAdapterOnClickListener() {
+        adapter.setOnClickListenerInterface(position -> v -> {
+            Intent intent = new Intent(this, UpdateActivity.class);
+            TaskModel task = adapter.getTask(position);
+            intent.putExtra("task", task);
+            intent.putExtra("position", position);
+            mainActivityResult.launch(intent);
+        });
     }
 
-    private void startRecyclerView() {
-        recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
+    public void setBtnAddOnClickListener() {
+        btnAdd.setOnClickListener(view -> {
+            Intent intent = new Intent(this, AddActivity.class);
+            mainActivityResult.launch(intent);
+        });
     }
+
 }

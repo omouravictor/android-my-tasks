@@ -22,11 +22,13 @@ public class AddActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
-        startVariables();
-        setListeners();
+        initView();
+        setOnClickEtDateListener();
+        setOnClickBtnClearListener();
+        setOnClickBtnAddListener();
     }
 
-    private void startVariables() {
+    private void initView() {
         etTask = findViewById(R.id.inputEditTextTask);
         etDate = findViewById(R.id.inputEditTextDate);
         etFocus = findViewById(R.id.etFocus);
@@ -38,7 +40,7 @@ public class AddActivity extends AppCompatActivity {
         etTask.setRawInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
     }
 
-    private void setListeners() {
+    public void setOnClickEtDateListener() {
         Calendar calendar = Calendar.getInstance();
         final int currentYear = calendar.get(Calendar.YEAR);
         final int currentMonth = calendar.get(Calendar.MONTH);
@@ -54,13 +56,17 @@ public class AddActivity extends AppCompatActivity {
             datePickerDialog.show();
             etFocus.requestFocus();
         });
+    }
 
+    public void setOnClickBtnClearListener() {
         btnClear.setOnClickListener(v -> {
             etTask.setText("");
             etDate.setText("");
             etFocus.requestFocus();
         });
+    }
 
+    private void setOnClickBtnAddListener() {
         btnAdd.setOnClickListener(v -> {
             if (etTask.getText().toString().equals("") || etDate.getText().toString().equals("")) {
                 Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
