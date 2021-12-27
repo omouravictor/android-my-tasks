@@ -46,8 +46,11 @@ public class UpdateActivity extends AppCompatActivity {
     private void getAndSetIntentData() {
         updatedPosition = getIntent().getIntExtra("position", 0);
         updatedTask = getIntent().getParcelableExtra("task");
+
         etTask.setText(updatedTask.getName());
         etDate.setText(updatedTask.getSlaDate());
+
+        getSupportActionBar().setTitle("Atualizando " + updatedTask.getName());
     }
 
     public void setOnClickEtDateListener() {
