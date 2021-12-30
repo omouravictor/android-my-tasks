@@ -48,7 +48,7 @@
             tools:text="10 dias restantes" />
 
         <Button
-            android:id="@+id/btnDelete"
+            android:id="@+id/btnComplete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Concluir"
