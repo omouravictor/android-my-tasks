@@ -122,8 +122,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.deleteAll) {
-            myDB.deleteAllTasks();
-            adapter.deleteAllTasks();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setMessage("Tem certeza que deseja excluir todas as tarefas?");
+
+            builder.setPositiveButton("Sim", (dialog, which) -> {
+                myDB.deleteAllTasks();
+                adapter.deleteAllTasks();
+                dialog.dismiss();
+            });
+            builder.setNegativeButton("Não", (dialog, which) -> {
+                dialog.dismiss();
+            });
+
+            builder.show();
         }
         return super.onOptionsItemSelected(item);
     }
