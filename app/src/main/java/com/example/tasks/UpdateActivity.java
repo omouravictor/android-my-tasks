@@ -90,11 +90,11 @@ public class UpdateActivity extends AppCompatActivity {
                 if (result == -1)
                     Toast.makeText(this, "Falha ao atualizar a tarefa.", Toast.LENGTH_SHORT).show();
                 else {
-                    Toast.makeText(this, "Tarefa atualizada com sucesso!", Toast.LENGTH_SHORT).show();
                     Intent taskData = new Intent();
                     taskData.putExtra("task", updatedTask);
                     taskData.putExtra("position", updatedPosition);
                     setResult(2, taskData);
+                    Toast.makeText(this, "Tarefa atualizada com sucesso!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
