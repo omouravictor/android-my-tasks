@@ -3,6 +3,7 @@ package com.example.tasks;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -34,6 +35,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         holder.tvTask.setText(task.getName());
         holder.tvSlaDate.setText(task.getSlaDate());
         holder.itemView.setOnClickListener(adapterInterface.getOnClickListener(position));
+        holder.btnComplete.setOnClickListener(adapterInterface.getBtnCompleteOnClickListener(position));
     }
 
     @Override
@@ -44,12 +46,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvId, tvTask, tvSlaDate;
+        Button btnComplete;
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
             tvId = itemView.findViewById(R.id.tvId);
             tvTask = itemView.findViewById(R.id.tvTask);
             tvSlaDate = itemView.findViewById(R.id.tvSlaDate);
+            btnComplete = itemView.findViewById(R.id.btnComplete);
         }
     }
 
@@ -65,6 +69,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     public void updateTask(int position, TaskModel updatedTask) {
         allTasks.set(position, updatedTask);
         notifyItemChanged(position);
+    }
+
+    public void deleteTask(int position) {
+        allTasks.remove(position);
+        notifyItemRemoved(position);
     }
 
     public TaskModel getTask(int position) {
