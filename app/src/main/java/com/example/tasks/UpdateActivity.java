@@ -49,8 +49,6 @@ public class UpdateActivity extends AppCompatActivity {
 
         etTask.setText(updatedTask.getName());
         etDate.setText(updatedTask.getSlaDate());
-
-        getSupportActionBar().setTitle("Atualizando " + updatedTask.getName());
     }
 
     public void setOnClickEtDateListener() {
