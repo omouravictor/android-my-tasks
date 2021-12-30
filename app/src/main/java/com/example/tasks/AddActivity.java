@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -54,6 +55,8 @@ public class AddActivity extends AppCompatActivity {
                 etDate.setText(date);
             }, currentYear, currentMonth, currentDay);
             datePickerDialog.show();
+            InputMethodManager imm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(etTask.getWindowToken(), 0);
             etFocus.requestFocus();
         });
     }
@@ -68,6 +71,7 @@ public class AddActivity extends AppCompatActivity {
 
     private void setOnClickBtnAddListener() {
         btnAdd.setOnClickListener(v -> {
+            btnAdd.setClickable(false);
             if (etTask.getText().toString().equals("") || etDate.getText().toString().equals("")) {
                 Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
             } else {
