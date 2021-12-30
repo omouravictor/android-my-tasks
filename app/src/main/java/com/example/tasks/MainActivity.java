@@ -2,6 +2,7 @@ package com.example.tasks;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -10,6 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -22,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     TaskAdapter adapter;
     SQLiteHelper myDB;
+    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initView() {
+        context = this;
         btnAdd = findViewById(R.id.btnAdd);
         recyclerView = findViewById(R.id.recyclerView);
         myDB = new SQLiteHelper(this);
@@ -64,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public View.OnClickListener getOnClickListener(int position) {
                 return v -> {
-                    Intent intent = new Intent(v.getContext(), UpdateActivity.class);
+                    Intent intent = new Intent(context, UpdateActivity.class);
                     TaskModel task = adapter.getTask(position);
                     intent.putExtra("task", task);
                     intent.putExtra("position", position);
@@ -75,10 +81,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public View.OnClickListener getBtnCompleteOnClickListener(int position) {
                 return v -> {
-                    Context context = v.getContext();
                     TaskModel task = adapter.getTask(position);
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setTitle(task.getName());
                     builder.setMessage("Confirmar conclusão?");
 
                     builder.setPositiveButton("Sim", (dialog, which) -> {
@@ -101,9 +107,24 @@ public class MainActivity extends AppCompatActivity {
 
     public void setBtnAddOnClickListener() {
         btnAdd.setOnClickListener(view -> {
-            Intent intent = new Intent(this, AddActivity.class);
+            Intent intent = new Intent(context, AddActivity.class);
             mainActivityResult.launch(intent);
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.my_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.deleteAll) {
+            myDB.deleteAllTasks();
+            adapter.deleteAllTasks();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }
