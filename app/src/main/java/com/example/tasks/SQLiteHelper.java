@@ -64,6 +64,15 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return result;
     }
 
+    public long deleteTask(TaskModel taskToBeDeleted) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        long result = db.delete(TABLE_NAME, "id=" + taskToBeDeleted.getId(), null);
+        db.close();
+
+        return result;
+    }
+
     public ArrayList<TaskModel> getAllTasks() {
 
         ArrayList<TaskModel> allTasks = new ArrayList<>();
