@@ -16,7 +16,8 @@
         <activity
             android:name=".AddActivity"
             android:exported="true"
-            android:label="Adicionar Tarefa" />
+            android:label="Adicionar Tarefa"
+            android:windowSoftInputMode="stateVisible" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
