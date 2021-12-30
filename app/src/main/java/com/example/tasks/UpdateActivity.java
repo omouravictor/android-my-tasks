@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -17,8 +18,8 @@ public class UpdateActivity extends AppCompatActivity {
 
     EditText etTask, etDate, etFocus;
     Button btnClear, btnUpdate;
-    TaskModel updatedTask;
-    int updatedPosition;
+    TaskModel task;
+    int position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,11 +45,12 @@ public class UpdateActivity extends AppCompatActivity {
     }
 
     private void getAndSetIntentData() {
-        updatedPosition = getIntent().getIntExtra("position", 0);
-        updatedTask = getIntent().getParcelableExtra("task");
+        position = getIntent().getIntExtra("position", 0);
+        task = getIntent().getParcelableExtra("task");
 
-        etTask.setText(updatedTask.getName());
-        etDate.setText(updatedTask.getSlaDate());
+        etTask.setText(task.getName());
+        etTask.setSelection(etTask.getText().length());
+        etDate.setText(task.getSlaDate());
     }
 
     public void setOnClickEtDateListener() {
@@ -65,6 +67,8 @@ public class UpdateActivity extends AppCompatActivity {
                 etDate.setText(date);
             }, currentYear, currentMonth, currentDay);
             datePickerDialog.show();
+            InputMethodManager imm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(etTask.getWindowToken(), 0);
             etFocus.requestFocus();
         });
     }
@@ -79,22 +83,24 @@ public class UpdateActivity extends AppCompatActivity {
 
     public void setOnClickBtnUpdateListener() {
         btnUpdate.setOnClickListener((v) -> {
+            btnUpdate.setClickable(false);
             if (etTask.getText().toString().equals("") || etDate.getText().toString().equals("")) {
                 Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
             } else {
-                updatedTask.setName(etTask.getText().toString());
-                updatedTask.setSlaDate(etDate.getText().toString());
+                task.setName(etTask.getText().toString());
+                task.setSlaDate(etDate.getText().toString());
                 SQLiteHelper myDB = new SQLiteHelper(this);
-                long result = myDB.updateTask(updatedTask);
+                long result = myDB.updateTask(task);
 
                 if (result == -1)
                     Toast.makeText(this, "Falha ao atualizar a tarefa.", Toast.LENGTH_SHORT).show();
                 else {
                     Intent taskData = new Intent();
-                    taskData.putExtra("task", updatedTask);
-                    taskData.putExtra("position", updatedPosition);
+                    taskData.putExtra("task", task);
+                    taskData.putExtra("position", position);
                     setResult(2, taskData);
                     Toast.makeText(this, "Tarefa atualizada com sucesso!", Toast.LENGTH_SHORT).show();
+                    finish();
                 }
             }
         });
