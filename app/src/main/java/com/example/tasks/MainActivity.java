@@ -53,12 +53,12 @@ public class MainActivity extends AppCompatActivity {
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() != RESULT_CANCELED) {
-                        TaskModel taskIntentData = result.getData().getParcelableExtra("task");
+                        TaskModel intentTask = result.getData().getParcelableExtra("task");
                         if (result.getResultCode() == 1) {
-                            adapter.addTask(taskIntentData);
+                            adapter.addTask(intentTask);
                         } else if (result.getResultCode() == 2) {
-                            int updatedPosition = result.getData().getIntExtra("position", 0);
-                            adapter.updateTask(updatedPosition, taskIntentData);
+                            int position = result.getData().getIntExtra("position", 0);
+                            adapter.updateTask(position, intentTask);
                         }
                     }
                 }
