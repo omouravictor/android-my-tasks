@@ -51,23 +51,23 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return result;
     }
 
-    public long updateTask(TaskModel updatedTask) {
+    public long updateTask(TaskModel task) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
-        cv.put(COLUMN_NAME, updatedTask.getName());
-        cv.put(COLUMN_SLA_DATE, updatedTask.getSlaDate());
+        cv.put(COLUMN_NAME, task.getName());
+        cv.put(COLUMN_SLA_DATE, task.getSlaDate());
 
-        long result = db.update(TABLE_NAME, cv, "id=" + updatedTask.getId(), null);
+        long result = db.update(TABLE_NAME, cv, "id=" + task.getId(), null);
         db.close();
 
         return result;
     }
 
-    public long deleteTask(TaskModel taskToBeDeleted) {
+    public long deleteTask(TaskModel task) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        long result = db.delete(TABLE_NAME, "id=" + taskToBeDeleted.getId(), null);
+        long result = db.delete(TABLE_NAME, "id=" + task.getId(), null);
         db.close();
 
         return result;
