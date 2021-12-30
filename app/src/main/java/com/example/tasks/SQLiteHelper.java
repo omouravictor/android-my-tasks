@@ -73,6 +73,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return result;
     }
 
+    public void deleteAllTasks() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + TABLE_NAME);
+    }
+
     public ArrayList<TaskModel> getAllTasks() {
 
         ArrayList<TaskModel> allTasks = new ArrayList<>();
