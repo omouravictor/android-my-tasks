@@ -34,7 +34,7 @@ public class MyActivityFunctions {
             DatePickerDialog datePickerDialog = new DatePickerDialog(
                     context, (view, year, month, day) -> {
                 month = month + 1;
-                etDate.setText(day + "-" + month + "-" + year);
+                etDate.setText(day + "/" + month + "/" + year);
             }, currentYear, currentMonth, currentDay);
             datePickerDialog.show();
             hideKeyboard(context, v);
