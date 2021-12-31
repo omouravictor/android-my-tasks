@@ -32,12 +32,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initView();
+        init();
         setBtnAddOnClickListener();
         setAdapterOnClickListenerS();
     }
 
-    private void initView() {
+    private void init() {
         context = this;
         btnAdd = findViewById(R.id.btnAdd);
         recyclerView = findViewById(R.id.recyclerView);
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         startMainActivityResult();
     }
 
-    public void startMainActivityResult() {
+    private void startMainActivityResult() {
         mainActivityResult = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
-    public void setAdapterOnClickListenerS() {
+    private void setAdapterOnClickListenerS() {
         adapter.setOnClickListenerInterface(new AdapterInterface() {
             @Override
             public View.OnClickListener getOnClickListener(int position) {
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void setBtnAddOnClickListener() {
+    private void setBtnAddOnClickListener() {
         btnAdd.setOnClickListener(view -> {
             Intent intent = new Intent(context, AddActivity.class);
             mainActivityResult.launch(intent);
