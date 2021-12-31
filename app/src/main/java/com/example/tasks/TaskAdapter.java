@@ -9,10 +9,16 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.util.ArrayList;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
 
+    private DateTimeFormatter dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
     private final ArrayList<TaskModel> allTasks;
     private AdapterInterface adapterInterface;
 
@@ -33,7 +39,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         TaskModel task = allTasks.get(position);
         holder.tvId.setText(String.valueOf(task.getId()));
         holder.tvTask.setText(task.getName());
-        holder.tvSlaDate.setText(task.getSlaDate());
+        int days = Days.daysBetween(
+                new LocalDate(),
+                LocalDate.parse(task.getSlaDate(), dtf)
+        ).getDays();
+        holder.tvSlaDate.setText("Expira em " + days + " dia (s)");
         holder.itemView.setOnClickListener(adapterInterface.getOnClickListener(position));
         holder.btnComplete.setOnClickListener(adapterInterface.getBtnCompleteOnClickListener(position));
     }
