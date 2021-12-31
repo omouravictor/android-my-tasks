@@ -2,20 +2,15 @@ package com.example.tasks;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.InputType;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.util.Calendar;
-
 public class AddActivity extends AppCompatActivity {
 
+    MyActivityFunctions myFunctions;
     EditText etTask, etDate, etFocus;
     Button btnClear, btnAdd;
 
@@ -23,50 +18,20 @@ public class AddActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
-        initView();
-        setOnClickEtDateListener();
-        setOnClickBtnClearListener();
+        init();
         setOnClickBtnAddListener();
+        myFunctions.setOnClickEtDateListener(this, etDate);
+        myFunctions.setOnClickBtnClearListener(btnClear, etTask, etDate);
     }
 
-    private void initView() {
+    private void init() {
         etTask = findViewById(R.id.inputEditTextTask);
         etDate = findViewById(R.id.inputEditTextDate);
         etFocus = findViewById(R.id.etFocus);
+        myFunctions = new MyActivityFunctions(etFocus);
         btnClear = findViewById(R.id.btnClear);
         btnAdd = findViewById(R.id.btnAdd);
-
-        // Enables textMultiLine EditText with ActionDone button (without Enter button)
-        etTask.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        etTask.setRawInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-    }
-
-    public void setOnClickEtDateListener() {
-        Calendar calendar = Calendar.getInstance();
-        final int currentYear = calendar.get(Calendar.YEAR);
-        final int currentMonth = calendar.get(Calendar.MONTH);
-        final int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
-
-        etDate.setOnClickListener(v -> {
-            DatePickerDialog datePickerDialog = new DatePickerDialog(
-                    this, (view, year, month, day) -> {
-                month = month + 1;
-                String date = day + "/" + month + "/" + year;
-                etDate.setText(date);
-            }, currentYear, currentMonth, currentDay);
-            datePickerDialog.show();
-            InputMethodManager imm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(etTask.getWindowToken(), 0);
-            etFocus.requestFocus();
-        });
-    }
-
-    public void setOnClickBtnClearListener() {
-        btnClear.setOnClickListener(v -> {
-            etTask.setText("");
-            etDate.setText("");
-            etFocus.requestFocus();
-        });
+        myFunctions.setActionDoneButton(etTask);
     }
 
     private void setOnClickBtnAddListener() {
