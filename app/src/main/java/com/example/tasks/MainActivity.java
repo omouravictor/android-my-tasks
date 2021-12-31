@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.deleteAll) {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setMessage("Tem certeza que deseja excluir todas as tarefas?");
+            builder.setMessage("Tem certeza que deseja excluir tudo?");
 
             builder.setPositiveButton("Sim", (dialog, which) -> {
                 myDB.deleteAllTasks();
