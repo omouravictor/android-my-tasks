@@ -9,9 +9,6 @@ public class TaskModel implements Parcelable {
     private String name;
     private String slaDate;
 
-    public TaskModel() {
-    }
-
     public TaskModel(long id, String name, String slaDate) {
         this.id = id;
         this.name = name;
