@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
 
-    private DateTimeFormatter dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
+    private final DateTimeFormatter dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
     private final ArrayList<TaskModel> allTasks;
     private AdapterInterface adapterInterface;
 
