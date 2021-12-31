@@ -95,9 +95,7 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(context, "Falha ao deletar a tarefa.", Toast.LENGTH_SHORT).show();
                         dialog.dismiss();
                     });
-                    builder.setNegativeButton("Não", (dialog, which) -> {
-                        dialog.dismiss();
-                    });
+                    builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
 
                     builder.show();
                 };
@@ -131,9 +129,7 @@ public class MainActivity extends AppCompatActivity {
                 adapter.deleteAllTasks();
                 dialog.dismiss();
             });
-            builder.setNegativeButton("Não", (dialog, which) -> {
-                dialog.dismiss();
-            });
+            builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
 
             builder.show();
         }
