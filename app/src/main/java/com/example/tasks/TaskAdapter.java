@@ -11,19 +11,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
 
-    private final DateTimeFormatter dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
     private final ArrayList<TaskModel> allTasks;
     private AdapterInterface adapterInterface;
+    private final DateTimeFormatter dtf;
+    private final LocalDate currentDate;
 
-    public TaskAdapter(ArrayList<TaskModel> items) {
+    public TaskAdapter(ArrayList<TaskModel> items, DateTimeFormatter dtf, LocalDate currentDate) {
         this.allTasks = items;
+        this.dtf = dtf;
+        this.currentDate = currentDate;
     }
 
     @NonNull
@@ -37,15 +39,24 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         TaskModel task = allTasks.get(position);
+        int days = Days.daysBetween(currentDate, LocalDate.parse(task.getSlaDate(), dtf)).getDays();
+
         holder.tvId.setText(String.valueOf(task.getId()));
         holder.tvTask.setText(task.getName());
-        int days = Days.daysBetween(
-                new LocalDate(),
-                LocalDate.parse(task.getSlaDate(), dtf)
-        ).getDays();
-        holder.tvSlaDate.setText("Expira em " + days + " dia (s)");
+
+        setSlaDateText(holder.tvSlaDate, days);
+
         holder.itemView.setOnClickListener(adapterInterface.getOnClickListener(position));
         holder.btnComplete.setOnClickListener(adapterInterface.getBtnCompleteOnClickListener(position));
+    }
+
+    public void setSlaDateText(TextView tvSlaDate, int days) {
+        if (days > 0)
+            tvSlaDate.setText("Expira em " + days + " dia (s)");
+        else if (days == 0)
+            tvSlaDate.setText("Expira HOJE!");
+        else
+            tvSlaDate.setText("Expirada");
     }
 
     @Override
