@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
 
+    MyFunctions myFunctions = new MyFunctions();
     private final ArrayList<TaskModel> allTasks;
     private AdapterInterface adapterInterface;
     private final DateTimeFormatter dtf;
@@ -84,7 +85,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     public void addTask(TaskModel task) {
         allTasks.add(task);
-        notifyItemInserted(getItemCount());
+        myFunctions.sortTaskArrayBySlaDate(allTasks, dtf, currentDate);
+        notifyDataSetChanged();
     }
 
     public void updateTask(int position, TaskModel updatedTask) {
