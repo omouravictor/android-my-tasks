@@ -9,13 +9,22 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
-import java.util.Calendar;
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormatter;
 
-public class MyActivityFunctions {
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+
+public class MyFunctions {
 
     EditText etFocus;
 
-    public MyActivityFunctions(EditText etFocus) {
+    public MyFunctions() {
+    }
+
+    public MyFunctions(EditText etFocus) {
         this.etFocus = etFocus;
     }
 
@@ -54,6 +63,14 @@ public class MyActivityFunctions {
         // Enables textMultiLine EditText with ActionDone button (without Enter button)
         etTask.setImeOptions(EditorInfo.IME_ACTION_DONE);
         etTask.setRawInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+    }
+
+    public void sortTaskArrayBySlaDate(ArrayList<TaskModel> tasks, DateTimeFormatter dtf, LocalDate currentDate) {
+        Collections.sort(tasks, (task1, task2) -> {
+            int days1 = Days.daysBetween(currentDate, LocalDate.parse(task1.getSlaDate(), dtf)).getDays();
+            int days2 = Days.daysBetween(currentDate, LocalDate.parse(task2.getSlaDate(), dtf)).getDays();
+            return Integer.compare(days1, days2);
+        });
     }
 
 }
