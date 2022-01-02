@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 public class UpdateActivity extends AppCompatActivity {
 
-    MyActivityFunctions myFunctions;
+    MyFunctions myFunctions;
     EditText etTask, etDate, etFocus;
     Button btnClear, btnUpdate;
     TaskModel task;
@@ -31,7 +31,7 @@ public class UpdateActivity extends AppCompatActivity {
         etTask = findViewById(R.id.inputEditTextTask2);
         etDate = findViewById(R.id.inputEditTextDate2);
         etFocus = findViewById(R.id.etFocus2);
-        myFunctions = new MyActivityFunctions(etFocus);
+        myFunctions = new MyFunctions(etFocus);
         btnClear = findViewById(R.id.btnClear2);
         btnUpdate = findViewById(R.id.btnUpdate);
         myFunctions.setActionDoneButton(etTask);

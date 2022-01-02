@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 public class AddActivity extends AppCompatActivity {
 
-    MyActivityFunctions myFunctions;
+    MyFunctions myFunctions;
     EditText etTask, etDate, etFocus;
     Button btnClear, btnAdd;
 
@@ -28,7 +28,7 @@ public class AddActivity extends AppCompatActivity {
         etTask = findViewById(R.id.inputEditTextTask);
         etDate = findViewById(R.id.inputEditTextDate);
         etFocus = findViewById(R.id.etFocus);
-        myFunctions = new MyActivityFunctions(etFocus);
+        myFunctions = new MyFunctions(etFocus);
         btnClear = findViewById(R.id.btnClear);
         btnAdd = findViewById(R.id.btnAdd);
         myFunctions.setActionDoneButton(etTask);
