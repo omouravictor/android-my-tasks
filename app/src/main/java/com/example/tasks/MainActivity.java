@@ -27,7 +27,6 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    MyFunctions myFunctions = new MyFunctions();
     ActivityResultLauncher<Intent> mainActivityResult;
     FloatingActionButton btnAdd;
     RecyclerView recyclerView;
@@ -58,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
         DateTimeFormatter dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
         LocalDate currentDate = new LocalDate();
 
-        myFunctions.sortTaskArrayBySlaDate(allTasks, dtf, currentDate);
         adapter = new TaskAdapter(allTasks, dtf, currentDate);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
