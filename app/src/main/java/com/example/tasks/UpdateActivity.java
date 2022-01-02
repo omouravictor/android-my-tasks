@@ -11,7 +11,7 @@ import android.widget.Toast;
 public class UpdateActivity extends AppCompatActivity {
 
     MyFunctions myFunctions;
-    EditText etTask, etDate, etFocus;
+    EditText etTask, etSlaDate, etFocus;
     Button btnClear, btnUpdate;
     TaskModel task;
     int position;
@@ -23,16 +23,16 @@ public class UpdateActivity extends AppCompatActivity {
         init();
         getAndSetIntentData();
         setOnClickBtnUpdateListener();
-        myFunctions.setOnClickEtDateListener(this, etDate);
-        myFunctions.setOnClickBtnClearListener(btnClear, etTask, etDate);
+        myFunctions.setOnClickEtDateListener(this, etSlaDate);
+        myFunctions.setOnClickBtnClearListener(btnClear, etTask, etSlaDate);
     }
 
     private void init() {
-        etTask = findViewById(R.id.inputEditTextTask2);
-        etDate = findViewById(R.id.inputEditTextDate2);
-        etFocus = findViewById(R.id.etFocus2);
+        etTask = findViewById(R.id.etTaskUpdate);
+        etSlaDate = findViewById(R.id.etSlaDateUpdate);
+        etFocus = findViewById(R.id.etFocusUpdate);
         myFunctions = new MyFunctions(etFocus);
-        btnClear = findViewById(R.id.btnClear2);
+        btnClear = findViewById(R.id.btnClearUpdate);
         btnUpdate = findViewById(R.id.btnUpdate);
         myFunctions.setActionDoneButton(etTask);
     }
@@ -42,17 +42,17 @@ public class UpdateActivity extends AppCompatActivity {
         task = getIntent().getParcelableExtra("task");
         etTask.setText(task.getName());
         etTask.setSelection(etTask.getText().length());
-        etDate.setText(task.getSlaDate());
+        etSlaDate.setText(task.getSlaDate());
     }
 
     private void setOnClickBtnUpdateListener() {
         btnUpdate.setOnClickListener((v) -> {
-            btnUpdate.setClickable(false);
-            if (etTask.getText().toString().equals("") || etDate.getText().toString().equals("")) {
+            if (etTask.getText().toString().equals("") || etSlaDate.getText().toString().equals("")) {
                 Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
             } else {
+                btnUpdate.setClickable(false);
                 task.setName(etTask.getText().toString());
-                task.setSlaDate(etDate.getText().toString());
+                task.setSlaDate(etSlaDate.getText().toString());
                 SQLiteHelper myDB = new SQLiteHelper(this);
                 long result = myDB.updateTask(task);
 

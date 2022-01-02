@@ -11,7 +11,7 @@ import android.widget.Toast;
 public class AddActivity extends AppCompatActivity {
 
     MyFunctions myFunctions;
-    EditText etTask, etDate, etFocus;
+    EditText etTask, etSlaDate, etFocus;
     Button btnClear, btnAdd;
 
     @Override
@@ -20,27 +20,27 @@ public class AddActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add);
         init();
         setOnClickBtnAddListener();
-        myFunctions.setOnClickEtDateListener(this, etDate);
-        myFunctions.setOnClickBtnClearListener(btnClear, etTask, etDate);
+        myFunctions.setOnClickEtDateListener(this, etSlaDate);
+        myFunctions.setOnClickBtnClearListener(btnClear, etTask, etSlaDate);
     }
 
     private void init() {
-        etTask = findViewById(R.id.inputEditTextTask);
-        etDate = findViewById(R.id.inputEditTextDate);
-        etFocus = findViewById(R.id.etFocus);
+        etTask = findViewById(R.id.etTaskAdd);
+        etSlaDate = findViewById(R.id.etSlaDateAdd);
+        etFocus = findViewById(R.id.etFocusAdd);
         myFunctions = new MyFunctions(etFocus);
-        btnClear = findViewById(R.id.btnClear);
+        btnClear = findViewById(R.id.btnClearAdd);
         btnAdd = findViewById(R.id.btnAdd);
         myFunctions.setActionDoneButton(etTask);
     }
 
     private void setOnClickBtnAddListener() {
         btnAdd.setOnClickListener(v -> {
-            btnAdd.setClickable(false);
-            if (etTask.getText().toString().equals("") || etDate.getText().toString().equals("")) {
+            if (etTask.getText().toString().equals("") || etSlaDate.getText().toString().equals("")) {
                 Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
             } else {
-                TaskModel task = new TaskModel(etTask.getText().toString(), etDate.getText().toString());
+                btnAdd.setClickable(false);
+                TaskModel task = new TaskModel(etTask.getText().toString(), etSlaDate.getText().toString());
                 SQLiteHelper myDB = new SQLiteHelper(this);
                 long result = myDB.createTask(task);
 
