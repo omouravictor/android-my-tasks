@@ -19,16 +19,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity {
 
+    MyFunctions myFunctions = new MyFunctions();
     ActivityResultLauncher<Intent> mainActivityResult;
     FloatingActionButton btnAdd;
     RecyclerView recyclerView;
@@ -58,11 +57,8 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<TaskModel> allTasks = myDB.getAllTasks();
         DateTimeFormatter dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
         LocalDate currentDate = new LocalDate();
-        Collections.sort(allTasks, (task1, task2) -> {
-            int days1 = Days.daysBetween(currentDate, LocalDate.parse(task1.getSlaDate(), dtf)).getDays();
-            int days2 = Days.daysBetween(currentDate, LocalDate.parse(task2.getSlaDate(), dtf)).getDays();
-            return Integer.compare(days1, days2);
-        });
+
+        myFunctions.sortTaskArrayBySlaDate(allTasks, dtf, currentDate);
         adapter = new TaskAdapter(allTasks, dtf, currentDate);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
