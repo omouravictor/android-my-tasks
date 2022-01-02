@@ -1,13 +1,11 @@
 package com.example.tasks;
 
 import android.graphics.Color;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -49,24 +47,21 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         holder.tvTaskName.setText(task.getName());
 
-        setExpirationTime(holder.tvExpirationTime, days);
+        setExpirationTime(holder.myRow, holder.tvExpirationTime, days);
 
         holder.itemView.setOnClickListener(adapterInterface.getOnClickListener(position));
         holder.btnComplete.setOnClickListener(adapterInterface.getBtnCompleteOnClickListener(position));
     }
 
-    public void setExpirationTime(TextView tvSlaDate, int days) {
-        SpannableString ss;
+    public void setExpirationTime(LinearLayout myRow, TextView tvExpirationTime, int days) {
         if (days > 0) {
-            tvSlaDate.setText("Expira em " + days + " dia (s)");
+            tvExpirationTime.setText("Expira em " + days + " dia (s)");
         } else if (days == 0) {
-            ss = new SpannableString("Expira hoje !");
-            ss.setSpan(new ForegroundColorSpan(Color.BLUE), 0, 11, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            tvSlaDate.setText(ss);
+            myRow.setBackgroundColor(Color.parseColor("#FBF6B3"));
+            tvExpirationTime.setText("Expira hoje !");
         } else {
-            ss = new SpannableString("Expirada :(");
-            ss.setSpan(new ForegroundColorSpan(Color.RED), 0, 8, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            tvSlaDate.setText(ss);
+            myRow.setBackgroundColor(Color.parseColor("#FFDCD9"));
+            tvExpirationTime.setText("Expirada :(");
         }
     }
 
@@ -79,12 +74,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         TextView tvTaskName, tvExpirationTime;
         Button btnComplete;
+        LinearLayout myRow;
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
             tvTaskName = itemView.findViewById(R.id.tvTaskName);
             tvExpirationTime = itemView.findViewById(R.id.expirationTime);
             btnComplete = itemView.findViewById(R.id.btnComplete);
+            myRow = itemView.findViewById(R.id.myRow);
         }
     }
 
