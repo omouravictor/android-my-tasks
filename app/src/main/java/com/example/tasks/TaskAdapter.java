@@ -42,7 +42,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         TaskModel task = allTasks.get(position);
         int days = Days.daysBetween(currentDate, LocalDate.parse(task.getSlaDate(), dtf)).getDays();
 
-        holder.tvId.setText(String.valueOf(task.getId()));
         holder.tvTask.setText(task.getName());
 
         setSlaDateText(holder.tvSlaDate, days);
@@ -67,12 +66,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvId, tvTask, tvSlaDate;
+        TextView tvTask, tvSlaDate;
         Button btnComplete;
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvId = itemView.findViewById(R.id.tvId);
             tvTask = itemView.findViewById(R.id.tvTask);
             tvSlaDate = itemView.findViewById(R.id.tvSlaDate);
             btnComplete = itemView.findViewById(R.id.btnComplete);
