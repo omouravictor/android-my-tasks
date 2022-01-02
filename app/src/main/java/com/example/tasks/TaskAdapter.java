@@ -1,5 +1,9 @@
 package com.example.tasks;
 
+import android.graphics.Color;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +18,10 @@ import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
 
-    MyFunctions myFunctions = new MyFunctions();
     private final ArrayList<TaskModel> allTasks;
     private AdapterInterface adapterInterface;
     private final DateTimeFormatter dtf;
@@ -27,6 +31,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         this.allTasks = items;
         this.dtf = dtf;
         this.currentDate = currentDate;
+        sortTaskArrayBySlaDate(allTasks);
     }
 
     @NonNull
@@ -42,21 +47,27 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         TaskModel task = allTasks.get(position);
         int days = Days.daysBetween(currentDate, LocalDate.parse(task.getSlaDate(), dtf)).getDays();
 
-        holder.tvTask.setText(task.getName());
+        holder.tvTaskName.setText(task.getName());
 
-        setSlaDateText(holder.tvSlaDate, days);
+        setExpirationTime(holder.tvExpirationTime, days);
 
         holder.itemView.setOnClickListener(adapterInterface.getOnClickListener(position));
         holder.btnComplete.setOnClickListener(adapterInterface.getBtnCompleteOnClickListener(position));
     }
 
-    public void setSlaDateText(TextView tvSlaDate, int days) {
-        if (days > 0)
+    public void setExpirationTime(TextView tvSlaDate, int days) {
+        SpannableString ss;
+        if (days > 0) {
             tvSlaDate.setText("Expira em " + days + " dia (s)");
-        else if (days == 0)
-            tvSlaDate.setText("Expira HOJE!");
-        else
-            tvSlaDate.setText("Expirada");
+        } else if (days == 0) {
+            ss = new SpannableString("Expira hoje !");
+            ss.setSpan(new ForegroundColorSpan(Color.BLUE), 0, 11, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            tvSlaDate.setText(ss);
+        } else {
+            ss = new SpannableString("Expirada :(");
+            ss.setSpan(new ForegroundColorSpan(Color.RED), 0, 8, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            tvSlaDate.setText(ss);
+        }
     }
 
     @Override
@@ -66,13 +77,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvTask, tvSlaDate;
+        TextView tvTaskName, tvExpirationTime;
         Button btnComplete;
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvTask = itemView.findViewById(R.id.tvTask);
-            tvSlaDate = itemView.findViewById(R.id.tvSlaDate);
+            tvTaskName = itemView.findViewById(R.id.tvTaskName);
+            tvExpirationTime = itemView.findViewById(R.id.expirationTime);
             btnComplete = itemView.findViewById(R.id.btnComplete);
         }
     }
@@ -81,15 +92,23 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         this.adapterInterface = adapterInterface;
     }
 
+    public void sortTaskArrayBySlaDate(ArrayList<TaskModel> allTasks) {
+        Collections.sort(allTasks, (task1, task2) -> {
+            int days1 = Days.daysBetween(currentDate, LocalDate.parse(task1.getSlaDate(), dtf)).getDays();
+            int days2 = Days.daysBetween(currentDate, LocalDate.parse(task2.getSlaDate(), dtf)).getDays();
+            return Integer.compare(days1, days2);
+        });
+    }
+
     public void addTask(TaskModel task) {
         allTasks.add(task);
-        myFunctions.sortTaskArrayBySlaDate(allTasks, dtf, currentDate);
+        sortTaskArrayBySlaDate(allTasks);
         notifyDataSetChanged();
     }
 
     public void updateTask(int position, TaskModel updatedTask) {
         allTasks.set(position, updatedTask);
-        myFunctions.sortTaskArrayBySlaDate(allTasks, dtf, currentDate);
+        sortTaskArrayBySlaDate(allTasks);
         notifyDataSetChanged();
     }
 
