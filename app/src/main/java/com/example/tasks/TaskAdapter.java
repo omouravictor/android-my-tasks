@@ -55,6 +55,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     public void setExpirationTime(LinearLayout myRow, TextView tvExpirationTime, int days) {
         if (days > 0) {
+            myRow.setBackgroundColor(Color.parseColor("#FFFFFF"));
             tvExpirationTime.setText("Expira em " + days + " dia (s)");
         } else if (days == 0) {
             myRow.setBackgroundColor(Color.parseColor("#FBF6B3"));
