@@ -91,7 +91,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     public void updateTask(int position, TaskModel updatedTask) {
         allTasks.set(position, updatedTask);
-        notifyItemChanged(position);
+        myFunctions.sortTaskArrayBySlaDate(allTasks, dtf, currentDate);
+        notifyDataSetChanged();
     }
 
     public void deleteTask(int position) {
