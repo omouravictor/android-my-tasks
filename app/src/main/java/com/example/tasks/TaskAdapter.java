@@ -1,5 +1,7 @@
 package com.example.tasks;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,8 +9,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.joda.time.Days;
@@ -20,12 +25,24 @@ import java.util.Collections;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
 
+    private final Context context;
+    private final ActivityResultLauncher<Intent> activityResult;
+    private final SQLiteHelper myDB;
     private final ArrayList<TaskModel> allTasks;
-    private AdapterInterface adapterInterface;
     private final DateTimeFormatter dtf;
     private final LocalDate currentDate;
 
-    public TaskAdapter(ArrayList<TaskModel> items, DateTimeFormatter dtf, LocalDate currentDate) {
+    public TaskAdapter(
+            Context context,
+            ActivityResultLauncher<Intent> activityResult,
+            SQLiteHelper myDB,
+            ArrayList<TaskModel> items,
+            DateTimeFormatter dtf,
+            LocalDate currentDate
+    ) {
+        this.myDB = myDB;
+        this.activityResult = activityResult;
+        this.context = context;
         this.allTasks = items;
         this.dtf = dtf;
         this.currentDate = currentDate;
@@ -49,8 +66,31 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         setExpirationTime(holder.myRow, holder.tvExpirationTime, days);
 
-        holder.itemView.setOnClickListener(adapterInterface.getOnClickListener(position));
-        holder.btnComplete.setOnClickListener(adapterInterface.getBtnCompleteOnClickListener(position));
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, UpdateActivity.class);
+            intent.putExtra("task", task);
+            intent.putExtra("position", position);
+            activityResult.launch(intent);
+        });
+
+        holder.btnComplete.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle(task.getName());
+            builder.setMessage("Confirmar conclusão?");
+
+            builder.setPositiveButton("Sim", (dialog, which) -> {
+                int arrayPosition = allTasks.indexOf(task);
+                long result = myDB.deleteTask(task);
+                if (result != 0)
+                    deleteTask(arrayPosition);
+                else
+                    Toast.makeText(context, "Falha ao deletar a tarefa.", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            });
+            builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
+
+            builder.show();
+        });
     }
 
     public void setExpirationTime(LinearLayout myRow, TextView tvExpirationTime, int days) {
@@ -86,10 +126,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
     }
 
-    public void setOnClickListenerInterface(AdapterInterface adapterInterface) {
-        this.adapterInterface = adapterInterface;
-    }
-
     public void sortTaskArrayBySlaDate(ArrayList<TaskModel> allTasks) {
         Collections.sort(allTasks, (task1, task2) -> {
             int days1 = Days.daysBetween(currentDate, LocalDate.parse(task1.getSlaDate(), dtf)).getDays();
@@ -120,7 +156,4 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         notifyDataSetChanged();
     }
 
-    public TaskModel getTask(int position) {
-        return allTasks.get(position);
-    }
 }
