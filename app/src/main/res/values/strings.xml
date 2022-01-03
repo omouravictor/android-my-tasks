@@ -11,4 +11,5 @@
     <string name="etDateText">%d/%d/%d</string>
     <string name="expirationTodayText">Expira hoje !</string>
     <string name="expiredText">Expirada :(</string>
+    <string name="menuItemDeleteAllText">Delete All</string>
 </resources>
