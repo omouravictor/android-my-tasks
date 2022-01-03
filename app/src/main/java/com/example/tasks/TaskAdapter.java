@@ -80,7 +80,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             builder.setPositiveButton("Sim", (dialog, which) -> {
                 long result = myDB.deleteTask(task);
                 if (result != 0)
-                    deleteTask(task);
+                    deleteTask(position);
                 else
                     Toast.makeText(context, "Falha ao deletar a tarefa.", Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
@@ -144,10 +144,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         notifyDataSetChanged();
     }
 
-    public void deleteTask(TaskModel task) {
-        int position = allTasks.indexOf(task);
+    public void deleteTask(int position) {
         allTasks.remove(position);
-        notifyItemRemoved(position);
+        notifyDataSetChanged();
     }
 
     public void deleteAllTasks() {
