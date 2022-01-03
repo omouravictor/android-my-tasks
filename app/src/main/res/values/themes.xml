@@ -1,16 +1,15 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Theme.Tasks" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <!-- Window Background color. -->
+        <item name="android:windowBackground">@color/darkWhite</item>
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/darkBlue</item>
-        <item name="colorPrimaryVariant">@color/darkBlue</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/darkBlue</item>
-        <item name="colorSecondaryVariant">@color/darkBlue</item>
         <item name="colorOnSecondary">@color/white</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">@color/darkBlue</item>
-        <!-- Customize your theme here. -->
     </style>
 </resources>
