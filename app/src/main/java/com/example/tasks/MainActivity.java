@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -27,7 +25,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    ActivityResultLauncher<Intent> mainActivityResult;
+    ActivityResultLauncher<Intent> activityResult;
     FloatingActionButton btnAdd;
     RecyclerView recyclerView;
     TaskAdapter adapter;
@@ -40,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         init();
         setBtnAddOnClickListener();
-        setAdapterOnClickListenerS();
     }
 
     private void init() {
@@ -48,8 +45,8 @@ public class MainActivity extends AppCompatActivity {
         btnAdd = findViewById(R.id.btnAdd);
         recyclerView = findViewById(R.id.recyclerView);
         myDB = new SQLiteHelper(this);
+        startActivityResult();
         startAdapterAndRecyclerView();
-        startMainActivityResult();
     }
 
     public void startAdapterAndRecyclerView() {
@@ -57,14 +54,14 @@ public class MainActivity extends AppCompatActivity {
         DateTimeFormatter dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
         LocalDate currentDate = new LocalDate();
 
-        adapter = new TaskAdapter(allTasks, dtf, currentDate);
+        adapter = new TaskAdapter(this, activityResult, myDB, allTasks, dtf, currentDate);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
     }
 
-    private void startMainActivityResult() {
-        mainActivityResult = registerForActivityResult(
+    private void startActivityResult() {
+        activityResult = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() != RESULT_CANCELED) {
@@ -80,48 +77,10 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
-    private void setAdapterOnClickListenerS() {
-        adapter.setOnClickListenerInterface(new AdapterInterface() {
-            @Override
-            public View.OnClickListener getOnClickListener(int position) {
-                return v -> {
-                    Intent intent = new Intent(context, UpdateActivity.class);
-                    TaskModel task = adapter.getTask(position);
-                    intent.putExtra("task", task);
-                    intent.putExtra("position", position);
-                    mainActivityResult.launch(intent);
-                };
-            }
-
-            @Override
-            public View.OnClickListener getBtnCompleteOnClickListener(int position) {
-                return v -> {
-                    TaskModel task = adapter.getTask(position);
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setTitle(task.getName());
-                    builder.setMessage("Confirmar conclusão?");
-
-                    builder.setPositiveButton("Sim", (dialog, which) -> {
-                        long result = myDB.deleteTask(task);
-                        if (result != 0)
-                            adapter.deleteTask(position);
-                        else
-                            Toast.makeText(context, "Falha ao deletar a tarefa.", Toast.LENGTH_SHORT).show();
-                        dialog.dismiss();
-                    });
-                    builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
-
-                    builder.show();
-                };
-            }
-        });
-    }
-
     private void setBtnAddOnClickListener() {
         btnAdd.setOnClickListener(view -> {
             Intent intent = new Intent(context, AddActivity.class);
-            mainActivityResult.launch(intent);
+            activityResult.launch(intent);
         });
     }
 
