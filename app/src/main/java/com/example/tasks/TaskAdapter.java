@@ -2,7 +2,6 @@ package com.example.tasks;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,13 +93,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     public void setExpirationTime(LinearLayout myRow, TextView tvExpirationTime, int days) {
         if (days > 0) {
-            myRow.setBackgroundColor(Color.parseColor("#FFFFFF"));
+            myRow.setBackgroundColor(context.getColor(R.color.white));
             tvExpirationTime.setText(context.getString(R.string.expirationDaysText, days));
         } else if (days == 0) {
-            myRow.setBackgroundColor(Color.parseColor("#FBF6B3"));
+            myRow.setBackgroundColor(context.getColor(R.color.lightYellow));
             tvExpirationTime.setText(R.string.expirationTodayText);
         } else {
-            myRow.setBackgroundColor(Color.parseColor("#FFDCD9"));
+            myRow.setBackgroundColor(context.getColor(R.color.lightRed));
             tvExpirationTime.setText(R.string.expiredText);
         }
     }
