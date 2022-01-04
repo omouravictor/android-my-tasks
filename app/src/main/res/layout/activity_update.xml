@@ -94,7 +94,7 @@
                 android:id="@+id/btnUpdate"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="@string/btnAddText"
+                android:text="@string/btnUpdateText"
                 android:textAllCaps="false"
                 android:textSize="15sp" />
 
