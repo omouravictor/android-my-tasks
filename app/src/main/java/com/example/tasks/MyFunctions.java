@@ -15,10 +15,7 @@ import java.util.Calendar;
 
 public class MyFunctions {
 
-    EditText etFocus;
-
-    public MyFunctions(EditText etFocus) {
-        this.etFocus = etFocus;
+    public MyFunctions() {
     }
 
     public void hideKeyboard(@NonNull Context context, @NonNull View view) {
@@ -42,7 +39,6 @@ public class MyFunctions {
         etDate.setOnClickListener(v -> {
             datePickerDialog.show();
             hideKeyboard(context, v);
-            etFocus.requestFocus();
         });
     }
 
@@ -50,7 +46,6 @@ public class MyFunctions {
         btnClear.setOnClickListener(v -> {
             etTask.setText("");
             etDate.setText("");
-            etFocus.requestFocus();
         });
     }
 

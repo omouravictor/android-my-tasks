@@ -11,7 +11,7 @@ import android.widget.Toast;
 public class AddActivity extends AppCompatActivity {
 
     MyFunctions myFunctions;
-    EditText etTask, etSlaDate, etFocus;
+    EditText etTask, etSlaDate;
     Button btnClear, btnAdd;
 
     @Override
@@ -19,19 +19,20 @@ public class AddActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
         init();
-        setOnClickBtnAddListener();
-        myFunctions.setOnClickEtDateListener(this, etSlaDate);
-        myFunctions.setOnClickBtnClearListener(btnClear, etTask, etSlaDate);
     }
 
     private void init() {
+        myFunctions = new MyFunctions();
         etTask = findViewById(R.id.etTaskAdd);
         etSlaDate = findViewById(R.id.etSlaDateAdd);
-        etFocus = findViewById(R.id.etFocusAdd);
-        myFunctions = new MyFunctions(etFocus);
         btnClear = findViewById(R.id.btnClearAdd);
         btnAdd = findViewById(R.id.btnAdd);
+
         myFunctions.setActionDoneButton(etTask);
+        myFunctions.setOnClickEtDateListener(this, etSlaDate);
+        myFunctions.setOnClickBtnClearListener(btnClear, etTask, etSlaDate);
+
+        setOnClickBtnAddListener();
     }
 
     private void setOnClickBtnAddListener() {

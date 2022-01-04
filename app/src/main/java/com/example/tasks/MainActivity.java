@@ -1,6 +1,5 @@
 package com.example.tasks;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -25,39 +24,28 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    ActivityResultLauncher<Intent> activityResult;
     FloatingActionButton btnAdd;
     RecyclerView recyclerView;
-    TaskAdapter adapter;
     SQLiteHelper myDB;
-    Context context;
+    TaskAdapter adapter;
+    ActivityResultLauncher<Intent> activityResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
-        setBtnAddOnClickListener();
     }
 
     private void init() {
-        context = this;
         btnAdd = findViewById(R.id.btnAdd);
         recyclerView = findViewById(R.id.recyclerView);
         myDB = new SQLiteHelper(this);
+
         startActivityResult();
         startAdapterAndRecyclerView();
-    }
 
-    public void startAdapterAndRecyclerView() {
-        ArrayList<TaskModel> allTasks = myDB.getAllTasks();
-        DateTimeFormatter dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
-        LocalDate currentDate = new LocalDate();
-
-        adapter = new TaskAdapter(this, activityResult, myDB, allTasks, dtf, currentDate);
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
+        setBtnAddOnClickListener();
     }
 
     private void startActivityResult() {
@@ -77,9 +65,20 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
+    public void startAdapterAndRecyclerView() {
+        ArrayList<TaskModel> allTasks = myDB.getAllTasks();
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
+        LocalDate currentDate = new LocalDate();
+
+        adapter = new TaskAdapter(this, activityResult, myDB, allTasks, dtf, currentDate);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
+    }
+
     private void setBtnAddOnClickListener() {
         btnAdd.setOnClickListener(view -> {
-            Intent intent = new Intent(context, AddActivity.class);
+            Intent intent = new Intent(this, AddActivity.class);
             activityResult.launch(intent);
         });
     }
@@ -95,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.deleteAll) {
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("Tem certeza que deseja excluir tudo?");
 
             builder.setPositiveButton("Sim", (dialog, which) -> {

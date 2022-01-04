@@ -11,7 +11,7 @@ import android.widget.Toast;
 public class UpdateActivity extends AppCompatActivity {
 
     MyFunctions myFunctions;
-    EditText etTask, etSlaDate, etFocus;
+    EditText etTask, etSlaDate;
     Button btnClear, btnUpdate;
     TaskModel task;
     int position;
@@ -21,26 +21,28 @@ public class UpdateActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update);
         init();
-        getAndSetIntentData();
-        setOnClickBtnUpdateListener();
-        myFunctions.setOnClickEtDateListener(this, etSlaDate);
-        myFunctions.setOnClickBtnClearListener(btnClear, etTask, etSlaDate);
     }
 
     private void init() {
+        myFunctions = new MyFunctions();
         etTask = findViewById(R.id.etTaskUpdate);
         etSlaDate = findViewById(R.id.etSlaDateUpdate);
-        etFocus = findViewById(R.id.etFocusUpdate);
-        myFunctions = new MyFunctions(etFocus);
         btnClear = findViewById(R.id.btnClearUpdate);
         btnUpdate = findViewById(R.id.btnUpdate);
+
         myFunctions.setActionDoneButton(etTask);
-        etFocus.requestFocus();
+        myFunctions.setOnClickEtDateListener(this, etSlaDate);
+        myFunctions.setOnClickBtnClearListener(btnClear, etTask, etSlaDate);
+
+        getAndSetIntentData();
+        setOnClickBtnUpdateListener();
     }
 
     private void getAndSetIntentData() {
-        position = getIntent().getIntExtra("position", 0);
-        task = getIntent().getParcelableExtra("task");
+        Intent intent = getIntent();
+        position = intent.getIntExtra("position", 0);
+        task = intent.getParcelableExtra("task");
+
         etTask.setText(task.getName());
         etTask.setSelection(etTask.getText().length());
         etSlaDate.setText(task.getSlaDate());
