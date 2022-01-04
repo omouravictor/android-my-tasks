@@ -35,6 +35,7 @@ public class UpdateActivity extends AppCompatActivity {
         btnClear = findViewById(R.id.btnClearUpdate);
         btnUpdate = findViewById(R.id.btnUpdate);
         myFunctions.setActionDoneButton(etTask);
+        etFocus.requestFocus();
     }
 
     private void getAndSetIntentData() {
@@ -53,7 +54,7 @@ public class UpdateActivity extends AppCompatActivity {
                 btnUpdate.setClickable(false);
                 task.setName(etTask.getText().toString());
                 task.setSlaDate(etSlaDate.getText().toString());
-                
+
                 SQLiteHelper myDB = new SQLiteHelper(this);
                 long result = myDB.updateTask(task);
 
