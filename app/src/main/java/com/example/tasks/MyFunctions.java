@@ -9,6 +9,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
+
 import java.util.Calendar;
 
 public class MyFunctions {
@@ -19,12 +21,12 @@ public class MyFunctions {
         this.etFocus = etFocus;
     }
 
-    public void hideKeyboard(Context context, View view) {
+    public void hideKeyboard(@NonNull Context context, @NonNull View view) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    public void setOnClickEtDateListener(Context context, EditText etDate) {
+    public void setOnClickEtDateListener(Context context, @NonNull EditText etDate) {
         Calendar calendar = Calendar.getInstance();
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(
@@ -44,7 +46,7 @@ public class MyFunctions {
         });
     }
 
-    public void setOnClickBtnClearListener(Button btnClear, EditText etTask, EditText etDate) {
+    public void setOnClickBtnClearListener(@NonNull Button btnClear, EditText etTask, EditText etDate) {
         btnClear.setOnClickListener(v -> {
             etTask.setText("");
             etDate.setText("");
@@ -52,7 +54,7 @@ public class MyFunctions {
         });
     }
 
-    public void setActionDoneButton(EditText etTask) {
+    public void setActionDoneButton(@NonNull EditText etTask) {
         // Enables textMultiLine EditText with ActionDone button (without Enter button)
         etTask.setImeOptions(EditorInfo.IME_ACTION_DONE);
         etTask.setRawInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);

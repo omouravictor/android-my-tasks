@@ -3,6 +3,8 @@ package com.example.tasks;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 public class TaskModel implements Parcelable {
 
     private long id;
@@ -20,7 +22,7 @@ public class TaskModel implements Parcelable {
         this.slaDate = slaDate;
     }
 
-    protected TaskModel(Parcel in) {
+    protected TaskModel(@NonNull Parcel in) {
         id = in.readLong();
         name = in.readString();
         slaDate = in.readString();
@@ -44,7 +46,7 @@ public class TaskModel implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeLong(id);
         dest.writeString(name);
         dest.writeString(slaDate);
