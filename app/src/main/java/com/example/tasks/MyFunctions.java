@@ -26,16 +26,18 @@ public class MyFunctions {
 
     public void setOnClickEtDateListener(Context context, EditText etDate) {
         Calendar calendar = Calendar.getInstance();
-        final int currentYear = calendar.get(Calendar.YEAR);
-        final int currentMonth = calendar.get(Calendar.MONTH);
-        final int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                context,
+                (view, year, month, day) -> {
+                    month = month + 1;
+                    etDate.setText(context.getString(R.string.etDateText, day, month, year));
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH));
 
         etDate.setOnClickListener(v -> {
-            DatePickerDialog datePickerDialog = new DatePickerDialog(
-                    context, (view, year, month, day) -> {
-                month = month + 1;
-                etDate.setText(context.getString(R.string.etDateText, day, month, year));
-            }, currentYear, currentMonth, currentDay);
             datePickerDialog.show();
             hideKeyboard(context, v);
             etFocus.requestFocus();
