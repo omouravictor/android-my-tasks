@@ -27,8 +27,9 @@ public class MainActivity extends AppCompatActivity {
     FloatingActionButton btnAdd;
     RecyclerView recyclerView;
     SQLiteHelper myDB;
-    TaskAdapter adapter;
+    AlertDialog.Builder builder;
     ActivityResultLauncher<Intent> activityResult;
+    TaskAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,10 +43,22 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         myDB = new SQLiteHelper(this);
 
+        startBuilder();
         startActivityResult();
         startAdapterAndRecyclerView();
 
         setBtnAddOnClickListener();
+    }
+
+    private void startBuilder() {
+        builder = new AlertDialog.Builder(this);
+        builder.setMessage("Tem certeza que deseja excluir tudo?");
+        builder.setPositiveButton("Sim", (dialog, which) -> {
+            myDB.deleteAllTasks();
+            adapter.deleteAllTasks();
+            dialog.dismiss();
+        });
+        builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
     }
 
     private void startActivityResult() {
@@ -93,17 +106,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.deleteAll) {
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Tem certeza que deseja excluir tudo?");
-
-            builder.setPositiveButton("Sim", (dialog, which) -> {
-                myDB.deleteAllTasks();
-                adapter.deleteAllTasks();
-                dialog.dismiss();
-            });
-            builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
-
             builder.show();
         }
         return super.onOptionsItemSelected(item);
