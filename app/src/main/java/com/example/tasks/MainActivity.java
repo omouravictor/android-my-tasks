@@ -24,12 +24,13 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    ActivityResultLauncher<Intent> activityResult;
+    AlertDialog.Builder builder;
     FloatingActionButton btnAdd;
     RecyclerView recyclerView;
-    SQLiteHelper myDB;
-    AlertDialog.Builder builder;
-    ActivityResultLauncher<Intent> activityResult;
+    Intent addActivityIntent;
     TaskAdapter adapter;
+    SQLiteHelper myDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
+        addActivityIntent = new Intent(this, AddActivity.class);
         btnAdd = findViewById(R.id.btnAdd);
         recyclerView = findViewById(R.id.recyclerView);
         myDB = new SQLiteHelper(this);
@@ -91,8 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setBtnAddOnClickListener() {
         btnAdd.setOnClickListener(view -> {
-            Intent intent = new Intent(this, AddActivity.class);
-            activityResult.launch(intent);
+            activityResult.launch(addActivityIntent);
         });
     }
 
