@@ -25,6 +25,8 @@ import java.util.Collections;
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
 
     private final Context context;
+    private final AlertDialog.Builder builder;
+    private final Intent updateActivityIntent;
     private final ActivityResultLauncher<Intent> activityResult;
     private final SQLiteHelper myDB;
     private final ArrayList<TaskModel> allTasks;
@@ -45,7 +47,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         this.allTasks = items;
         this.dtf = dtf;
         this.currentDate = currentDate;
-        sortTaskArrayBySlaDate(allTasks);
+        this.updateActivityIntent = new Intent(context, UpdateActivity.class);
+        this.builder = new AlertDialog.Builder(context);
+        sortTaskArrayBySlaDate();
     }
 
     @NonNull
@@ -66,27 +70,23 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         setExpirationTime(holder.myRow, holder.tvExpirationTime, days);
 
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, UpdateActivity.class);
-            intent.putExtra("task", task);
-            intent.putExtra("position", position);
-            activityResult.launch(intent);
+            updateActivityIntent.putExtra("task", task);
+            updateActivityIntent.putExtra("position", position);
+            activityResult.launch(updateActivityIntent);
         });
 
-        holder.btnComplete.setOnClickListener(v -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setTitle(task.getName());
-            builder.setMessage("Confirmar conclusão?");
+        builder.setMessage("Confirmar conclusão?");
+        builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
 
+        holder.btnComplete.setOnClickListener(v -> {
+            builder.setTitle(task.getName());
             builder.setPositiveButton("Sim", (dialog, which) -> {
-                long result = myDB.deleteTask(task);
-                if (result != 0)
+                if (myDB.deleteTask(task) != 0)
                     deleteTask(position);
                 else
                     Toast.makeText(context, "Falha ao deletar a tarefa.", Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
             });
-            builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
-
             builder.show();
         });
     }
@@ -124,23 +124,22 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
     }
 
-    public void sortTaskArrayBySlaDate(ArrayList<TaskModel> allTasks) {
+    public void sortTaskArrayBySlaDate() {
         Collections.sort(allTasks, (task1, task2) -> {
             int days1 = Days.daysBetween(currentDate, LocalDate.parse(task1.getSlaDate(), dtf)).getDays();
             int days2 = Days.daysBetween(currentDate, LocalDate.parse(task2.getSlaDate(), dtf)).getDays();
             return Integer.compare(days1, days2);
         });
+        notifyDataSetChanged();
     }
 
     public void addTask(TaskModel task) {
         allTasks.add(task);
-        sortTaskArrayBySlaDate(allTasks);
         notifyDataSetChanged();
     }
 
     public void updateTask(int position, TaskModel updatedTask) {
         allTasks.set(position, updatedTask);
-        sortTaskArrayBySlaDate(allTasks);
         notifyDataSetChanged();
     }
 
