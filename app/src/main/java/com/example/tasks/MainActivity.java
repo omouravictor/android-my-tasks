@@ -3,7 +3,6 @@ package com.example.tasks;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -54,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void startBuilder() {
         builder = new AlertDialog.Builder(this);
+        builder.setTitle("Excluir tudo?");
         builder.setMessage("Tem certeza que deseja excluir tudo?");
         builder.setPositiveButton("Sim", (dialog, which) -> {
             myDB.deleteAllTasks();
@@ -99,16 +99,16 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.my_menu, menu);
+        getMenuInflater().inflate(R.menu.my_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.deleteAll) {
+        if (item.getItemId() == R.id.deleteAll)
             builder.show();
-        }
+        else if (item.getItemId() == R.id.sortBySlaDate)
+            adapter.sortTaskArrayBySlaDate();
         return super.onOptionsItemSelected(item);
     }
 }
