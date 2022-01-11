@@ -130,17 +130,17 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             int days2 = Days.daysBetween(currentDate, LocalDate.parse(task2.getSlaDate(), dtf)).getDays();
             return Integer.compare(days1, days2);
         });
-        notifyDataSetChanged();
+        notifyItemRangeChanged(0, getItemCount());
     }
 
     public void addTask(TaskModel task) {
         allTasks.add(task);
-        notifyDataSetChanged();
+        notifyItemInserted(getItemCount());
     }
 
     public void updateTask(int position, TaskModel updatedTask) {
         allTasks.set(position, updatedTask);
-        notifyDataSetChanged();
+        notifyItemChanged(position);
     }
 
     public void deleteTask(int position) {
