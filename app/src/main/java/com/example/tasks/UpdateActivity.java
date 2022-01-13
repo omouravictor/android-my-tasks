@@ -54,6 +54,7 @@ public class UpdateActivity extends AppCompatActivity {
                 Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
             } else {
                 btnUpdate.setClickable(false);
+
                 task.setName(etTask.getText().toString());
                 task.setSlaDate(etSlaDate.getText().toString());
 
