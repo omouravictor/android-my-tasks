@@ -92,9 +92,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setBtnAddOnClickListener() {
-        btnAdd.setOnClickListener(view -> {
-            activityResult.launch(addActivityIntent);
-        });
+        btnAdd.setOnClickListener(view -> activityResult.launch(addActivityIntent));
     }
 
     @Override
