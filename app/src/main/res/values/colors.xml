@@ -7,4 +7,6 @@
     <color name="lightYellow">#FBF6B3</color>
     <color name="lightRed">#FFDCD9</color>
     <color name="black">#000000</color>
+    <color name="gray">#676767</color>
+    <color name="darkGray">#5C5C5C</color>
 </resources>
