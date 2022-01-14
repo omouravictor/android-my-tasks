@@ -26,7 +26,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     ActivityResultLauncher<Intent> activityResult;
-    AlertDialog.Builder builder;
+    AlertDialog.Builder deleteAllBuilder, sortBuilder;
     FloatingActionButton btnAdd;
     RecyclerView recyclerView;
     Intent addActivityIntent;
@@ -46,23 +46,33 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         myDB = new SQLiteHelper(this);
 
-        startBuilder();
+        startSortBuilder();
+        startDeleteAllBuilder();
         startActivityResult();
         startAdapterAndRecyclerView();
 
         setBtnAddOnClickListener();
     }
 
-    private void startBuilder() {
-        builder = new AlertDialog.Builder(this);
-        builder.setTitle("Excluir tudo?");
-        builder.setMessage("Tem certeza que deseja excluir tudo?");
-        builder.setPositiveButton("Sim", (dialog, which) -> {
+    private void startSortBuilder() {
+        sortBuilder = new AlertDialog.Builder(this);
+        sortBuilder.setMessage("Deseja ordenar por tempo de expiração?");
+        sortBuilder.setPositiveButton("Sim", (dialog, which) -> {
+            adapter.sortTaskArrayBySlaDate();
+            dialog.dismiss();
+        });
+        sortBuilder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
+    }
+
+    private void startDeleteAllBuilder() {
+        deleteAllBuilder = new AlertDialog.Builder(this);
+        deleteAllBuilder.setMessage("Deseja apagar todas as tarefas?");
+        deleteAllBuilder.setPositiveButton("Sim", (dialog, which) -> {
             myDB.deleteAllTasks();
             adapter.deleteAllTasks();
             dialog.dismiss();
         });
-        builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
+        deleteAllBuilder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
     }
 
     private void startActivityResult() {
@@ -109,9 +119,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.deleteAll)
-            builder.show();
+            deleteAllBuilder.show();
         else if (item.getItemId() == R.id.sortBySlaDate)
-            adapter.sortTaskArrayBySlaDate();
+            sortBuilder.show();
         return super.onOptionsItemSelected(item);
     }
 }
