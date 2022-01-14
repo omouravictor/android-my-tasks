@@ -18,9 +18,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
+            android:fontFamily="sans-serif-condensed"
             android:text="@string/taskTextHint"
             android:textColor="@color/darkGray"
-            android:textSize="18sp"
+            android:textSize="17.5sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/expirationTime"
             app:layout_constraintStart_toStartOf="parent"
@@ -30,8 +31,10 @@
             android:id="@+id/expirationTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-condensed"
             android:text="@string/expirationTimeText"
             android:textColor="@color/gray"
+            android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -40,8 +43,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="0.5"
-        android:padding="12dp">
+        android:layout_weight="0.4"
+        android:paddingRight="12dp">
 
         <Button
             android:id="@+id/btnComplete"
