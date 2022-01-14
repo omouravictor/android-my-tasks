@@ -3,10 +3,12 @@
 
     <item
         android:id="@+id/sortBySlaDate"
+        android:icon="@drawable/ic_sort_by_sla_date"
         android:title="@string/menuItemSortBySlaDateText" />
 
     <item
         android:id="@+id/deleteAll"
+        android:icon="@drawable/ic_delete_all"
         android:title="@string/menuItemDeleteAllText" />
 
 </menu>
