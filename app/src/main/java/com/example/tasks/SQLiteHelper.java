@@ -46,10 +46,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_NAME, task.getName());
         cv.put(COLUMN_SLA_DATE, task.getSlaDate());
 
-        long result = db.insert(TABLE_NAME, null, cv);
-        db.close();
-
-        return result;
+        return db.insert(TABLE_NAME, null, cv);
     }
 
     public long updateTask(@NonNull TaskModel task) {
@@ -59,19 +56,23 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_NAME, task.getName());
         cv.put(COLUMN_SLA_DATE, task.getSlaDate());
 
-        long result = db.update(TABLE_NAME, cv, "id=" + task.getId(), null);
-        db.close();
-
-        return result;
+        return db.update(TABLE_NAME, cv, "id=" + task.getId(), null);
     }
 
     public long deleteTask(@NonNull TaskModel task) {
         SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(TABLE_NAME, "id=" + task.getId(), null);
+    }
 
-        long result = db.delete(TABLE_NAME, "id=" + task.getId(), null);
-        db.close();
-
-        return result;
+    public ArrayList<TaskModel> deleteSelectedTasks(ArrayList<TaskModel> selectedTasks) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ArrayList<TaskModel> deletedTasks = new ArrayList<>();
+        for (TaskModel task : selectedTasks) {
+            long result = db.delete(TABLE_NAME, "id=" + task.getId(), null);
+            if (result == 1)
+                deletedTasks.add(task);
+        }
+        return deletedTasks;
     }
 
     public void deleteAllTasks() {
