@@ -59,12 +59,4 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ImageView
-        android:id="@+id/ivCheck"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:padding="12dp"
-        android:src="@drawable/ic_check"
-        android:visibility="gone"/>
-
 </LinearLayout>
