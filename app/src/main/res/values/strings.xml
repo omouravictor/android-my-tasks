@@ -13,4 +13,6 @@
     <string name="expiredText">Expirada :(</string>
     <string name="menuItemDeleteAllText">Deletar tudo</string>
     <string name="menuItemSortBySlaDateText">Ordenar</string>
+    <string name="menuItemDeleteText">Deletar</string>
+    <string name="menuItemSelectAllText">Selecionar tudo</string>
 </resources>
