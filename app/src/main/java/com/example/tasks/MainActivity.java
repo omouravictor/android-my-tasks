@@ -26,7 +26,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     ActivityResultLauncher<Intent> activityResult;
-    AlertDialog.Builder deleteAllBuilder, sortBuilder;
+    AlertDialog.Builder finishAllBuilder, sortBuilder;
     FloatingActionButton btnAdd;
     RecyclerView recyclerView;
     Intent addActivityIntent;
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         myDB = new SQLiteHelper(this);
 
         startSortBuilder();
-        startDeleteAllBuilder();
+        startFinishAllBuilder();
         startActivityResult();
         startAdapterAndRecyclerView();
 
@@ -64,15 +64,15 @@ public class MainActivity extends AppCompatActivity {
         sortBuilder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
     }
 
-    private void startDeleteAllBuilder() {
-        deleteAllBuilder = new AlertDialog.Builder(this);
-        deleteAllBuilder.setMessage("Deseja apagar todas as tarefas?");
-        deleteAllBuilder.setPositiveButton("Sim", (dialog, which) -> {
+    private void startFinishAllBuilder() {
+        finishAllBuilder = new AlertDialog.Builder(this);
+        finishAllBuilder.setMessage("Deseja concluir todas as tarefas?");
+        finishAllBuilder.setPositiveButton("Sim", (dialog, which) -> {
             myDB.deleteAllTasks();
             adapter.deleteAllTasks();
             dialog.dismiss();
         });
-        deleteAllBuilder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
+        finishAllBuilder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
     }
 
     private void startActivityResult() {
@@ -104,7 +104,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setBtnAddOnClickListener() {
-        btnAdd.setOnClickListener(view -> activityResult.launch(addActivityIntent));
+        btnAdd.setOnClickListener(v -> {
+            activityResult.launch(addActivityIntent);
+            if (adapter.getActionMode() != null)
+                adapter.getActionMode().finish();
+        });
     }
 
     @SuppressLint("RestrictedApi")
@@ -118,8 +122,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.deleteAll)
-            deleteAllBuilder.show();
+        if (item.getItemId() == R.id.finishAll)
+            finishAllBuilder.show();
         else if (item.getItemId() == R.id.sortBySlaDate)
             sortBuilder.show();
         return super.onOptionsItemSelected(item);
