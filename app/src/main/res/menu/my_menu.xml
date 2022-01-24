@@ -7,8 +7,8 @@
         android:title="@string/menuItemSortBySlaDateText" />
 
     <item
-        android:id="@+id/deleteAll"
-        android:icon="@drawable/ic_delete"
-        android:title="@string/menuItemDeleteAllText" />
+        android:id="@+id/finishAll"
+        android:icon="@drawable/ic_check"
+        android:title="@string/menuItemFinishAllText" />
 
 </menu>
