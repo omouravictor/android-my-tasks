@@ -59,6 +59,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         sortTaskArrayBySlaDate();
     }
 
+    public ActionMode getActionMode() {
+        return actionMode;
+    }
+
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
         TextView tvTaskName, tvExpirationTime;
         Button btnComplete;
@@ -118,7 +122,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 ActionMode.Callback callback = new ActionMode.Callback() {
                     @Override
                     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                        mode.getMenuInflater().inflate(R.menu.my_menu2, menu);
+                        mode.getMenuInflater().inflate(R.menu.my_action_mode_menu, menu);
                         actionMode = mode;
                         isActionMode = true;
                         return true;
@@ -132,7 +136,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
                     @Override
                     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                        if (item.getItemId() == R.id.delete) {
+                        if (item.getItemId() == R.id.finish) {
                             if (!selectedTasks.isEmpty()) {
                                 builder.setMessage("Concluir " + selectedTasks.size() + " tarefa(s) selecionada(s)?");
                                 builder.setPositiveButton("Sim", (dialog, which) -> {
@@ -147,7 +151,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                                     mode.finish();
                                 });
                                 builder.show();
-                            }
+                            } else
+                                mode.finish();
 
                         } else if (item.getItemId() == R.id.selectAll) {
                             if (selectedTasks.size() == allTasks.size()) {
@@ -211,11 +216,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     private void myOnPrepareActionMode(ActionMode mode, TaskViewHolder holder, TaskModel task) {
         if (!holder.isSelected) {
+            holder.btnComplete.setEnabled(false);
             holder.isSelected = true;
             selectedTasks.add(task);
             holder.itemView.setBackgroundColor(Color.LTGRAY);
             mode.setTitle(String.valueOf(selectedTasks.size()));
         } else {
+            holder.btnComplete.setEnabled(true);
             holder.isSelected = false;
             selectedTasks.remove(task);
             holder.itemView.setBackgroundColor(holder.background);
@@ -228,6 +235,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private void putHoldersAsSelected() {
         for (TaskViewHolder holder : allHolders) {
             holder.isSelected = true;
+            holder.btnComplete.setEnabled(false);
             holder.itemView.setBackgroundColor(Color.LTGRAY);
         }
     }
@@ -235,6 +243,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private void putHoldersAsNotSelected() {
         for (TaskViewHolder holder : allHolders) {
             holder.isSelected = false;
+            holder.btnComplete.setEnabled(true);
             holder.itemView.setBackgroundColor(holder.background);
         }
     }
