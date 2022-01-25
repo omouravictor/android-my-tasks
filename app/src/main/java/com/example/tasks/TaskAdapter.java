@@ -37,6 +37,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private boolean isActionMode;
     private ActionMode actionMode;
     private final ArrayList<TaskModel> selectedTasks = new ArrayList<>();
+    private final ArrayList<TaskViewHolder> selectedHolders = new ArrayList<>();
     private final ArrayList<TaskViewHolder> allHolders = new ArrayList<>();
 
     public TaskAdapter(
@@ -147,6 +148,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                                         deleteSelectedTasks(deletedTasks);
                                         Toast.makeText(context, "Falha ao deletar alguma(s) tarefa(s).", Toast.LENGTH_SHORT).show();
                                     }
+                                    putHoldersAsNotSelected(selectedHolders);
                                     dialog.dismiss();
                                     mode.finish();
                                 });
@@ -157,9 +159,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                         } else if (item.getItemId() == R.id.selectAll) {
                             if (selectedTasks.size() == allTasks.size()) {
                                 selectedTasks.clear();
-                                putHoldersAsNotSelected();
+                                selectedHolders.clear();
+                                putHoldersAsNotSelected(allHolders);
                             } else {
                                 selectedTasks.clear();
+                                selectedHolders.clear();
                                 selectedTasks.addAll(allTasks);
                                 putHoldersAsSelected();
                             }
@@ -173,7 +177,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                         isActionMode = false;
                         if (!selectedTasks.isEmpty()) {
                             selectedTasks.clear();
-                            putHoldersAsNotSelected();
+                            selectedHolders.clear();
+                            putHoldersAsNotSelected(allHolders);
                         }
                     }
                 };
@@ -219,12 +224,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             holder.btnComplete.setEnabled(false);
             holder.isSelected = true;
             selectedTasks.add(task);
+            selectedHolders.add(holder);
             holder.itemView.setBackgroundColor(Color.LTGRAY);
             mode.setTitle(String.valueOf(selectedTasks.size()));
         } else {
             holder.btnComplete.setEnabled(true);
             holder.isSelected = false;
             selectedTasks.remove(task);
+            selectedHolders.remove(holder);
             holder.itemView.setBackgroundColor(holder.background);
             mode.setTitle(String.valueOf(selectedTasks.size()));
             if (selectedTasks.isEmpty())
@@ -240,8 +247,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
     }
 
-    private void putHoldersAsNotSelected() {
-        for (TaskViewHolder holder : allHolders) {
+    private void putHoldersAsNotSelected(ArrayList<TaskViewHolder> holders) {
+        for (TaskViewHolder holder : holders) {
             holder.isSelected = false;
             holder.btnComplete.setEnabled(true);
             holder.itemView.setBackgroundColor(holder.background);
