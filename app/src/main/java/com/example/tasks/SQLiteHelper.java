@@ -67,7 +67,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public ArrayList<TaskModel> deleteSelectedTasks(ArrayList<TaskModel> selectedTasks) {
         SQLiteDatabase db = this.getWritableDatabase();
         ArrayList<TaskModel> deletedTasks = new ArrayList<>();
-        for (TaskModel task : selectedTasks) {
+        TaskModel task;
+        for (int i = 0; i < selectedTasks.size(); i++) {
+            task = selectedTasks.get(i);
             long result = db.delete(TABLE_NAME, "id=" + task.getId(), null);
             if (result == 1)
                 deletedTasks.add(task);
