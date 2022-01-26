@@ -2,16 +2,18 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">@color/darkBlue</item>
+        <item name="android:statusBarColor">@color/primary</item>
         <!-- Window Background -->
         <item name="android:windowBackground">@drawable/start_background_window</item>
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/darkBlue</item>
+        <item name="colorPrimary">@color/primary</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/darkBlue</item>
+        <item name="colorSecondary">@color/primary</item>
         <item name="colorOnSecondary">@color/white</item>
         <!-- Menu -->
         <item name="popupMenuBackground">@color/darkWhite</item>
+        <!-- Action mode -->
+        <item name="actionModeBackground">@color/darkPrimary</item>
     </style>
 </resources>
