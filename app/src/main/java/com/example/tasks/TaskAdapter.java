@@ -91,11 +91,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         TaskModel task = allTasks.get(position);
-        int days = Days.daysBetween(currentDate, LocalDate.parse(task.getSlaDate(), dtf)).getDays();
 
         holder.tvTaskName.setText(task.getName());
 
-        setExpirationTime(holder, days);
+        setExpirationTime(task, holder);
 
         holder.btnComplete.setOnClickListener(v -> {
             builder.setMessage("Concluir '" + task.getName() + "'?");
@@ -123,9 +122,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 ActionMode.Callback callback = new ActionMode.Callback() {
                     @Override
                     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                        mode.getMenuInflater().inflate(R.menu.my_action_mode_menu, menu);
-                        actionMode = mode;
-                        isActionMode = true;
+                        myOnCreateActionMode(mode, menu);
                         return true;
                     }
 
@@ -137,49 +134,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
                     @Override
                     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                        if (item.getItemId() == R.id.finish) {
-                            if (!selectedTasks.isEmpty()) {
-                                builder.setMessage("Concluir " + selectedTasks.size() + " tarefa(s) selecionada(s)?");
-                                builder.setPositiveButton("Sim", (dialog, which) -> {
-                                    ArrayList<TaskModel> deletedTasks = myDB.deleteSelectedTasks(selectedTasks);
-                                    if (deletedTasks.size() == selectedTasks.size()) {
-                                        deleteSelectedTasks(deletedTasks);
-                                    } else {
-                                        deleteSelectedTasks(deletedTasks);
-                                        Toast.makeText(context, "Falha ao deletar alguma(s) tarefa(s).", Toast.LENGTH_SHORT).show();
-                                    }
-                                    putHoldersAsNotSelected(selectedHolders);
-                                    dialog.dismiss();
-                                    mode.finish();
-                                });
-                                builder.show();
-                            } else
-                                mode.finish();
-
-                        } else if (item.getItemId() == R.id.selectAll) {
-                            if (selectedTasks.size() == allTasks.size()) {
-                                selectedTasks.clear();
-                                selectedHolders.clear();
-                                putHoldersAsNotSelected(allHolders);
-                            } else {
-                                selectedTasks.clear();
-                                selectedHolders.clear();
-                                selectedTasks.addAll(allTasks);
-                                putHoldersAsSelected();
-                            }
-                            mode.setTitle(String.valueOf(selectedTasks.size()));
-                        }
+                        myOnActionItemClicked(mode, item);
                         return true;
                     }
 
                     @Override
                     public void onDestroyActionMode(ActionMode mode) {
-                        isActionMode = false;
-                        if (!selectedTasks.isEmpty()) {
-                            selectedTasks.clear();
-                            selectedHolders.clear();
-                            putHoldersAsNotSelected(allHolders);
-                        }
+                        myOnDestroyActionMode();
                     }
                 };
                 v.startActionMode(callback);
@@ -193,7 +154,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         return allTasks.size();
     }
 
-    private void setExpirationTime(TaskViewHolder holder, int days) {
+    public void sortTaskArrayBySlaDate() {
+        allTasks.sort(Comparator.comparingInt(
+                task -> Days.daysBetween(currentDate, LocalDate.parse(task.getSlaDate(), dtf)).getDays()
+        ));
+        notifyItemRangeChanged(0, getItemCount());
+    }
+
+    private void setExpirationTime(TaskModel task, TaskViewHolder holder) {
+        int days = Days.daysBetween(currentDate, LocalDate.parse(task.getSlaDate(), dtf)).getDays();
         if (days > 0) {
             int white = context.getColor(R.color.white);
             holder.itemView.setBackgroundColor(white);
@@ -212,11 +181,51 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
     }
 
-    public void sortTaskArrayBySlaDate() {
-        allTasks.sort(Comparator.comparingInt(
-                task -> Days.daysBetween(currentDate, LocalDate.parse(task.getSlaDate(), dtf)).getDays()
-        ));
-        notifyItemRangeChanged(0, getItemCount());
+    private void myOnCreateActionMode(ActionMode mode, Menu menu) {
+        mode.getMenuInflater().inflate(R.menu.my_action_mode_menu, menu);
+        actionMode = mode;
+        isActionMode = true;
+    }
+
+    private void myOnActionItemClicked(ActionMode mode, MenuItem item) {
+        if (item.getItemId() == R.id.finish) {
+            builder.setMessage("Concluir " + selectedTasks.size() + " tarefa(s) selecionada(s)?");
+            builder.setPositiveButton("Sim", (dialog, which) -> {
+                ArrayList<TaskModel> deletedTasks = myDB.deleteSelectedTasks(selectedTasks);
+                if (deletedTasks.size() == selectedTasks.size()) {
+                    deleteSelectedTasks(deletedTasks);
+                } else {
+                    deleteSelectedTasks(deletedTasks);
+                    Toast.makeText(context, "Falha ao deletar alguma(s) tarefa(s).", Toast.LENGTH_SHORT).show();
+                }
+                putHoldersAsNotSelected(selectedHolders);
+                dialog.dismiss();
+                mode.finish();
+            });
+            builder.show();
+        } else if (item.getItemId() == R.id.selectAll) {
+            if (selectedTasks.size() == allTasks.size()) {
+                putHoldersAsNotSelected(allHolders);
+                selectedTasks.clear();
+                selectedHolders.clear();
+                mode.finish();
+            } else {
+                putHoldersAsSelected();
+                selectedTasks.clear();
+                selectedHolders.clear();
+                selectedTasks.addAll(allTasks);
+            }
+            mode.setTitle(String.valueOf(selectedTasks.size()));
+        }
+    }
+
+    private void myOnDestroyActionMode() {
+        isActionMode = false;
+        if (!selectedTasks.isEmpty()) {
+            selectedTasks.clear();
+            selectedHolders.clear();
+            putHoldersAsNotSelected(allHolders);
+        }
     }
 
     private void myOnPrepareActionMode(ActionMode mode, TaskViewHolder holder, TaskModel task) {
