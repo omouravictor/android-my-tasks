@@ -46,14 +46,14 @@
         android:layout_weight="0.4">
 
         <Button
-            android:id="@+id/btnComplete"
+            android:id="@+id/btnFinish"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="12dp"
-            android:backgroundTint="@drawable/btn_complete_background_color"
-            android:text="@string/btnCompleteText"
+            android:backgroundTint="@drawable/btn_finish_background_color"
+            android:text="@string/btnFinishText"
             android:textAllCaps="false"
-            android:textColor="@drawable/btn_complete_text_color"
+            android:textColor="@drawable/btn_finish_text_color"
             android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

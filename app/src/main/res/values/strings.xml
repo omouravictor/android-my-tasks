@@ -6,7 +6,7 @@
     <string name="btnAddText">Adicionar</string>
     <string name="btnUpdateText">Atualizar</string>
     <string name="expirationTimeText">Expira HOJE!</string>
-    <string name="btnCompleteText">Concluir</string>
+    <string name="btnFinishText">Concluir</string>
     <string name="expirationDaysText">Expira em %d dia (s)</string>
     <string name="etDateText">%d/%d/%d</string>
     <string name="expirationTodayText">Expira hoje !</string>

@@ -74,7 +74,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             super(itemView);
             tvTaskName = itemView.findViewById(R.id.tvTaskName);
             tvExpirationTime = itemView.findViewById(R.id.expirationTime);
-            btnComplete = itemView.findViewById(R.id.btnComplete);
+            btnComplete = itemView.findViewById(R.id.btnFinish);
         }
     }
 
