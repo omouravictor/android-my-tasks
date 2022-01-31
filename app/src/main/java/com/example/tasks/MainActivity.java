@@ -79,11 +79,13 @@ public class MainActivity extends AppCompatActivity {
         activityResult = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    if (result.getResultCode() != RESULT_CANCELED) {
+                    int resultCode = result.getResultCode();
+                    if (resultCode != RESULT_CANCELED) {
+                        assert result.getData() != null;
                         TaskModel intentTask = result.getData().getParcelableExtra("task");
-                        if (result.getResultCode() == 1) {
+                        if (resultCode == 1) {
                             adapter.addTask(intentTask);
-                        } else if (result.getResultCode() == 2) {
+                        } else if (resultCode == 2) {
                             int position = result.getData().getIntExtra("position", 0);
                             adapter.updateTask(position, intentTask);
                         }
