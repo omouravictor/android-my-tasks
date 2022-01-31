@@ -93,9 +93,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startAdapterAndRecyclerView() {
-        ArrayList<TaskModel> allTasks = myDB.getAllTasks();
-        DateTimeFormatter dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
         LocalDate currentDate = new LocalDate();
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
+        ArrayList<TaskModel> allTasks = myDB.getAllTasks();
 
         adapter = new TaskAdapter(this, activityResult, myDB, allTasks, dtf, currentDate);
 
