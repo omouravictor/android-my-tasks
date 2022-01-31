@@ -124,9 +124,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.finishAll)
+        int id = item.getItemId();
+        if (id == R.id.finishAll)
             finishAllBuilder.show();
-        else if (item.getItemId() == R.id.sortBySlaDate)
+        else if (id == R.id.sortBySlaDate)
             sortBuilder.show();
         return super.onOptionsItemSelected(item);
     }
