@@ -26,13 +26,14 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
+    private TaskAdapter finishedTasksAdapter;
     private final Context context;
-    private final ActivityResultLauncher<Intent> activityResult;
+    private ActivityResultLauncher<Intent> activityResult;
     private final SQLiteHelper myDB;
     private final ArrayList<TaskModel> allTasks;
-    private final DateTimeFormatter dtf;
-    private final LocalDate currentDate;
-    private final Intent updateActivityIntent;
+    private DateTimeFormatter dtf;
+    private LocalDate currentDate;
+    private Intent updateActivityIntent;
     private final AlertDialog.Builder builder;
     private boolean isActionMode;
     private ActionMode actionMode;
@@ -40,18 +41,25 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private final ArrayList<TaskViewHolder> selectedHolders = new ArrayList<>();
     private final ArrayList<TaskViewHolder> allHolders = new ArrayList<>();
 
+    public TaskAdapter(TaskAdapter adapter) {
+        this.context = adapter.context;
+        this.myDB = adapter.myDB;
+        this.allTasks = myDB.getAllFinishedTasks();
+        this.builder = new AlertDialog.Builder(context);
+        builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
+    }
+
     public TaskAdapter(
             Context context,
             ActivityResultLauncher<Intent> activityResult,
             SQLiteHelper myDB,
-            ArrayList<TaskModel> items,
             DateTimeFormatter dtf,
             LocalDate currentDate
     ) {
         this.context = context;
         this.activityResult = activityResult;
         this.myDB = myDB;
-        this.allTasks = items;
+        this.allTasks = myDB.getAllTasksOnHold();
         this.dtf = dtf;
         this.currentDate = currentDate;
         this.updateActivityIntent = new Intent(context, UpdateActivity.class);
@@ -94,28 +102,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         holder.tvTaskName.setText(task.getName());
 
-        setExpirationTime(task, holder);
-
-        holder.btnComplete.setOnClickListener(v -> {
-            builder.setMessage("Concluir '" + task.getName() + "'?");
-            builder.setPositiveButton("Sim", (dialog, which) -> {
-                if (myDB.deleteTask(task) != 0)
-                    deleteTask(holder.getAdapterPosition());
-                else
-                    Toast.makeText(context, "Falha ao deletar a tarefa.", Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
-            });
-            builder.show();
-        });
-
-        holder.itemView.setOnClickListener(v -> {
-            if (!isActionMode) {
-                updateActivityIntent.putExtra("task", task);
-                updateActivityIntent.putExtra("position", holder.getAdapterPosition());
-                activityResult.launch(updateActivityIntent);
-            } else
-                myOnPrepareActionMode(actionMode, holder, task);
-        });
+        if (task.getIsFinished() == 0) prepareTasksOnHold(task, holder);
+        else prepareFinishedTasks(task, holder);
 
         holder.itemView.setOnLongClickListener(v -> {
             if (!isActionMode) {
@@ -152,6 +140,59 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     @Override
     public int getItemCount() {
         return allTasks.size();
+    }
+
+    public void prepareTasksOnHold(TaskModel task, TaskViewHolder holder) {
+        setExpirationTime(task, holder);
+
+        holder.btnComplete.setOnClickListener(v -> {
+            builder.setMessage("Concluir '" + task.getName() + "'?");
+            builder.setPositiveButton("Sim", (dialog, which) -> {
+                deleteTask(holder.getAdapterPosition());
+                task.setIsFinished(1);
+                finishedTasksAdapter.addTask(task);
+                dialog.dismiss();
+            });
+            builder.show();
+        });
+
+        holder.itemView.setOnClickListener(v -> {
+            if (!isActionMode) {
+                updateActivityIntent.putExtra("task", task);
+                updateActivityIntent.putExtra("position", holder.getAdapterPosition());
+                activityResult.launch(updateActivityIntent);
+            } else
+                myOnPrepareActionMode(actionMode, holder, task);
+        });
+
+    }
+
+    public void prepareFinishedTasks(TaskModel task, TaskViewHolder holder) {
+        setFinishedTaskLayout(holder);
+
+        holder.btnComplete.setOnClickListener(v -> {
+            builder.setMessage("Excluir '" + task.getName() + "'?");
+            builder.setPositiveButton("Sim", (dialog, which) -> {
+                if (myDB.deleteTask(task) != 0)
+                    deleteTask(holder.getAdapterPosition());
+                else
+                    Toast.makeText(context, "Falha ao deletar a tarefa.", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            });
+            builder.show();
+        });
+
+        holder.itemView.setOnClickListener(v -> {
+            if (isActionMode) myOnPrepareActionMode(actionMode, holder, task);
+        });
+
+    }
+
+    public void setFinishedTaskLayout(TaskViewHolder holder) {
+        int green = context.getColor(R.color.green);
+        holder.itemView.setBackgroundColor(green);
+        holder.background = green;
+        holder.tvExpirationTime.setText("Concluída");
     }
 
     public void sortTaskArrayBySlaDate() {
@@ -296,4 +337,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         notifyDataSetChanged();
     }
 
+    public void setFinishedTasksAdapter(TaskAdapter finishedTasksAdapter) {
+        this.finishedTasksAdapter = finishedTasksAdapter;
+    }
 }
