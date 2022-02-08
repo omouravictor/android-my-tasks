@@ -19,6 +19,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_NAME = "name";
     private static final String COLUMN_SLA_DATE = "sla_date";
+    private static final String COLUMN_IS_FINISHED = "is_finished";
 
     public SQLiteHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -29,7 +30,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         String query = ("CREATE TABLE " + TABLE_NAME + "("
                 + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + COLUMN_NAME + " TEXT,"
-                + COLUMN_SLA_DATE + " TEXT" + ")");
+                + COLUMN_SLA_DATE + " TEXT,"
+                + COLUMN_IS_FINISHED + " INTEGER" + ")");
         db.execSQL(query);
     }
 
@@ -45,6 +47,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
         cv.put(COLUMN_NAME, task.getName());
         cv.put(COLUMN_SLA_DATE, task.getSlaDate());
+        cv.put(COLUMN_IS_FINISHED, task.getIsFinished());
 
         return db.insert(TABLE_NAME, null, cv);
     }
@@ -55,6 +58,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
         cv.put(COLUMN_NAME, task.getName());
         cv.put(COLUMN_SLA_DATE, task.getSlaDate());
+        cv.put(COLUMN_IS_FINISHED, task.getIsFinished());
 
         return db.update(TABLE_NAME, cv, "id=" + task.getId(), null);
     }
@@ -96,7 +100,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 TaskModel task = new TaskModel(
                         cursor.getLong(0),
                         cursor.getString(1),
-                        cursor.getString(2)
+                        cursor.getString(2),
+                        cursor.getInt(3)
                 );
                 allTasks.add(task);
             }
@@ -104,5 +109,29 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         }
 
         return allTasks;
+    }
+
+    public ArrayList<TaskModel> getAllFinishedTasks() {
+        ArrayList<TaskModel> finishedTasks = new ArrayList<>();
+        String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + COLUMN_IS_FINISHED + " = 1";
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor;
+
+        if (db != null) {
+            cursor = db.rawQuery(query, null);
+            while (cursor.moveToNext()) {
+                TaskModel task = new TaskModel(
+                        cursor.getLong(0),
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getInt(3)
+                );
+                finishedTasks.add(task);
+            }
+            cursor.close();
+        }
+
+        return finishedTasks;
     }
 }
