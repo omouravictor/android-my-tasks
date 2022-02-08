@@ -1,6 +1,7 @@
 package com.example.tasks;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -12,46 +13,112 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuBuilder;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import java.util.ArrayList;
-
 public class MainActivity extends AppCompatActivity {
 
-    ActivityResultLauncher<Intent> activityResult;
+    TasksOnHoldFragment tasksOnHoldFragment;
+    FinishedTasksFragment finishedTasksFragment;
     AlertDialog.Builder finishAllBuilder, sortBuilder;
-    FloatingActionButton btnAdd;
-    RecyclerView recyclerView;
-    Intent addActivityIntent;
+    ActivityResultLauncher<Intent> actResult;
     TaskAdapter adapter;
     SQLiteHelper myDB;
+    TabLayout tabLayout;
+    ViewPager2 vp2;
+    ViewPagerAdapter vpAdapter;
+    FloatingActionButton btnAdd;
+    Intent addActivityIntent;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setElevation(0);
         setContentView(R.layout.activity_main);
         init();
     }
 
     private void init() {
-        addActivityIntent = new Intent(this, AddActivity.class);
-        btnAdd = findViewById(R.id.btnAdd);
-        recyclerView = findViewById(R.id.recyclerView);
         myDB = new SQLiteHelper(this);
-
-        startSortBuilder();
+        startBtnAdd();
         startFinishAllBuilder();
         startActivityResult();
-        startAdapterAndRecyclerView();
+        startSortBuilder();
+        startAdapter();
+        startFragments();
+        startLayoutTab();
+    }
 
-        setBtnAddOnClickListener();
+    public void startLayoutTab() {
+        vp2 = findViewById(R.id.viewPager2);
+        tabLayout = findViewById(R.id.tabLayout);
+        vpAdapter = new ViewPagerAdapter(this);
+        vpAdapter.addFragment(tasksOnHoldFragment, "Aguardando");
+        vpAdapter.addFragment(finishedTasksFragment, "Concluídas");
+        vp2.setAdapter(vpAdapter);
+        new TabLayoutMediator(
+                tabLayout, vp2, (tab, position) -> tab.setText(vpAdapter.getTitles().get(position))
+        ).attach();
+    }
+
+    public void startFragments() {
+        tasksOnHoldFragment = new TasksOnHoldFragment(adapter);
+        finishedTasksFragment = new FinishedTasksFragment(adapter);
+        adapter.setFinishedTasksAdapter(finishedTasksFragment.getFinishedTasksAdapter());
+    }
+
+    public void startAdapter() {
+        LocalDate currentDate = new LocalDate();
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
+
+        myDB.deleteAllTasks();
+        TaskModel teste = new TaskModel();
+        teste.setName("TESTE1");
+        teste.setSlaDate("07/02/2022");
+        teste.setIsFinished(1);
+        TaskModel teste2 = new TaskModel();
+        teste2.setName("TESTE2");
+        teste2.setSlaDate("07/02/2022");
+        teste2.setIsFinished(1);
+        TaskModel teste3 = new TaskModel();
+        teste3.setName("TESTE3");
+        teste3.setSlaDate("07/02/2022");
+        teste3.setIsFinished(1);
+        myDB.createTask(new TaskModel("A", "26/03/2022"));
+        myDB.createTask(new TaskModel("B", "23/02/2022"));
+        myDB.createTask(new TaskModel("C", "31/01/2022"));
+        myDB.createTask(teste);
+        myDB.createTask(teste2);
+        myDB.createTask(teste3);
+
+        adapter = new TaskAdapter(this, actResult, myDB, dtf, currentDate);
+    }
+
+    private void startActivityResult() {
+        actResult = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    int resultCode = result.getResultCode();
+                    if (resultCode != Activity.RESULT_CANCELED) {
+                        assert result.getData() != null;
+                        TaskModel intentTask = result.getData().getParcelableExtra("task");
+                        if (resultCode == 1) {
+                            adapter.addTask(intentTask);
+                        } else if (resultCode == 2) {
+                            int position = result.getData().getIntExtra("position", 0);
+                            adapter.updateTask(position, intentTask);
+                        }
+                    }
+                }
+        );
     }
 
     private void startSortBuilder() {
@@ -75,39 +142,11 @@ public class MainActivity extends AppCompatActivity {
         finishAllBuilder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
     }
 
-    private void startActivityResult() {
-        activityResult = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    int resultCode = result.getResultCode();
-                    if (resultCode != RESULT_CANCELED) {
-                        assert result.getData() != null;
-                        TaskModel intentTask = result.getData().getParcelableExtra("task");
-                        if (resultCode == 1) {
-                            adapter.addTask(intentTask);
-                        } else if (resultCode == 2) {
-                            int position = result.getData().getIntExtra("position", 0);
-                            adapter.updateTask(position, intentTask);
-                        }
-                    }
-                }
-        );
-    }
-
-    public void startAdapterAndRecyclerView() {
-        LocalDate currentDate = new LocalDate();
-        DateTimeFormatter dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
-        ArrayList<TaskModel> allTasks = myDB.getAllTasks();
-
-        adapter = new TaskAdapter(this, activityResult, myDB, allTasks, dtf, currentDate);
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
-    }
-
-    private void setBtnAddOnClickListener() {
+    private void startBtnAdd() {
+        btnAdd = findViewById(R.id.btnAdd);
+        addActivityIntent = new Intent(this, AddActivity.class);
         btnAdd.setOnClickListener(v -> {
-            activityResult.launch(addActivityIntent);
+            actResult.launch(addActivityIntent);
             if (adapter.getActionMode() != null)
                 adapter.getActionMode().finish();
         });
