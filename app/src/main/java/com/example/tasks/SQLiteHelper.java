@@ -86,10 +86,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM " + TABLE_NAME);
     }
 
-    public ArrayList<TaskModel> getAllTasks() {
+    public ArrayList<TaskModel> getAllTasksOnHold() {
 
         ArrayList<TaskModel> allTasks = new ArrayList<>();
-        String query = "SELECT * FROM " + TABLE_NAME;
+        String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + COLUMN_IS_FINISHED + " = 0";
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor;
