@@ -15,4 +15,5 @@
     <string name="menuItemSortBySlaDateText">Ordenar</string>
     <string name="menuItemDeleteText">Deletar</string>
     <string name="menuItemSelectAllText">Selecionar tudo</string>
+    <string name="menuItemFinishText">Concluir</string>
 </resources>
