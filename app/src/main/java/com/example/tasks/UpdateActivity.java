@@ -61,7 +61,7 @@ public class UpdateActivity extends AppCompatActivity {
                 SQLiteHelper myDB = new SQLiteHelper(this);
                 long result = myDB.updateTask(task);
 
-                if (result == -1)
+                if (result == 0)
                     Toast.makeText(this, "Falha ao atualizar a tarefa.", Toast.LENGTH_SHORT).show();
                 else {
                     Intent taskData = new Intent();
