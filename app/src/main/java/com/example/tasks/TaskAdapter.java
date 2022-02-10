@@ -110,7 +110,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 ActionMode.Callback callback = new ActionMode.Callback() {
                     @Override
                     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                        myOnCreateActionMode(mode, menu);
+                        myOnCreateActionMode(mode, menu, task);
                         return true;
                     }
 
@@ -150,6 +150,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             builder.setPositiveButton("Sim", (dialog, which) -> {
                 deleteTask(holder.getAdapterPosition());
                 task.setIsFinished(1);
+                myDB.updateTask(task);
                 finishedTasksAdapter.addTask(task);
                 dialog.dismiss();
             });
@@ -193,6 +194,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         holder.itemView.setBackgroundColor(green);
         holder.background = green;
         holder.tvExpirationTime.setText("Concluída");
+        holder.btnComplete.setText("Excluir");
     }
 
     public void sortTaskArrayBySlaDate() {
@@ -222,14 +224,30 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
     }
 
-    private void myOnCreateActionMode(ActionMode mode, Menu menu) {
+    private void myOnCreateActionMode(ActionMode mode, Menu menu, TaskModel task) {
         mode.getMenuInflater().inflate(R.menu.my_action_mode_menu, menu);
+        if (task.getIsFinished() == 0) mode.getMenu().getItem(1).setVisible(false);
+        else mode.getMenu().getItem(0).setVisible(false);
         actionMode = mode;
         isActionMode = true;
     }
 
     private void myOnActionItemClicked(ActionMode mode, MenuItem item) {
         if (item.getItemId() == R.id.finish) {
+            builder.setMessage("Concluir " + selectedTasks.size() + " tarefa(s) selecionada(s)?");
+            builder.setPositiveButton("Sim", (dialog, which) -> {
+                deleteSelectedTasks(selectedTasks);
+                for (TaskModel task : selectedTasks) {
+                    task.setIsFinished(1);
+                    myDB.updateTask(task);
+                }
+                finishedTasksAdapter.addAllTasks(selectedTasks);
+                putHoldersAsNotSelected(selectedHolders);
+                dialog.dismiss();
+                mode.finish();
+            });
+            builder.show();
+        } else if (item.getItemId() == R.id.delete) {
             builder.setMessage("Concluir " + selectedTasks.size() + " tarefa(s) selecionada(s)?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
                 ArrayList<TaskModel> deletedTasks = myDB.deleteSelectedTasks(selectedTasks);
@@ -308,6 +326,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     public void addTask(TaskModel task) {
         allTasks.add(task);
         notifyItemInserted(getItemCount());
+    }
+
+    public void addAllTasks(ArrayList<TaskModel> tasksArray) {
+        int positionStart = getItemCount();
+        allTasks.addAll(tasksArray);
+        notifyItemRangeInserted(positionStart, tasksArray.size());
     }
 
     public void updateTask(int position, TaskModel updatedTask) {
