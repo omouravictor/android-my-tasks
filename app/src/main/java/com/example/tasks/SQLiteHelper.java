@@ -20,6 +20,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String COLUMN_NAME = "name";
     private static final String COLUMN_SLA_DATE = "sla_date";
     private static final String COLUMN_IS_FINISHED = "is_finished";
+    private static final String COLUMN_FINISHED_DATE = "finished_date";
 
     public SQLiteHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -31,7 +32,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + COLUMN_NAME + " TEXT,"
                 + COLUMN_SLA_DATE + " TEXT,"
-                + COLUMN_IS_FINISHED + " INTEGER" + ")");
+                + COLUMN_IS_FINISHED + " INTEGER,"
+                + COLUMN_FINISHED_DATE + " TEXT" + ")");
         db.execSQL(query);
     }
 
@@ -48,6 +50,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_NAME, task.getName());
         cv.put(COLUMN_SLA_DATE, task.getSlaDate());
         cv.put(COLUMN_IS_FINISHED, task.getIsFinished());
+        cv.put(COLUMN_FINISHED_DATE, task.getFinishedDate());
 
         return db.insert(TABLE_NAME, null, cv);
     }
@@ -59,6 +62,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_NAME, task.getName());
         cv.put(COLUMN_SLA_DATE, task.getSlaDate());
         cv.put(COLUMN_IS_FINISHED, task.getIsFinished());
+        cv.put(COLUMN_FINISHED_DATE, task.getFinishedDate());
 
         return db.update(TABLE_NAME, cv, "id=" + task.getId(), null);
     }
@@ -101,7 +105,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                         cursor.getLong(0),
                         cursor.getString(1),
                         cursor.getString(2),
-                        cursor.getInt(3)
+                        cursor.getInt(3),
+                        cursor.getString(4)
                 );
                 allTasks.add(task);
             }
@@ -125,7 +130,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                         cursor.getLong(0),
                         cursor.getString(1),
                         cursor.getString(2),
-                        cursor.getInt(3)
+                        cursor.getInt(3),
+                        cursor.getString(4)
                 );
                 finishedTasks.add(task);
             }
