@@ -64,8 +64,8 @@ public class TaskModel implements Parcelable {
         dest.writeInt(isFinished);
     }
 
-    void finish(int isFinished, String finishedDate) {
-        setIsFinished(isFinished);
+    public void finish(String finishedDate) {
+        this.isFinished = 1;
         this.finishedDate = finishedDate;
     }
 
