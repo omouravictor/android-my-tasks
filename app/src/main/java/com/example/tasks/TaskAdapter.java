@@ -148,9 +148,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         holder.btnComplete.setOnClickListener(v -> {
             builder.setMessage("Concluir '" + task.getName() + "'?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
-                deleteTask(holder.getAdapterPosition());
-                task.setIsFinished(1);
+                task.finish(currentDate.toString(dtf));
                 myDB.updateTask(task);
+                deleteTask(holder.getAdapterPosition());
                 finishedTasksAdapter.addTask(task);
                 dialog.dismiss();
             });
@@ -169,7 +169,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     }
 
     public void prepareFinishedTasks(TaskModel task, TaskViewHolder holder) {
-        setFinishedTaskLayout(holder);
+        setFinishedTaskLayout(task, holder);
 
         holder.btnComplete.setOnClickListener(v -> {
             builder.setMessage("Excluir '" + task.getName() + "'?");
@@ -189,12 +189,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     }
 
-    public void setFinishedTaskLayout(TaskViewHolder holder) {
+    public void setFinishedTaskLayout(TaskModel task, TaskViewHolder holder) {
         int green = context.getColor(R.color.green);
         holder.itemView.setBackgroundColor(green);
         holder.background = green;
-        holder.tvExpirationTime.setText("Concluída");
-        holder.btnComplete.setText("Excluir");
+        holder.tvExpirationTime.setText("Concluída em " + task.getFinishedDate());
+        holder.btnComplete.setText(R.string.btnDeleteText);
     }
 
     public void sortTaskArrayBySlaDate() {
@@ -232,46 +232,46 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         isActionMode = true;
     }
 
+    void putTasksAsFinished(ArrayList<TaskModel> tasksArray) {
+        for (TaskModel task : tasksArray) {
+            task.finish(currentDate.toString(dtf));
+            myDB.updateTask(task);
+        }
+    }
+
     private void myOnActionItemClicked(ActionMode mode, MenuItem item) {
         if (item.getItemId() == R.id.finish) {
-            builder.setMessage("Concluir " + selectedTasks.size() + " tarefa(s) selecionada(s)?");
-            builder.setPositiveButton("Sim", (dialog, which) -> {
-                deleteSelectedTasks(selectedTasks);
-                for (TaskModel task : selectedTasks) {
-                    task.setIsFinished(1);
-                    myDB.updateTask(task);
-                }
-                finishedTasksAdapter.addAllTasks(selectedTasks);
-                putHoldersAsNotSelected(selectedHolders);
-                dialog.dismiss();
-                mode.finish();
-            });
-            builder.show();
+            if (!selectedTasks.isEmpty()) {
+                builder.setMessage("Concluir " + selectedTasks.size() + " tarefa(s) selecionada(s)?");
+                builder.setPositiveButton("Sim", (dialog, which) -> {
+                    deleteSelectedTasks(selectedTasks);
+                    putTasksAsFinished(selectedTasks);
+                    finishedTasksAdapter.addAllTasks(selectedTasks);
+                    putHoldersAsNotSelected(selectedHolders);
+                    mode.finish();
+                    dialog.dismiss();
+                });
+                builder.show();
+            }
         } else if (item.getItemId() == R.id.delete) {
             builder.setMessage("Concluir " + selectedTasks.size() + " tarefa(s) selecionada(s)?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
                 ArrayList<TaskModel> deletedTasks = myDB.deleteSelectedTasks(selectedTasks);
-                if (deletedTasks.size() == selectedTasks.size()) {
-                    deleteSelectedTasks(deletedTasks);
-                } else {
-                    deleteSelectedTasks(deletedTasks);
+                deleteSelectedTasks(deletedTasks);
+                if (deletedTasks.size() != selectedTasks.size())
                     Toast.makeText(context, "Falha ao deletar alguma(s) tarefa(s).", Toast.LENGTH_SHORT).show();
-                }
                 putHoldersAsNotSelected(selectedHolders);
-                dialog.dismiss();
                 mode.finish();
+                dialog.dismiss();
             });
             builder.show();
         } else if (item.getItemId() == R.id.selectAll) {
             if (selectedTasks.size() == allTasks.size()) {
                 putHoldersAsNotSelected(allHolders);
-                selectedTasks.clear();
-                selectedHolders.clear();
-                mode.finish();
+                clearSelected();
             } else {
                 putHoldersAsSelected();
-                selectedTasks.clear();
-                selectedHolders.clear();
+                clearSelected();
                 selectedTasks.addAll(allTasks);
             }
             mode.setTitle(String.valueOf(selectedTasks.size()));
@@ -281,9 +281,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private void myOnDestroyActionMode() {
         isActionMode = false;
         if (!selectedTasks.isEmpty()) {
-            selectedTasks.clear();
-            selectedHolders.clear();
-            putHoldersAsNotSelected(allHolders);
+            putHoldersAsNotSelected(selectedHolders);
+            clearSelected();
         }
     }
 
@@ -321,6 +320,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             holder.btnComplete.setEnabled(true);
             holder.itemView.setBackgroundColor(holder.background);
         }
+    }
+
+    void clearSelected() {
+        selectedTasks.clear();
+        selectedHolders.clear();
     }
 
     public void addTask(TaskModel task) {
