@@ -68,7 +68,6 @@ public class UpdateActivity extends AppCompatActivity {
                     taskData.putExtra("task", task);
                     taskData.putExtra("position", position);
                     setResult(2, taskData);
-                    Toast.makeText(this, "Tarefa atualizada com sucesso!", Toast.LENGTH_SHORT).show();
                     finish();
                 }
             }

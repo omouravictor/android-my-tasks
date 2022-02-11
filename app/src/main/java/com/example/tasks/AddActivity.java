@@ -52,7 +52,6 @@ public class AddActivity extends AppCompatActivity {
                     Intent taskData = new Intent();
                     taskData.putExtra("task", task);
                     setResult(1, taskData);
-                    Toast.makeText(this, "Tarefa adicionada com sucesso!", Toast.LENGTH_SHORT).show();
                     finish();
                 }
             }
