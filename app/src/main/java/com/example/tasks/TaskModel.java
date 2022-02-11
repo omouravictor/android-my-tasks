@@ -10,17 +10,19 @@ public class TaskModel implements Parcelable {
     private long id;
     private String name;
     private String slaDate;
+    private String finishedDate = "";
     private int isFinished = 0;
 
-    public TaskModel () {
+    public TaskModel() {
 
     }
 
-    public TaskModel(long id, String name, String slaDate, int isFinished) {
+    public TaskModel(long id, String name, String slaDate, int isFinished, String finishedDate) {
         this.id = id;
         this.name = name;
         this.slaDate = slaDate;
         setIsFinished(isFinished);
+        this.finishedDate = finishedDate;
     }
 
     public TaskModel(String name, String slaDate) {
@@ -32,6 +34,7 @@ public class TaskModel implements Parcelable {
         id = in.readLong();
         name = in.readString();
         slaDate = in.readString();
+        finishedDate = in.readString();
         isFinished = in.readInt();
     }
 
@@ -57,7 +60,13 @@ public class TaskModel implements Parcelable {
         dest.writeLong(id);
         dest.writeString(name);
         dest.writeString(slaDate);
+        dest.writeString(finishedDate);
         dest.writeInt(isFinished);
+    }
+
+    void finish(int isFinished, String finishedDate) {
+        setIsFinished(isFinished);
+        this.finishedDate = finishedDate;
     }
 
     public long getId() {
@@ -90,5 +99,13 @@ public class TaskModel implements Parcelable {
 
     public void setIsFinished(int isFinished) {
         if (isFinished == 1) this.isFinished = 1;
+    }
+
+    public String getFinishedDate() {
+        return finishedDate;
+    }
+
+    public void setFinishedDate(String finishedDate) {
+        this.finishedDate = finishedDate;
     }
 }
