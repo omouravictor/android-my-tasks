@@ -73,6 +73,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         return actionMode;
     }
 
+    public void setFinishedTasksAdapter(TaskAdapter finishedTasksAdapter) {
+        this.finishedTasksAdapter = finishedTasksAdapter;
+    }
+
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
         TextView tvTaskName, tvExpirationTime;
         Button btnComplete;
@@ -143,6 +147,26 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         return allTasks.size();
     }
 
+    private void setExpirationTime(TaskModel task, TaskViewHolder holder) {
+        int days = Days.daysBetween(currentDate, LocalDate.parse(task.getSlaDate(), dtf)).getDays();
+        if (days > 0) {
+            int white = context.getColor(R.color.white);
+            holder.itemView.setBackgroundColor(white);
+            holder.background = white;
+            holder.tvExpirationTime.setText(context.getString(R.string.expirationDaysText, days));
+        } else if (days == 0) {
+            int yellow = context.getColor(R.color.lightYellow);
+            holder.itemView.setBackgroundColor(yellow);
+            holder.background = yellow;
+            holder.tvExpirationTime.setText(R.string.expirationTodayText);
+        } else {
+            int red = context.getColor(R.color.lightRed);
+            holder.itemView.setBackgroundColor(red);
+            holder.background = red;
+            holder.tvExpirationTime.setText(R.string.expiredText);
+        }
+    }
+
     public void prepareTasksOnHold(TaskModel task, TaskViewHolder holder) {
         setExpirationTime(task, holder);
 
@@ -169,6 +193,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     }
 
+    public void setFinishedTaskLayout(TaskModel task, TaskViewHolder holder) {
+        int green = context.getColor(R.color.green);
+        holder.itemView.setBackgroundColor(green);
+        holder.background = green;
+        holder.tvExpirationTime.setText(context.getString(R.string.finishedText, task.getFinishedDate()));
+        holder.btnComplete.setText(R.string.btnDeleteText);
+    }
+
     public void prepareFinishedTasks(TaskModel task, TaskViewHolder holder) {
         setFinishedTaskLayout(task, holder);
 
@@ -191,39 +223,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     }
 
-    public void setFinishedTaskLayout(TaskModel task, TaskViewHolder holder) {
-        int green = context.getColor(R.color.green);
-        holder.itemView.setBackgroundColor(green);
-        holder.background = green;
-        holder.tvExpirationTime.setText(context.getString(R.string.finishedText, task.getFinishedDate()));
-        holder.btnComplete.setText(R.string.btnDeleteText);
-    }
-
     public void sortTaskArrayBySlaDate() {
         allTasks.sort(Comparator.comparingInt(
                 task -> Days.daysBetween(currentDate, LocalDate.parse(task.getSlaDate(), dtf)).getDays()
         ));
         notifyItemRangeChanged(0, getItemCount());
-    }
-
-    private void setExpirationTime(TaskModel task, TaskViewHolder holder) {
-        int days = Days.daysBetween(currentDate, LocalDate.parse(task.getSlaDate(), dtf)).getDays();
-        if (days > 0) {
-            int white = context.getColor(R.color.white);
-            holder.itemView.setBackgroundColor(white);
-            holder.background = white;
-            holder.tvExpirationTime.setText(context.getString(R.string.expirationDaysText, days));
-        } else if (days == 0) {
-            int yellow = context.getColor(R.color.lightYellow);
-            holder.itemView.setBackgroundColor(yellow);
-            holder.background = yellow;
-            holder.tvExpirationTime.setText(R.string.expirationTodayText);
-        } else {
-            int red = context.getColor(R.color.lightRed);
-            holder.itemView.setBackgroundColor(red);
-            holder.background = red;
-            holder.tvExpirationTime.setText(R.string.expiredText);
-        }
     }
 
     private void myOnCreateActionMode(ActionMode mode, Menu menu, TaskModel task) {
@@ -238,6 +242,22 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         for (TaskModel task : tasksArray) {
             task.finish(currentDate.toString(dtf));
             myDB.updateTask(task);
+        }
+    }
+
+    private void putAllHoldersAsNotSelected() {
+        for (TaskViewHolder holder : allHolders) {
+            holder.isSelected = false;
+            holder.btnComplete.setEnabled(true);
+            holder.itemView.setBackgroundColor(holder.background);
+        }
+    }
+
+    private void putAllHoldersAsSelected() {
+        for (TaskViewHolder holder : allHolders) {
+            holder.isSelected = true;
+            holder.btnComplete.setEnabled(false);
+            holder.itemView.setBackgroundColor(Color.LTGRAY);
         }
     }
 
@@ -280,6 +300,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
     }
 
+    private void putHoldersAsNotSelected(ArrayList<TaskViewHolder> holders) {
+        for (TaskViewHolder holder : holders) {
+            holder.isSelected = false;
+            holder.btnComplete.setEnabled(true);
+            holder.itemView.setBackgroundColor(holder.background);
+        }
+    }
+
     private void myOnDestroyActionMode() {
         isActionMode = false;
         putHoldersAsNotSelected(selectedHolders);
@@ -303,30 +331,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             mode.setTitle(String.valueOf(selectedTasks.size()));
             if (selectedTasks.isEmpty())
                 mode.finish();
-        }
-    }
-
-    private void putAllHoldersAsSelected() {
-        for (TaskViewHolder holder : allHolders) {
-            holder.isSelected = true;
-            holder.btnComplete.setEnabled(false);
-            holder.itemView.setBackgroundColor(Color.LTGRAY);
-        }
-    }
-
-    private void putAllHoldersAsNotSelected() {
-        for (TaskViewHolder holder : allHolders) {
-            holder.isSelected = false;
-            holder.btnComplete.setEnabled(true);
-            holder.itemView.setBackgroundColor(holder.background);
-        }
-    }
-
-    private void putHoldersAsNotSelected(ArrayList<TaskViewHolder> holders) {
-        for (TaskViewHolder holder : holders) {
-            holder.isSelected = false;
-            holder.btnComplete.setEnabled(true);
-            holder.itemView.setBackgroundColor(holder.background);
         }
     }
 
@@ -368,9 +372,5 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         allTasks.clear();
         allHolders.clear();
         notifyDataSetChanged();
-    }
-
-    public void setFinishedTasksAdapter(TaskAdapter finishedTasksAdapter) {
-        this.finishedTasksAdapter = finishedTasksAdapter;
     }
 }
