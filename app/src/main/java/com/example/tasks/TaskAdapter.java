@@ -89,15 +89,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     @NonNull
     @Override
     public TaskViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        TaskViewHolder holder = new TaskViewHolder(
+        return new TaskViewHolder(
                 LayoutInflater.from(parent.getContext()).inflate(R.layout.my_row, parent, false)
         );
-        allHolders.add(holder);
-        return holder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
+        if (position >= allHolders.size()) allHolders.add(holder);
+
         TaskModel task = allTasks.get(position);
 
         holder.tvTaskName.setText(task.getName());
@@ -171,6 +171,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     public void prepareFinishedTasks(TaskModel task, TaskViewHolder holder) {
         setFinishedTaskLayout(task, holder);
 
+        holder.btnComplete.setEnabled(true);
         holder.btnComplete.setOnClickListener(v -> {
             builder.setMessage("Excluir '" + task.getName() + "'?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
@@ -267,10 +268,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             builder.show();
         } else if (item.getItemId() == R.id.selectAll) {
             if (selectedTasks.size() == allTasks.size()) {
-                putHoldersAsNotSelected(allHolders);
+                putAllHoldersAsNotSelected();
                 clearSelected();
             } else {
-                putHoldersAsSelected();
+                putAllHoldersAsSelected();
                 clearSelected();
                 selectedTasks.addAll(allTasks);
             }
@@ -280,10 +281,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     private void myOnDestroyActionMode() {
         isActionMode = false;
-        if (!selectedTasks.isEmpty()) {
-            putHoldersAsNotSelected(selectedHolders);
-            clearSelected();
-        }
+        putHoldersAsNotSelected(selectedHolders);
+        if (!selectedTasks.isEmpty() && !selectedHolders.isEmpty()) clearSelected();
     }
 
     private void myOnPrepareActionMode(ActionMode mode, TaskViewHolder holder, TaskModel task) {
@@ -306,11 +305,19 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
     }
 
-    private void putHoldersAsSelected() {
+    private void putAllHoldersAsSelected() {
         for (TaskViewHolder holder : allHolders) {
             holder.isSelected = true;
             holder.btnComplete.setEnabled(false);
             holder.itemView.setBackgroundColor(Color.LTGRAY);
+        }
+    }
+
+    private void putAllHoldersAsNotSelected() {
+        for (TaskViewHolder holder : allHolders) {
+            holder.isSelected = false;
+            holder.btnComplete.setEnabled(true);
+            holder.itemView.setBackgroundColor(holder.background);
         }
     }
 
@@ -349,13 +356,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         notifyItemRemoved(position);
     }
 
-    private void deleteSelectedTasks(ArrayList<TaskModel> deletedTasks) {
-        int index;
-        for (TaskModel task : deletedTasks) {
-            index = allTasks.indexOf(task);
-            allTasks.remove(index);
-            allHolders.remove(index);
-            notifyItemRemoved(index);
+    private void deleteSelectedTasks(ArrayList<TaskModel> tasks) {
+        for (TaskModel task : tasks) {
+            int index = allTasks.indexOf(task);
+            deleteTask(index);
         }
     }
 
