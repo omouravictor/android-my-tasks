@@ -32,7 +32,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private final SQLiteHelper myDB;
     private final ArrayList<TaskModel> allTasks;
     private DateTimeFormatter dtf;
-    private LocalDate currentDate;
+    private final LocalDate currentDate;
     private Intent updateActivityIntent;
     private final AlertDialog.Builder builder;
     private boolean isActionMode;
@@ -45,6 +45,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         this.context = adapter.context;
         this.myDB = adapter.myDB;
         this.allTasks = myDB.getAllFinishedTasks();
+        this.currentDate = adapter.currentDate;
         this.builder = new AlertDialog.Builder(context);
         builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
     }
@@ -194,7 +195,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         int green = context.getColor(R.color.green);
         holder.itemView.setBackgroundColor(green);
         holder.background = green;
-        holder.tvExpirationTime.setText("Concluída em " + task.getFinishedDate());
+        holder.tvExpirationTime.setText(context.getString(R.string.finishedText, task.getFinishedDate()));
         holder.btnComplete.setText(R.string.btnDeleteText);
     }
 
