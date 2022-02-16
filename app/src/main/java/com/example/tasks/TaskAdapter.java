@@ -31,7 +31,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private ActivityResultLauncher<Intent> activityResult;
     private final SQLiteHelper myDB;
     private final ArrayList<TaskModel> allTasks;
-    private DateTimeFormatter dtf;
+    private final DateTimeFormatter dtf;
     private final LocalDate currentDate;
     private Intent updateActivityIntent;
     private final AlertDialog.Builder builder;
@@ -45,6 +45,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         this.context = adapter.context;
         this.myDB = adapter.myDB;
         this.allTasks = myDB.getAllFinishedTasks();
+        this.dtf = adapter.dtf;
         this.currentDate = adapter.currentDate;
         this.builder = new AlertDialog.Builder(context);
         builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
@@ -73,8 +74,16 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         return actionMode;
     }
 
+    public TaskAdapter getFinishedTasksAdapter() {
+        return finishedTasksAdapter;
+    }
+
     public void setFinishedTasksAdapter(TaskAdapter finishedTasksAdapter) {
         this.finishedTasksAdapter = finishedTasksAdapter;
+    }
+
+    public ArrayList<TaskModel> getAllTasks() {
+        return allTasks;
     }
 
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
@@ -267,8 +276,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 builder.setMessage("Concluir " + selectedTasks.size() + " tarefa(s) selecionada(s)?");
                 builder.setPositiveButton("Sim", (dialog, which) -> {
                     deleteSelectedTasks(selectedTasks);
-                    putTasksAsFinished(selectedTasks);
-                    finishedTasksAdapter.addAllTasks(selectedTasks);
+                    finishedTasksAdapter.addFinishedTasks(selectedTasks);
                     putHoldersAsNotSelected(selectedHolders);
                     mode.finish();
                     dialog.dismiss();
@@ -290,10 +298,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         } else if (item.getItemId() == R.id.selectAll) {
             if (selectedTasks.size() == allTasks.size()) {
                 putAllHoldersAsNotSelected();
-                clearSelected();
+                clearSelectedTasksAndHolders();
             } else {
                 putAllHoldersAsSelected();
-                clearSelected();
+                clearSelectedTasksAndHolders();
                 selectedTasks.addAll(allTasks);
             }
             mode.setTitle(String.valueOf(selectedTasks.size()));
@@ -311,7 +319,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private void myOnDestroyActionMode() {
         isActionMode = false;
         putHoldersAsNotSelected(selectedHolders);
-        if (!selectedTasks.isEmpty() && !selectedHolders.isEmpty()) clearSelected();
+        if (!selectedTasks.isEmpty() && !selectedHolders.isEmpty()) clearSelectedTasksAndHolders();
     }
 
     private void myOnPrepareActionMode(ActionMode mode, TaskViewHolder holder, TaskModel task) {
@@ -334,7 +342,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
     }
 
-    void clearSelected() {
+    void clearSelectedTasksAndHolders() {
         selectedTasks.clear();
         selectedHolders.clear();
     }
@@ -344,8 +352,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         notifyItemInserted(getItemCount());
     }
 
-    public void addAllTasks(ArrayList<TaskModel> tasksArray) {
+    public void addFinishedTasks(ArrayList<TaskModel> tasksArray) {
         int positionStart = getItemCount();
+        putTasksAsFinished(tasksArray);
         allTasks.addAll(tasksArray);
         notifyItemRangeInserted(positionStart, tasksArray.size());
     }
