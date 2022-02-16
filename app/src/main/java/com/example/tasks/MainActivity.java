@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startDeleteAllBuilder() {
-        builder.setMessage("Deseja concluir todas as tarefas?");
+        builder.setMessage("Deseja excluir todas as tarefas?");
         builder.setPositiveButton("Sim", (dialog, which) -> {
             myDB.deleteAllTasks();
             adapter.getFinishedTasksAdapter().deleteAllTasks();
