@@ -116,7 +116,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         holder.tvTaskName.setText(task.getName());
 
-        if (task.getIsFinished() == 0) prepareTasksOnHold(task, holder);
+        if (!task.isFinished()) prepareTasksOnHold(task, holder);
         else prepareFinishedTasks(task, holder);
 
         holder.itemView.setOnLongClickListener(v -> {
@@ -241,8 +241,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     private void myOnCreateActionMode(ActionMode mode, Menu menu, TaskModel task) {
         mode.getMenuInflater().inflate(R.menu.my_action_mode_menu, menu);
-        if (task.getIsFinished() == 0) mode.getMenu().getItem(1).setVisible(false);
+
+        if (!task.isFinished()) mode.getMenu().getItem(0).setVisible(true);
         else mode.getMenu().getItem(0).setVisible(false);
+
         actionMode = mode;
         isActionMode = true;
     }
