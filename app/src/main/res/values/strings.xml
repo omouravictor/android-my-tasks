@@ -18,4 +18,5 @@
     <string name="menuItemDeleteText">Deletar</string>
     <string name="menuItemSelectAllText">Selecionar tudo</string>
     <string name="menuItemFinishText">Concluir</string>
+    <string name="menuItemDeleteAllText">Deletar tudo</string>
 </resources>
