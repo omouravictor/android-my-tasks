@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-
 public class TasksOnHoldFragment extends Fragment {
 
     View view;
@@ -21,8 +20,7 @@ public class TasksOnHoldFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_tasks_on_hold, container, false);
         recyclerView = view.findViewById(R.id.rvTasksOnHold);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
