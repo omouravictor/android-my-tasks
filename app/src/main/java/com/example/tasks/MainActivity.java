@@ -27,11 +27,11 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    TasksOnHoldFragment tasksOnHoldFragment;
+    TasksOnHoldFragment onHoldTasksFragment;
     FinishedTasksFragment finishedTasksFragment;
     AlertDialog.Builder builder;
     ActivityResultLauncher<Intent> actResult;
-    TaskAdapter adapter;
+    TaskAdapter onHoldTaskAdapter, finishedTaskAdapter;
     SQLiteHelper myDB;
     TabLayout tabLayout;
     ViewPager2 vp2;
@@ -52,19 +52,14 @@ public class MainActivity extends AppCompatActivity {
         builder = new AlertDialog.Builder(this);
         startBtnAdd();
         startActivityResult();
-        startAdapter();
-        startFragments();
+        startAdaptersAndFragments();
         startLayoutTab();
     }
 
     private void startBtnAdd() {
         btnAdd = findViewById(R.id.btnAdd);
         addActivityIntent = new Intent(this, AddActivity.class);
-        btnAdd.setOnClickListener(v -> {
-            actResult.launch(addActivityIntent);
-            if (adapter.getActionMode() != null)
-                adapter.getActionMode().finish();
-        });
+        btnAdd.setOnClickListener(v -> actResult.launch(addActivityIntent));
     }
 
     private void startActivityResult() {
@@ -76,33 +71,44 @@ public class MainActivity extends AppCompatActivity {
                         assert result.getData() != null;
                         TaskModel intentTask = result.getData().getParcelableExtra("task");
                         if (resultCode == 1) {
-                            adapter.addTask(intentTask);
+                            onHoldTaskAdapter.addTask(intentTask);
                         } else if (resultCode == 2) {
                             int position = result.getData().getIntExtra("position", 0);
-                            adapter.updateTask(position, intentTask);
+                            onHoldTaskAdapter.updateTask(position, intentTask);
                         }
                     }
                 }
         );
     }
 
-    public void startAdapter() {
+    public void startAdaptersAndFragments() {
         LocalDate currentDate = new LocalDate();
         DateTimeFormatter dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
-        adapter = new TaskAdapter(this, actResult, myDB, dtf, currentDate);
-    }
 
-    public void startFragments() {
-        tasksOnHoldFragment = new TasksOnHoldFragment(adapter);
-        finishedTasksFragment = new FinishedTasksFragment(adapter);
-        adapter.setFinishedTasksAdapter(finishedTasksFragment.getFinishedTasksAdapter());
+        myDB.deleteAllTasks();
+        TaskModel teste = new TaskModel();
+        teste.setName("TESTE1");
+        teste.setSlaDate(currentDate.toString(dtf));
+        teste.finish(currentDate.toString(dtf));
+        myDB.createTask(new TaskModel("A", currentDate.toString(dtf)));
+        myDB.createTask(new TaskModel("B", "23/04/2022"));
+        myDB.createTask(teste);
+
+        onHoldTaskAdapter = new TaskAdapter(this, actResult, myDB, myDB.getAllTasksOnHold(), dtf, currentDate);
+        finishedTaskAdapter = new TaskAdapter(this, actResult, myDB, myDB.getAllFinishedTasks(), dtf, currentDate);
+
+        onHoldTaskAdapter.setFinishedTasksAdapter(finishedTaskAdapter);
+        finishedTaskAdapter.setOnHoldTaskAdapter(onHoldTaskAdapter);
+
+        onHoldTasksFragment = new TasksOnHoldFragment(onHoldTaskAdapter);
+        finishedTasksFragment = new FinishedTasksFragment(finishedTaskAdapter);
     }
 
     public void startLayoutTab() {
         vp2 = findViewById(R.id.viewPager2);
         tabLayout = findViewById(R.id.tabLayout);
         vpAdapter = new ViewPagerAdapter(this);
-        vpAdapter.addFragment(tasksOnHoldFragment, "Aguardando");
+        vpAdapter.addFragment(onHoldTasksFragment, "Aguardando");
         vpAdapter.addFragment(finishedTasksFragment, "Concluídas");
         vp2.setAdapter(vpAdapter);
         new TabLayoutMediator(
@@ -113,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
     private void startSortBuilder() {
         builder.setMessage("Deseja ordenar por tempo de expiração?");
         builder.setPositiveButton("Sim", (dialog, which) -> {
-            adapter.sortTaskArrayBySlaDate();
+            onHoldTaskAdapter.sortTaskArrayBySlaDate();
             dialog.dismiss();
         });
         builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
@@ -123,9 +129,9 @@ public class MainActivity extends AppCompatActivity {
     private void startFinishAllBuilder() {
         builder.setMessage("Deseja concluir todas as tarefas?");
         builder.setPositiveButton("Sim", (dialog, which) -> {
-            ArrayList<TaskModel> tasks = adapter.getAllTasks();
-            adapter.getFinishedTasksAdapter().addFinishedTasks(tasks);
-            adapter.deleteAllTasks();
+            ArrayList<TaskModel> tasks = onHoldTaskAdapter.getAllTasks();
+            finishedTaskAdapter.addFinishedTasks(tasks);
+            onHoldTaskAdapter.deleteAllTasks();
             dialog.dismiss();
         });
         builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
@@ -136,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setMessage("Deseja excluir todas as tarefas?");
         builder.setPositiveButton("Sim", (dialog, which) -> {
             myDB.deleteAllTasks();
-            adapter.getFinishedTasksAdapter().deleteAllTasks();
+            finishedTaskAdapter.deleteAllTasks();
             dialog.dismiss();
         });
         builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
