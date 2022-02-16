@@ -69,6 +69,11 @@ public class TaskModel implements Parcelable {
         this.finishedDate = finishedDate;
     }
 
+    public void undo() {
+        this.isFinished = 0;
+        this.finishedDate = null;
+    }
+
     public boolean isFinished() {
         return isFinished == 1;
     }
