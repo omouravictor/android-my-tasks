@@ -13,23 +13,19 @@ public class FinishedTasksFragment extends Fragment {
 
     View view;
     RecyclerView recyclerView;
-    TaskAdapter finishedTasksAdapter;
+    TaskAdapter adapter;
 
-    public FinishedTasksFragment(TaskAdapter tasksOnHoldAdapter) {
-        this.finishedTasksAdapter = new TaskAdapter(tasksOnHoldAdapter);
+    public FinishedTasksFragment(TaskAdapter adapter) {
+        this.adapter = adapter;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_finished_tasks, container, false);
         recyclerView = view.findViewById(R.id.rvFinishedTasks);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(finishedTasksAdapter);
+        recyclerView.setAdapter(adapter);
         return view;
     }
 
-    public TaskAdapter getFinishedTasksAdapter() {
-        return finishedTasksAdapter;
-    }
 }
