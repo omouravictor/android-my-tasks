@@ -10,7 +10,7 @@ public class TaskModel implements Parcelable {
     private long id;
     private String name;
     private String slaDate;
-    private String finishedDate = "";
+    private String finishedDate;
     private int isFinished = 0;
 
     public TaskModel() {
@@ -69,6 +69,10 @@ public class TaskModel implements Parcelable {
         this.finishedDate = finishedDate;
     }
 
+    public boolean isFinished() {
+        return isFinished == 1;
+    }
+
     public long getId() {
         return id;
     }
@@ -105,7 +109,4 @@ public class TaskModel implements Parcelable {
         return finishedDate;
     }
 
-    public void setFinishedDate(String finishedDate) {
-        this.finishedDate = finishedDate;
-    }
 }
