@@ -145,7 +145,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     }
 
     private void setOnHoldTaskLayout(TaskModel task, TaskViewHolder holder) {
-        int days = Days.daysBetween(currentDate, LocalDate.parse(task.getSlaDate(), dtf)).getDays();
+        int days = Days.daysBetween(currentDate, LocalDate.parse(task.getExpirationDate(), dtf)).getDays();
         if (days > 0) {
             int white = context.getColor(R.color.white);
             holder.itemView.setBackgroundColor(white);
@@ -221,7 +221,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     public void sortTaskArrayBySlaDate() {
         allTasks.sort(Comparator.comparingInt(
-                task -> Days.daysBetween(currentDate, LocalDate.parse(task.getSlaDate(), dtf)).getDays()
+                task -> Days.daysBetween(currentDate, LocalDate.parse(task.getExpirationDate(), dtf)).getDays()
         ));
         notifyItemRangeChanged(0, getItemCount());
     }

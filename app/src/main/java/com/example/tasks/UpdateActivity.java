@@ -45,7 +45,7 @@ public class UpdateActivity extends AppCompatActivity {
 
         etTask.setText(task.getName());
         etTask.setSelection(etTask.getText().length());
-        etSlaDate.setText(task.getSlaDate());
+        etSlaDate.setText(task.getExpirationDate());
     }
 
     private void setOnClickBtnUpdateListener() {
@@ -56,7 +56,7 @@ public class UpdateActivity extends AppCompatActivity {
                 btnUpdate.setClickable(false);
 
                 task.setName(etTask.getText().toString());
-                task.setSlaDate(etSlaDate.getText().toString());
+                task.setExpirationDate(etSlaDate.getText().toString());
 
                 SQLiteHelper myDB = new SQLiteHelper(this);
                 long result = myDB.updateTask(task);
