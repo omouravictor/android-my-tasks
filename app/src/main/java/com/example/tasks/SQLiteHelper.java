@@ -90,6 +90,16 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM " + TABLE_NAME);
     }
 
+    public void deleteOnHoldTasks() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + TABLE_NAME + " WHERE " + COLUMN_IS_FINISHED + " = 0");
+    }
+
+    public void deleteFinishedTasks() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + TABLE_NAME + " WHERE " + COLUMN_IS_FINISHED + " = 1");
+    }
+
     public ArrayList<TaskModel> getAllTasksOnHold() {
 
         ArrayList<TaskModel> allTasks = new ArrayList<>();
