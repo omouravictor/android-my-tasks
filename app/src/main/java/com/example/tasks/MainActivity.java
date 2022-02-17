@@ -85,11 +85,13 @@ public class MainActivity extends AppCompatActivity {
         LocalDate currentDate = new LocalDate();
         DateTimeFormatter dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
 
+        /*
         myDB.deleteAllTasks();
         myDB.createTask(new TaskModel("TESTE1", "10/02/2022", 1, "10/02/2022"));
         myDB.createTask(new TaskModel("TESTE2", currentDate.toString(dtf), 1, currentDate.toString(dtf)));
-        myDB.createTask(new TaskModel("A", currentDate.toString(dtf)));
-        myDB.createTask(new TaskModel("B", "23/04/2022"));
+        myDB.createTask(new TaskModel("TESTE3", currentDate.toString(dtf)));
+        myDB.createTask(new TaskModel("TESTE4", "23/04/2022"));
+         */
 
         adaptOnHoldTasks = new TaskAdapter(this, actResult, myDB, myDB.getAllTasksOnHold(), dtf, currentDate);
         adaptFinishedTasks = new TaskAdapter(this, actResult, myDB, myDB.getAllFinishedTasks(), dtf, currentDate);
