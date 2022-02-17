@@ -272,7 +272,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             builder.setMessage("Concluir " + selectedTasks.size() + " tarefa(s) selecionada(s)?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
                 deleteSelectedTasks(selectedTasks);
-                finishedTasksAdapter.addFinishedTasks(selectedTasks);
+                finishedTasksAdapter.putTasksAsFinished(selectedTasks);
+                finishedTasksAdapter.addAllTasks(selectedTasks);
                 putHoldersAsNotSelected(selectedHolders);
                 mode.finish();
                 dialog.dismiss();
@@ -286,7 +287,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             builder.setMessage("Desfazer " + selectedTasks.size() + " tarefa(s) selecionada(s)?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
                 deleteSelectedTasks(selectedTasks);
-                onHoldTaskAdapter.addOnHoldTasks(selectedTasks);
+                onHoldTaskAdapter.putTasksAsOnHold(selectedTasks);
+                onHoldTaskAdapter.addAllTasks(selectedTasks);
                 putHoldersAsNotSelected(selectedHolders);
                 mode.finish();
                 dialog.dismiss();
@@ -376,16 +378,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         notifyItemInserted(getItemCount());
     }
 
-    public void addFinishedTasks(ArrayList<TaskModel> tasksArray) {
+    public void addAllTasks(ArrayList<TaskModel> tasksArray) {
         int positionStart = getItemCount();
-        putTasksAsFinished(tasksArray);
-        allTasks.addAll(tasksArray);
-        notifyItemRangeInserted(positionStart, tasksArray.size());
-    }
-
-    private void addOnHoldTasks(ArrayList<TaskModel> tasksArray) {
-        int positionStart = getItemCount();
-        putTasksAsOnHold(tasksArray);
         allTasks.addAll(tasksArray);
         notifyItemRangeInserted(positionStart, tasksArray.size());
     }
