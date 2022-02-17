@@ -41,6 +41,7 @@ public class AddActivity extends AppCompatActivity {
                 Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
             } else {
                 btnAdd.setClickable(false);
+
                 SQLiteHelper myDB = new SQLiteHelper(this);
                 TaskModel task = new TaskModel(etTask.getText().toString(), etSlaDate.getText().toString());
                 long result = myDB.createTask(task);

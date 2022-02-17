@@ -55,15 +55,16 @@ public class UpdateActivity extends AppCompatActivity {
             } else {
                 btnUpdate.setClickable(false);
 
+                SQLiteHelper myDB = new SQLiteHelper(this);
+
                 task.setName(etTask.getText().toString());
                 task.setExpirationDate(etSlaDate.getText().toString());
 
-                SQLiteHelper myDB = new SQLiteHelper(this);
                 long result = myDB.updateTask(task);
 
-                if (result == 0)
+                if (result == 0) {
                     Toast.makeText(this, "Falha ao atualizar a tarefa.", Toast.LENGTH_SHORT).show();
-                else {
+                } else {
                     Intent taskData = new Intent();
                     taskData.putExtra("task", task);
                     taskData.putExtra("position", position);
@@ -73,5 +74,4 @@ public class UpdateActivity extends AppCompatActivity {
             }
         });
     }
-
 }
