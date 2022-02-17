@@ -10,7 +10,7 @@
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/backToOnHold"
-        android:icon="@drawable/ic_undo_task"
+        android:icon="@drawable/ic_undo_task_action_mode"
         android:orderInCategory="1"
         android:title="@string/menuItemUndoTaskText"
         app:showAsAction="ifRoom" />
