@@ -10,11 +10,19 @@ public class TaskModel implements Parcelable {
     private long id;
     private String name;
     private String slaDate;
-    private String finishedDate;
     private int isFinished = 0;
+    private String finishedDate;
 
-    public TaskModel() {
+    public TaskModel(String name, String slaDate) {
+        this.name = name;
+        this.slaDate = slaDate;
+    }
 
+    public TaskModel(String name, String slaDate, int isFinished, String finishedDate) {
+        this.name = name;
+        this.slaDate = slaDate;
+        setIsFinished(isFinished);
+        this.finishedDate = finishedDate;
     }
 
     public TaskModel(long id, String name, String slaDate, int isFinished, String finishedDate) {
@@ -25,17 +33,12 @@ public class TaskModel implements Parcelable {
         this.finishedDate = finishedDate;
     }
 
-    public TaskModel(String name, String slaDate) {
-        this.name = name;
-        this.slaDate = slaDate;
-    }
-
     protected TaskModel(@NonNull Parcel in) {
         id = in.readLong();
         name = in.readString();
         slaDate = in.readString();
-        finishedDate = in.readString();
         isFinished = in.readInt();
+        finishedDate = in.readString();
     }
 
     public static final Creator<TaskModel> CREATOR = new Creator<TaskModel>() {
@@ -60,8 +63,8 @@ public class TaskModel implements Parcelable {
         dest.writeLong(id);
         dest.writeString(name);
         dest.writeString(slaDate);
-        dest.writeString(finishedDate);
         dest.writeInt(isFinished);
+        dest.writeString(finishedDate);
     }
 
     public void finish(String finishedDate) {
