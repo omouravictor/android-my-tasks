@@ -9,36 +9,36 @@ public class TaskModel implements Parcelable {
 
     private long id;
     private String name;
-    private String slaDate;
     private int isFinished = 0;
     private String finishedDate;
+    private String expirationDate;
 
-    public TaskModel(String name, String slaDate) {
+    public TaskModel(String name, String expirationDate) {
         this.name = name;
-        this.slaDate = slaDate;
+        this.expirationDate = expirationDate;
     }
 
-    public TaskModel(String name, String slaDate, int isFinished, String finishedDate) {
+    public TaskModel(String name, String expirationDate, int isFinished, String finishedDate) {
         this.name = name;
-        this.slaDate = slaDate;
         setIsFinished(isFinished);
         this.finishedDate = finishedDate;
+        this.expirationDate = expirationDate;
     }
 
-    public TaskModel(long id, String name, String slaDate, int isFinished, String finishedDate) {
+    public TaskModel(long id, String name, String expirationDate, int isFinished, String finishedDate) {
         this.id = id;
         this.name = name;
-        this.slaDate = slaDate;
         setIsFinished(isFinished);
         this.finishedDate = finishedDate;
+        this.expirationDate = expirationDate;
     }
 
     protected TaskModel(@NonNull Parcel in) {
         id = in.readLong();
         name = in.readString();
-        slaDate = in.readString();
         isFinished = in.readInt();
         finishedDate = in.readString();
+        expirationDate = in.readString();
     }
 
     public static final Creator<TaskModel> CREATOR = new Creator<TaskModel>() {
@@ -62,9 +62,9 @@ public class TaskModel implements Parcelable {
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeLong(id);
         dest.writeString(name);
-        dest.writeString(slaDate);
         dest.writeInt(isFinished);
         dest.writeString(finishedDate);
+        dest.writeString(expirationDate);
     }
 
     public void finish(String finishedDate) {
@@ -97,12 +97,12 @@ public class TaskModel implements Parcelable {
         this.name = name;
     }
 
-    public String getSlaDate() {
-        return slaDate;
+    public String getExpirationDate() {
+        return expirationDate;
     }
 
-    public void setSlaDate(String dateSLA) {
-        this.slaDate = dateSLA;
+    public void setExpirationDate(String expirationDate) {
+        this.expirationDate = expirationDate;
     }
 
     public int getIsFinished() {
