@@ -41,15 +41,15 @@ public class AddActivity extends AppCompatActivity {
                 Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
             } else {
                 btnAdd.setClickable(false);
-                TaskModel task = new TaskModel(etTask.getText().toString(), etSlaDate.getText().toString());
                 SQLiteHelper myDB = new SQLiteHelper(this);
+                TaskModel task = new TaskModel(etTask.getText().toString(), etSlaDate.getText().toString());
                 long result = myDB.createTask(task);
 
-                if (result == -1)
+                if (result == -1) {
                     Toast.makeText(this, "Falha ao criar a tarefa.", Toast.LENGTH_SHORT).show();
-                else {
-                    task.setId(result);
+                } else {
                     Intent taskData = new Intent();
+                    task.setId(result);
                     taskData.putExtra("task", task);
                     setResult(1, taskData);
                     finish();
