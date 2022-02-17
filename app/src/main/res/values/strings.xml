@@ -20,4 +20,5 @@
     <string name="menuItemFinishText">Concluir</string>
     <string name="menuItemDeleteAllText">Excluir tudo</string>
     <string name="menuItemUndoTaskText">Desfazer</string>
+    <string name="menuItemUndoAllText">Desfazer tudo</string>
 </resources>
