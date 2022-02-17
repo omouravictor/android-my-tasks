@@ -18,7 +18,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String TABLE_NAME = "tb_tasks";
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_NAME = "name";
-    private static final String COLUMN_SLA_DATE = "sla_date";
+    private static final String COLUMN_EXPIRATION_DATE = "expiration_date";
     private static final String COLUMN_IS_FINISHED = "is_finished";
     private static final String COLUMN_FINISHED_DATE = "finished_date";
 
@@ -31,7 +31,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         String query = ("CREATE TABLE " + TABLE_NAME + "("
                 + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + COLUMN_NAME + " TEXT,"
-                + COLUMN_SLA_DATE + " TEXT,"
+                + COLUMN_EXPIRATION_DATE + " TEXT,"
                 + COLUMN_IS_FINISHED + " INTEGER,"
                 + COLUMN_FINISHED_DATE + " TEXT" + ")");
         db.execSQL(query);
@@ -46,42 +46,48 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public long createTask(@NonNull TaskModel task) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
+        long result;
 
         cv.put(COLUMN_NAME, task.getName());
-        cv.put(COLUMN_SLA_DATE, task.getSlaDate());
+        cv.put(COLUMN_EXPIRATION_DATE, task.getSlaDate());
         cv.put(COLUMN_IS_FINISHED, task.getIsFinished());
         cv.put(COLUMN_FINISHED_DATE, task.getFinishedDate());
 
-        return db.insert(TABLE_NAME, null, cv);
+        result = db.insert(TABLE_NAME, null, cv);
+        return result;
     }
 
     public long updateTask(@NonNull TaskModel task) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
+        long result;
 
         cv.put(COLUMN_NAME, task.getName());
-        cv.put(COLUMN_SLA_DATE, task.getSlaDate());
+        cv.put(COLUMN_EXPIRATION_DATE, task.getSlaDate());
         cv.put(COLUMN_IS_FINISHED, task.getIsFinished());
         cv.put(COLUMN_FINISHED_DATE, task.getFinishedDate());
 
-        return db.update(TABLE_NAME, cv, "id=" + task.getId(), null);
+        result = db.update(TABLE_NAME, cv, "id=" + task.getId(), null);
+        return result;
     }
 
     public long deleteTask(@NonNull TaskModel task) {
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(TABLE_NAME, "id=" + task.getId(), null);
+        long result;
+
+        result = db.delete(TABLE_NAME, "id=" + task.getId(), null);
+        return result;
     }
 
     public ArrayList<TaskModel> deleteSelectedTasks(ArrayList<TaskModel> selectedTasks) {
         SQLiteDatabase db = this.getWritableDatabase();
         ArrayList<TaskModel> deletedTasks = new ArrayList<>();
-        TaskModel task;
-        for (int i = 0; i < selectedTasks.size(); i++) {
-            task = selectedTasks.get(i);
+
+        for (TaskModel task : selectedTasks) {
             long result = db.delete(TABLE_NAME, "id=" + task.getId(), null);
-            if (result == 1)
-                deletedTasks.add(task);
+            if (result == 1) deletedTasks.add(task);
         }
+
         return deletedTasks;
     }
 
@@ -101,11 +107,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<TaskModel> getAllTasksOnHold() {
-
-        ArrayList<TaskModel> allTasks = new ArrayList<>();
+        ArrayList<TaskModel> onHoldTasks = new ArrayList<>();
         String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + COLUMN_IS_FINISHED + " = 0";
         SQLiteDatabase db = this.getReadableDatabase();
-
         Cursor cursor;
 
         if (db != null) {
@@ -118,19 +122,18 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                         cursor.getInt(3),
                         cursor.getString(4)
                 );
-                allTasks.add(task);
+                onHoldTasks.add(task);
             }
             cursor.close();
         }
 
-        return allTasks;
+        return onHoldTasks;
     }
 
     public ArrayList<TaskModel> getAllFinishedTasks() {
         ArrayList<TaskModel> finishedTasks = new ArrayList<>();
         String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + COLUMN_IS_FINISHED + " = 1";
         SQLiteDatabase db = this.getReadableDatabase();
-
         Cursor cursor;
 
         if (db != null) {
