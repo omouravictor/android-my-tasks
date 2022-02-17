@@ -26,10 +26,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
-    private TaskAdapter finishedTasksAdapter;
-    private TaskAdapter onHoldTaskAdapter;
+    private TaskAdapter adaptFinishedTasks;
+    private TaskAdapter adaptOnHoldTasks;
     private final Context context;
-    private final ActivityResultLauncher<Intent> activityResult;
+    private final ActivityResultLauncher<Intent> actResult;
     private final SQLiteHelper myDB;
     private final ArrayList<TaskModel> allTasks;
     private final DateTimeFormatter dtf;
@@ -37,21 +37,21 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private final Intent updateActivityIntent;
     private final AlertDialog.Builder builder;
     private boolean isActionMode;
-    private ActionMode actionMode;
+    private ActionMode myActionMode;
     private final ArrayList<TaskModel> selectedTasks = new ArrayList<>();
     private final ArrayList<TaskViewHolder> selectedHolders = new ArrayList<>();
     private final ArrayList<TaskViewHolder> allHolders = new ArrayList<>();
 
     public TaskAdapter(
             Context context,
-            ActivityResultLauncher<Intent> activityResult,
+            ActivityResultLauncher<Intent> actResult,
             SQLiteHelper myDB,
             ArrayList<TaskModel> allTasks,
             DateTimeFormatter dtf,
             LocalDate currentDate
     ) {
         this.context = context;
-        this.activityResult = activityResult;
+        this.actResult = actResult;
         this.myDB = myDB;
         this.allTasks = allTasks;
         this.dtf = dtf;
@@ -62,12 +62,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         sortTaskArrayBySlaDate();
     }
 
-    public void setFinishedTasksAdapter(TaskAdapter finishedTasksAdapter) {
-        this.finishedTasksAdapter = finishedTasksAdapter;
+    public void setFinishedTasksAdapter(TaskAdapter adaptFinishedTasks) {
+        this.adaptFinishedTasks = adaptFinishedTasks;
     }
 
-    public void setOnHoldTaskAdapter(TaskAdapter onHoldTaskAdapter) {
-        this.onHoldTaskAdapter = onHoldTaskAdapter;
+    public void setOnHoldTaskAdapter(TaskAdapter adaptOnHoldTasks) {
+        this.adaptOnHoldTasks = adaptOnHoldTasks;
     }
 
     public ArrayList<TaskModel> getAllTasks() {
@@ -104,7 +104,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         holder.tvTaskName.setText(task.getName());
 
-        if (!task.isFinished()) prepareTasksOnHold(task, holder);
+        if (!task.isFinished()) prepareOnHoldTasks(task, holder);
         else prepareFinishedTasks(task, holder);
 
         holder.itemView.setOnLongClickListener(v -> {
@@ -118,13 +118,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
                     @Override
                     public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                        myOnPrepareActionMode(mode, holder, task);
+                        myOnPrepareActionMode(holder, task);
                         return true;
                     }
 
                     @Override
                     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                        myOnActionItemClicked(mode, item);
+                        myOnActionItemClicked(item);
                         return true;
                     }
 
@@ -144,7 +144,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         return allTasks.size();
     }
 
-    private void setExpirationTime(TaskModel task, TaskViewHolder holder) {
+    private void setOnHoldTaskLayout(TaskModel task, TaskViewHolder holder) {
         int days = Days.daysBetween(currentDate, LocalDate.parse(task.getSlaDate(), dtf)).getDays();
         if (days > 0) {
             int white = context.getColor(R.color.white);
@@ -164,8 +164,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
     }
 
-    public void prepareTasksOnHold(TaskModel task, TaskViewHolder holder) {
-        setExpirationTime(task, holder);
+    public void prepareOnHoldTasks(TaskModel task, TaskViewHolder holder) {
+        setOnHoldTaskLayout(task, holder);
 
         holder.btnComplete.setOnClickListener(v -> {
             builder.setMessage("Concluir '" + task.getName() + "'?");
@@ -173,7 +173,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 task.finish(currentDate.toString(dtf));
                 myDB.updateTask(task);
                 deleteTask(holder.getAdapterPosition());
-                finishedTasksAdapter.addTask(task);
+                adaptFinishedTasks.addTask(task);
                 dialog.dismiss();
             });
             builder.show();
@@ -183,11 +183,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             if (!isActionMode) {
                 updateActivityIntent.putExtra("task", task);
                 updateActivityIntent.putExtra("position", holder.getAdapterPosition());
-                activityResult.launch(updateActivityIntent);
+                actResult.launch(updateActivityIntent);
             } else
-                myOnPrepareActionMode(actionMode, holder, task);
+                myOnPrepareActionMode(holder, task);
         });
-
     }
 
     public void setFinishedTaskLayout(TaskModel task, TaskViewHolder holder) {
@@ -215,7 +214,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         });
 
         holder.itemView.setOnClickListener(v -> {
-            if (isActionMode) myOnPrepareActionMode(actionMode, holder, task);
+            if (isActionMode) myOnPrepareActionMode(holder, task);
         });
 
     }
@@ -228,13 +227,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     }
 
     private void myOnCreateActionMode(ActionMode mode, Menu menu, TaskModel task) {
-        mode.getMenuInflater().inflate(R.menu.my_action_mode_menu, menu);
+        myActionMode = mode;
+        isActionMode = true;
+
+        myActionMode.getMenuInflater().inflate(R.menu.my_action_mode_menu, menu);
 
         if (task.isFinished()) mode.getMenu().getItem(0).setVisible(false);
         else mode.getMenu().getItem(1).setVisible(false);
-
-        actionMode = mode;
-        isActionMode = true;
     }
 
     void putTasksAsFinished(ArrayList<TaskModel> tasksArray) {
@@ -267,37 +266,37 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
     }
 
-    private void menuItemFinish(ActionMode mode) {
+    private void menuItemFinish() {
         if (!selectedTasks.isEmpty()) {
             builder.setMessage("Concluir " + selectedTasks.size() + " tarefa(s) selecionada(s)?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
                 deleteSelectedTasks(selectedTasks);
-                finishedTasksAdapter.putTasksAsFinished(selectedTasks);
-                finishedTasksAdapter.addAllTasks(selectedTasks);
+                adaptFinishedTasks.putTasksAsFinished(selectedTasks);
+                adaptFinishedTasks.addAllTasks(selectedTasks);
                 putHoldersAsNotSelected(selectedHolders);
-                mode.finish();
+                myActionMode.finish();
                 dialog.dismiss();
             });
             builder.show();
         }
     }
 
-    private void menuItemBackToOnHold(ActionMode mode) {
+    private void menuItemBackToOnHold() {
         if (!selectedTasks.isEmpty()) {
             builder.setMessage("Desfazer " + selectedTasks.size() + " tarefa(s) selecionada(s)?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
                 deleteSelectedTasks(selectedTasks);
-                onHoldTaskAdapter.putTasksAsOnHold(selectedTasks);
-                onHoldTaskAdapter.addAllTasks(selectedTasks);
+                adaptOnHoldTasks.putTasksAsOnHold(selectedTasks);
+                adaptOnHoldTasks.addAllTasks(selectedTasks);
                 putHoldersAsNotSelected(selectedHolders);
-                mode.finish();
+                myActionMode.finish();
                 dialog.dismiss();
             });
             builder.show();
         }
     }
 
-    private void menuItemDelete(ActionMode mode) {
+    private void menuItemDelete() {
         builder.setMessage("Exluir " + selectedTasks.size() + " tarefa(s) selecionada(s)?");
         builder.setPositiveButton("Sim", (dialog, which) -> {
             ArrayList<TaskModel> deletedTasks = myDB.deleteSelectedTasks(selectedTasks);
@@ -305,13 +304,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             if (deletedTasks.size() != selectedTasks.size())
                 Toast.makeText(context, "Falha ao deletar alguma(s) tarefa(s).", Toast.LENGTH_SHORT).show();
             putHoldersAsNotSelected(selectedHolders);
-            mode.finish();
+            myActionMode.finish();
             dialog.dismiss();
         });
         builder.show();
     }
 
-    private void menuItemSelectAll(ActionMode mode) {
+    private void menuItemSelectAll() {
         if (selectedTasks.size() == allTasks.size()) {
             putAllHoldersAsNotSelected();
             clearSelectedTasksAndHolders();
@@ -320,18 +319,18 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             clearSelectedTasksAndHolders();
             selectedTasks.addAll(allTasks);
         }
-        mode.setTitle(String.valueOf(selectedTasks.size()));
+        myActionMode.setTitle(String.valueOf(selectedTasks.size()));
     }
 
-    private void myOnActionItemClicked(ActionMode mode, MenuItem item) {
+    private void myOnActionItemClicked(MenuItem item) {
         if (item.getItemId() == R.id.finish)
-            menuItemFinish(mode);
+            menuItemFinish();
         else if (item.getItemId() == R.id.backToOnHold)
-            menuItemBackToOnHold(mode);
+            menuItemBackToOnHold();
         else if (item.getItemId() == R.id.delete)
-            menuItemDelete(mode);
+            menuItemDelete();
         else if (item.getItemId() == R.id.selectAll)
-            menuItemSelectAll(mode);
+            menuItemSelectAll();
     }
 
     private void putHoldersAsNotSelected(ArrayList<TaskViewHolder> holders) {
@@ -348,23 +347,22 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         if (!selectedTasks.isEmpty() && !selectedHolders.isEmpty()) clearSelectedTasksAndHolders();
     }
 
-    private void myOnPrepareActionMode(ActionMode mode, TaskViewHolder holder, TaskModel task) {
+    private void myOnPrepareActionMode(TaskViewHolder holder, TaskModel task) {
         if (!holder.isSelected) {
             holder.btnComplete.setEnabled(false);
             holder.isSelected = true;
             selectedTasks.add(task);
             selectedHolders.add(holder);
             holder.itemView.setBackgroundColor(Color.LTGRAY);
-            mode.setTitle(String.valueOf(selectedTasks.size()));
+            myActionMode.setTitle(String.valueOf(selectedTasks.size()));
         } else {
             holder.btnComplete.setEnabled(true);
             holder.isSelected = false;
             selectedTasks.remove(task);
             selectedHolders.remove(holder);
             holder.itemView.setBackgroundColor(holder.background);
-            mode.setTitle(String.valueOf(selectedTasks.size()));
-            if (selectedTasks.isEmpty())
-                mode.finish();
+            myActionMode.setTitle(String.valueOf(selectedTasks.size()));
+            if (selectedTasks.isEmpty()) myActionMode.finish();
         }
     }
 
@@ -378,14 +376,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         notifyItemInserted(getItemCount());
     }
 
-    public void addAllTasks(ArrayList<TaskModel> tasksArray) {
+    public void addAllTasks(ArrayList<TaskModel> tasks) {
         int positionStart = getItemCount();
-        allTasks.addAll(tasksArray);
-        notifyItemRangeInserted(positionStart, tasksArray.size());
+        allTasks.addAll(tasks);
+        notifyItemRangeInserted(positionStart, tasks.size());
     }
 
-    public void updateTask(int position, TaskModel updatedTask) {
-        allTasks.set(position, updatedTask);
+    public void updateTask(int position, TaskModel task) {
+        allTasks.set(position, task);
         notifyItemChanged(position);
     }
 
