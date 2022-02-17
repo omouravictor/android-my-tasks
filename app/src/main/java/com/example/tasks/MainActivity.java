@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     ViewPagerAdapter vpAdapter;
     FloatingActionButton btnAdd;
     Intent addActivityIntent;
+    Menu myMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,13 +87,10 @@ public class MainActivity extends AppCompatActivity {
         DateTimeFormatter dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
 
         myDB.deleteAllTasks();
-        TaskModel teste = new TaskModel();
-        teste.setName("TESTE1");
-        teste.setSlaDate(currentDate.toString(dtf));
-        teste.finish(currentDate.toString(dtf));
+        myDB.createTask(new TaskModel("TESTE1", "10/02/2022", 1, "10/02/2022"));
+        myDB.createTask(new TaskModel("TESTE2", currentDate.toString(dtf), 1, currentDate.toString(dtf)));
         myDB.createTask(new TaskModel("A", currentDate.toString(dtf)));
         myDB.createTask(new TaskModel("B", "23/04/2022"));
-        myDB.createTask(teste);
 
         onHoldTaskAdapter = new TaskAdapter(this, actResult, myDB, myDB.getAllTasksOnHold(), dtf, currentDate);
         finishedTaskAdapter = new TaskAdapter(this, actResult, myDB, myDB.getAllFinishedTasks(), dtf, currentDate);
@@ -108,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         vp2 = findViewById(R.id.viewPager2);
         tabLayout = findViewById(R.id.tabLayout);
         vpAdapter = new ViewPagerAdapter(this);
-        vpAdapter.addFragment(onHoldTasksFragment, "Aguardando");
+        vpAdapter.addFragment(onHoldTasksFragment, "Em espera");
         vpAdapter.addFragment(finishedTasksFragment, "Concluídas");
         vp2.setAdapter(vpAdapter);
         new TabLayoutMediator(
@@ -117,12 +115,42 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startSortBuilder() {
-        builder.setMessage("Deseja ordenar por tempo de expiração?");
-        builder.setPositiveButton("Sim", (dialog, which) -> {
-            onHoldTaskAdapter.sortTaskArrayBySlaDate();
-            dialog.dismiss();
-        });
-        builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
+        if (tabLayout.getTabAt(0).isSelected()) {
+            builder.setMessage("Deseja ordenar por tempo de expiração?");
+            builder.setPositiveButton("Sim", (dialog, which) -> {
+                onHoldTaskAdapter.sortTaskArrayBySlaDate();
+                dialog.dismiss();
+            });
+            builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
+        } else {
+            builder.setMessage("Deseja ordenar por tempo de conclusão?");
+            builder.setPositiveButton("Sim", (dialog, which) -> {
+                finishedTaskAdapter.sortTaskArrayBySlaDate();
+                dialog.dismiss();
+            });
+            builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
+        }
+        builder.show();
+    }
+
+    private void startDeleteAllBuilder() {
+        if (tabLayout.getTabAt(0).isSelected()) {
+            builder.setMessage("Deseja excluir todas as tarefas em espera?");
+            builder.setPositiveButton("Sim", (dialog, which) -> {
+                myDB.deleteOnHoldTasks();
+                onHoldTaskAdapter.deleteAllTasks();
+                dialog.dismiss();
+            });
+            builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
+        } else {
+            builder.setMessage("Deseja excluir todas as tarefas concluídas?");
+            builder.setPositiveButton("Sim", (dialog, which) -> {
+                myDB.deleteFinishedTasks();
+                finishedTaskAdapter.deleteAllTasks();
+                dialog.dismiss();
+            });
+            builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
+        }
         builder.show();
     }
 
@@ -130,7 +158,8 @@ public class MainActivity extends AppCompatActivity {
         builder.setMessage("Deseja concluir todas as tarefas?");
         builder.setPositiveButton("Sim", (dialog, which) -> {
             ArrayList<TaskModel> tasks = onHoldTaskAdapter.getAllTasks();
-            finishedTaskAdapter.addFinishedTasks(tasks);
+            finishedTaskAdapter.putTasksAsFinished(tasks);
+            finishedTaskAdapter.addAllTasks(tasks);
             onHoldTaskAdapter.deleteAllTasks();
             dialog.dismiss();
         });
@@ -138,10 +167,12 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
-    private void startDeleteAllBuilder() {
-        builder.setMessage("Deseja excluir todas as tarefas?");
+    private void startUndoAllBuilder() {
+        builder.setMessage("Deseja desfazer todas as tarefas?");
         builder.setPositiveButton("Sim", (dialog, which) -> {
-            myDB.deleteAllTasks();
+            ArrayList<TaskModel> tasks = finishedTaskAdapter.getAllTasks();
+            onHoldTaskAdapter.putTasksAsOnHold(tasks);
+            onHoldTaskAdapter.addAllTasks(tasks);
             finishedTaskAdapter.deleteAllTasks();
             dialog.dismiss();
         });
@@ -149,12 +180,45 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
+    public void myOnTabSelected(TabLayout.Tab tab) {
+        MenuItem finishAll = myMenu.getItem(2);
+        MenuItem undoAll = myMenu.getItem(3);
+        if (tab.getPosition() == 0) {
+            finishAll.setVisible(true);
+            undoAll.setVisible(false);
+        } else {
+            finishAll.setVisible(false);
+            undoAll.setVisible(true);
+        }
+    }
+
     @SuppressLint("RestrictedApi")
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        myMenu = menu;
         MenuBuilder m = (MenuBuilder) menu;
+
         m.setOptionalIconsVisible(true);
         getMenuInflater().inflate(R.menu.my_menu, menu);
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                myOnTabSelected(tab);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                myOnTabSelected(tab);
+            }
+        });
+
+        tabLayout.getTabAt(0).select();
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -163,10 +227,12 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.sortBySlaDate)
             startSortBuilder();
-        else if (id == R.id.finishAll)
-            startFinishAllBuilder();
         else if (id == R.id.deleteAll)
             startDeleteAllBuilder();
+        else if (id == R.id.finishAll)
+            startFinishAllBuilder();
+        else if (id == R.id.undoAll)
+            startUndoAllBuilder();
         return super.onOptionsItemSelected(item);
     }
 }
