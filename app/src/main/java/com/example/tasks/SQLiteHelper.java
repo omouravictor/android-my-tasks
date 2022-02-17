@@ -49,7 +49,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         long result;
 
         cv.put(COLUMN_NAME, task.getName());
-        cv.put(COLUMN_EXPIRATION_DATE, task.getSlaDate());
+        cv.put(COLUMN_EXPIRATION_DATE, task.getExpirationDate());
         cv.put(COLUMN_IS_FINISHED, task.getIsFinished());
         cv.put(COLUMN_FINISHED_DATE, task.getFinishedDate());
 
@@ -63,7 +63,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         long result;
 
         cv.put(COLUMN_NAME, task.getName());
-        cv.put(COLUMN_EXPIRATION_DATE, task.getSlaDate());
+        cv.put(COLUMN_EXPIRATION_DATE, task.getExpirationDate());
         cv.put(COLUMN_IS_FINISHED, task.getIsFinished());
         cv.put(COLUMN_FINISHED_DATE, task.getFinishedDate());
 
