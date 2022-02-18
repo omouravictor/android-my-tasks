@@ -119,14 +119,14 @@ public class MainActivity extends AppCompatActivity {
         if (tabLayout.getTabAt(0).isSelected()) {
             builder.setMessage("Deseja ordenar por tempo de expiração?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
-                adaptOnHoldTasks.sortTaskArrayBySlaDate();
+                adaptOnHoldTasks.sortTasksArrayBySlaDate();
                 dialog.dismiss();
             });
             builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
         } else {
             builder.setMessage("Deseja ordenar por tempo de conclusão?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
-                adaptFinishedTasks.sortTaskArrayBySlaDate();
+                adaptFinishedTasks.sortTasksArrayByFinishedDate();
                 dialog.dismiss();
             });
             builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
