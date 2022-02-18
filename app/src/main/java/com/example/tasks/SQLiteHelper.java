@@ -31,9 +31,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         String query = ("CREATE TABLE " + TABLE_NAME + "("
                 + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + COLUMN_NAME + " TEXT,"
-                + COLUMN_EXPIRATION_DATE + " TEXT,"
+                + COLUMN_EXPIRATION_DATE + " DATE,"
                 + COLUMN_IS_FINISHED + " INTEGER,"
-                + COLUMN_FINISHED_DATE + " TEXT" + ")");
+                + COLUMN_FINISHED_DATE + " DATE" + ")");
         db.execSQL(query);
     }
 
@@ -108,7 +108,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     public ArrayList<TaskModel> getAllTasksOnHold() {
         ArrayList<TaskModel> onHoldTasks = new ArrayList<>();
-        String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + COLUMN_IS_FINISHED + " = 0";
+        String query = "SELECT *" +
+                " FROM " + TABLE_NAME +
+                " WHERE " + COLUMN_IS_FINISHED + " = 0" +
+                " ORDER BY " + COLUMN_EXPIRATION_DATE + " ASC";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor;
 
@@ -132,7 +135,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     public ArrayList<TaskModel> getAllFinishedTasks() {
         ArrayList<TaskModel> finishedTasks = new ArrayList<>();
-        String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + COLUMN_IS_FINISHED + " = 1";
+        String query = "SELECT *" +
+                " FROM " + TABLE_NAME +
+                " WHERE " + COLUMN_IS_FINISHED + " = 1" +
+                " ORDER BY " + COLUMN_FINISHED_DATE + " DESC";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor;
 
