@@ -59,7 +59,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         this.updateActivityIntent = new Intent(context, UpdateActivity.class);
         this.builder = new AlertDialog.Builder(context);
         builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
-        sortTaskArrayBySlaDate();
     }
 
     public void setFinishedTasksAdapter(TaskAdapter adaptFinishedTasks) {
@@ -219,9 +218,22 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     }
 
-    public void sortTaskArrayBySlaDate() {
+    public void sortTasksArrayBySlaDate() {
         allTasks.sort(Comparator.comparingInt(
-                task -> Days.daysBetween(currentDate, LocalDate.parse(task.getExpirationDate(), dtf)).getDays()
+                task -> Days.daysBetween(
+                        currentDate,
+                        LocalDate.parse(task.getExpirationDate(), dtf)
+                ).getDays()
+        ));
+        notifyItemRangeChanged(0, getItemCount());
+    }
+
+    public void sortTasksArrayByFinishedDate() {
+        allTasks.sort(Comparator.comparingInt(
+                task -> Days.daysBetween(
+                        LocalDate.parse(task.getFinishedDate(), dtf),
+                        currentDate
+                ).getDays()
         ));
         notifyItemRangeChanged(0, getItemCount());
     }
