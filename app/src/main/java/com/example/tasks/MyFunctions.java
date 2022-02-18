@@ -11,7 +11,7 @@ import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 
-import java.util.Calendar;
+import org.joda.time.LocalDate;
 
 public class MyFunctions {
 
@@ -24,17 +24,21 @@ public class MyFunctions {
     }
 
     public void setOnClickEtDateListener(Context context, @NonNull EditText etDate) {
-        Calendar calendar = Calendar.getInstance();
+        LocalDate currentDate = LocalDate.now();
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 context,
                 (view, year, month, day) -> {
                     month += 1;
-                    etDate.setText(context.getString(R.string.etDateText, day, month, year));
+                    if (month < 10)
+                        etDate.setText(context.getString(R.string.etDateZeroBeforeMonthText, day, month, year));
+                    else
+                        etDate.setText(context.getString(R.string.etDateText, day, month, year));
                 },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH));
+                currentDate.getYear(),
+                currentDate.getMonthOfYear() - 1,
+                currentDate.getDayOfMonth()
+        );
 
         etDate.setOnClickListener(v -> {
             datePickerDialog.show();
