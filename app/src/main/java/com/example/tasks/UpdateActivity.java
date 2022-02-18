@@ -8,8 +8,13 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 public class UpdateActivity extends AppCompatActivity {
 
+    DateTimeFormatter dtf;
     MyFunctions myFunctions;
     EditText etTask, etSlaDate;
     Button btnClear, btnUpdate;
@@ -24,6 +29,7 @@ public class UpdateActivity extends AppCompatActivity {
     }
 
     private void init() {
+        dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
         myFunctions = new MyFunctions();
         etTask = findViewById(R.id.etTaskUpdate);
         etSlaDate = findViewById(R.id.etSlaDateUpdate);
@@ -45,7 +51,9 @@ public class UpdateActivity extends AppCompatActivity {
 
         etTask.setText(task.getName());
         etTask.setSelection(etTask.getText().length());
-        etSlaDate.setText(task.getExpirationDate());
+
+        LocalDate expirationDate = LocalDate.parse(task.getExpirationDate());
+        etSlaDate.setText(expirationDate.toString(dtf));
     }
 
     private void setOnClickBtnUpdateListener() {
@@ -56,9 +64,10 @@ public class UpdateActivity extends AppCompatActivity {
                 btnUpdate.setClickable(false);
 
                 SQLiteHelper myDB = new SQLiteHelper(this);
+                LocalDate expirationDate = LocalDate.parse(etSlaDate.getText().toString(), dtf);
 
                 task.setName(etTask.getText().toString());
-                task.setExpirationDate(etSlaDate.getText().toString());
+                task.setExpirationDate(expirationDate.toString());
 
                 long result = myDB.updateTask(task);
 

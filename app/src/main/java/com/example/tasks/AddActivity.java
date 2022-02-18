@@ -8,8 +8,13 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 public class AddActivity extends AppCompatActivity {
 
+    DateTimeFormatter dtf;
     MyFunctions myFunctions;
     EditText etTask, etSlaDate;
     Button btnClear, btnAdd;
@@ -22,6 +27,7 @@ public class AddActivity extends AppCompatActivity {
     }
 
     private void init() {
+        dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
         myFunctions = new MyFunctions();
         etTask = findViewById(R.id.etTaskAdd);
         etSlaDate = findViewById(R.id.etSlaDateAdd);
@@ -43,7 +49,9 @@ public class AddActivity extends AppCompatActivity {
                 btnAdd.setClickable(false);
 
                 SQLiteHelper myDB = new SQLiteHelper(this);
-                TaskModel task = new TaskModel(etTask.getText().toString(), etSlaDate.getText().toString());
+                LocalDate expirationDate = LocalDate.parse(etSlaDate.getText().toString(), dtf);
+                TaskModel task = new TaskModel(etTask.getText().toString(), expirationDate.toString());
+
                 long result = myDB.createTask(task);
 
                 if (result == -1) {
