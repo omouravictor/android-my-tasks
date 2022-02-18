@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -32,33 +31,32 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private final ActivityResultLauncher<Intent> actResult;
     private final SQLiteHelper myDB;
     private final ArrayList<TaskModel> allTasks;
-    private final DateTimeFormatter dtf;
     private final LocalDate currentDate;
     private final Intent updateActivityIntent;
     private final AlertDialog.Builder builder;
     private boolean isActionMode;
     private ActionMode myActionMode;
-    private final ArrayList<TaskModel> selectedTasks = new ArrayList<>();
-    private final ArrayList<TaskViewHolder> selectedHolders = new ArrayList<>();
-    private final ArrayList<TaskViewHolder> allHolders = new ArrayList<>();
+    private final ArrayList<TaskModel> selectedTasks;
+    private final ArrayList<TaskViewHolder> selectedHolders;
+    private final ArrayList<TaskViewHolder> allHolders;
 
     public TaskAdapter(
             Context context,
             ActivityResultLauncher<Intent> actResult,
             SQLiteHelper myDB,
-            ArrayList<TaskModel> allTasks,
-            DateTimeFormatter dtf,
-            LocalDate currentDate
+            ArrayList<TaskModel> allTasks
     ) {
         this.context = context;
         this.actResult = actResult;
         this.myDB = myDB;
         this.allTasks = allTasks;
-        this.dtf = dtf;
-        this.currentDate = currentDate;
+        this.currentDate = LocalDate.now();
         this.updateActivityIntent = new Intent(context, UpdateActivity.class);
         this.builder = new AlertDialog.Builder(context);
         builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
+        selectedTasks = new ArrayList<>();
+        selectedHolders = new ArrayList<>();
+        allHolders = new ArrayList<>();
     }
 
     public void setFinishedTasksAdapter(TaskAdapter adaptFinishedTasks) {
@@ -144,7 +142,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     }
 
     private void setOnHoldTaskLayout(TaskModel task, TaskViewHolder holder) {
-        int days = Days.daysBetween(currentDate, LocalDate.parse(task.getExpirationDate(), dtf)).getDays();
+        int days = Days.daysBetween(currentDate, LocalDate.parse(task.getExpirationDate())).getDays();
         if (days > 0) {
             int white = context.getColor(R.color.white);
             holder.itemView.setBackgroundColor(white);
@@ -169,7 +167,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         holder.btnComplete.setOnClickListener(v -> {
             builder.setMessage("Concluir '" + task.getName() + "'?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
-                task.finish(currentDate.toString(dtf));
+                task.finish(currentDate.toString());
                 myDB.updateTask(task);
                 deleteTask(holder.getAdapterPosition());
                 adaptFinishedTasks.addTask(task);
@@ -222,7 +220,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         allTasks.sort(Comparator.comparingInt(
                 task -> Days.daysBetween(
                         currentDate,
-                        LocalDate.parse(task.getExpirationDate(), dtf)
+                        LocalDate.parse(task.getExpirationDate())
                 ).getDays()
         ));
         notifyItemRangeChanged(0, getItemCount());
@@ -231,7 +229,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     public void sortTasksArrayByFinishedDate() {
         allTasks.sort(Comparator.comparingInt(
                 task -> Days.daysBetween(
-                        LocalDate.parse(task.getFinishedDate(), dtf),
+                        LocalDate.parse(task.getFinishedDate()),
                         currentDate
                 ).getDays()
         ));
@@ -250,7 +248,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     void putTasksAsFinished(ArrayList<TaskModel> tasksArray) {
         for (TaskModel task : tasksArray) {
-            task.finish(currentDate.toString(dtf));
+            task.finish(currentDate.toString());
             myDB.updateTask(task);
         }
     }
