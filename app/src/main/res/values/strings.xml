@@ -11,6 +11,7 @@
     <string name="expirationDaysText">Expira em %d dia (s)</string>
     <string name="finishedText">Concluída em %s</string>
     <string name="etDateText">%d/%d/%d</string>
+    <string name="etDateZeroBeforeMonthText">%d/0%d/%d</string>
     <string name="expirationTodayText">Expira hoje !</string>
     <string name="expiredText">Expirada :(</string>
     <string name="menuItemFinishAllText">Concluir tudo</string>
