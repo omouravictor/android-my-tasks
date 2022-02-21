@@ -117,4 +117,7 @@ public class TaskModel implements Parcelable {
         return finishedDate;
     }
 
+    public void setFinishedDate(String finishedDate) {
+        this.finishedDate = finishedDate;
+    }
 }
