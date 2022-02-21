@@ -23,6 +23,18 @@ public class MyFunctions {
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
+    public String getDateText(int day, int month, int year) {
+        String dateText = "";
+
+        if (day < 10) dateText += "0" + day + "/";
+        else dateText += day + "/";
+
+        if (month < 10) dateText += "0" + month + "/" + year;
+        else dateText += month + "/" + year;
+
+        return dateText;
+    }
+
     public void setOnClickEtDateListener(Context context, @NonNull EditText etDate) {
         LocalDate currentDate = LocalDate.now();
 
@@ -30,10 +42,7 @@ public class MyFunctions {
                 context,
                 (view, year, month, day) -> {
                     month += 1;
-                    if (month < 10)
-                        etDate.setText(context.getString(R.string.etDateZeroBeforeMonthText, day, month, year));
-                    else
-                        etDate.setText(context.getString(R.string.etDateText, day, month, year));
+                    etDate.setText(getDateText(day, month, year));
                 },
                 currentDate.getYear(),
                 currentDate.getMonthOfYear() - 1,
