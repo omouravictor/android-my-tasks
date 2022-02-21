@@ -136,6 +136,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             }
             return true;
         });
+
+        holder.itemView.setOnClickListener(v -> {
+            if (!isActionMode) {
+                updateActivityIntent.putExtra("task", task);
+                updateActivityIntent.putExtra("position", holder.getAdapterPosition());
+                actResult.launch(updateActivityIntent);
+            } else
+                myOnPrepareActionMode(holder, task);
+        });
     }
 
     @Override
@@ -177,15 +186,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             });
             builder.show();
         });
-
-        holder.itemView.setOnClickListener(v -> {
-            if (!isActionMode) {
-                updateActivityIntent.putExtra("task", task);
-                updateActivityIntent.putExtra("position", holder.getAdapterPosition());
-                actResult.launch(updateActivityIntent);
-            } else
-                myOnPrepareActionMode(holder, task);
-        });
     }
 
     public void setFinishedTaskLayout(TaskModel task, TaskViewHolder holder) {
@@ -218,11 +218,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             });
             builder.show();
         });
-
-        holder.itemView.setOnClickListener(v -> {
-            if (isActionMode) myOnPrepareActionMode(holder, task);
-        });
-
     }
 
     public void sortTasksArrayBySlaDate() {
