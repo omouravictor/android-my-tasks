@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
+    private MyFunctions myFunctions;
     private TaskAdapter adaptFinishedTasks;
     private TaskAdapter adaptOnHoldTasks;
     private final Context context;
@@ -50,9 +51,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         this.actResult = actResult;
         this.myDB = myDB;
         this.allTasks = allTasks;
-        this.currentDate = LocalDate.now();
-        this.updateActivityIntent = new Intent(context, UpdateActivity.class);
-        this.builder = new AlertDialog.Builder(context);
+        myFunctions = new MyFunctions();
+        currentDate = LocalDate.now();
+        updateActivityIntent = new Intent(context, UpdateActivity.class);
+        builder = new AlertDialog.Builder(context);
         builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
         selectedTasks = new ArrayList<>();
         selectedHolders = new ArrayList<>();
@@ -188,9 +190,16 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     public void setFinishedTaskLayout(TaskModel task, TaskViewHolder holder) {
         int green = context.getColor(R.color.green);
+        LocalDate finishedDate = LocalDate.parse(task.getFinishedDate());
+        String dateFormatText = myFunctions.getDateText(
+                finishedDate.getDayOfMonth(),
+                finishedDate.getMonthOfYear(),
+                finishedDate.getYear()
+        );
+
         holder.itemView.setBackgroundColor(green);
         holder.background = green;
-        holder.tvExpirationTime.setText(context.getString(R.string.finishedText, task.getFinishedDate()));
+        holder.tvExpirationTime.setText(context.getString(R.string.finishedText, dateFormatText));
         holder.btnComplete.setText(R.string.btnDeleteText);
     }
 
