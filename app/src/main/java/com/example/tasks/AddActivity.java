@@ -16,8 +16,9 @@ public class AddActivity extends AppCompatActivity {
 
     DateTimeFormatter dtf;
     MyFunctions myFunctions;
-    EditText etTask, etSlaDate;
+    EditText etTask, etExpirationTime;
     Button btnClear, btnAdd;
+    TaskModel task;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,40 +31,39 @@ public class AddActivity extends AppCompatActivity {
         dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
         myFunctions = new MyFunctions();
         etTask = findViewById(R.id.etTaskAdd);
-        etSlaDate = findViewById(R.id.etSlaDateAdd);
+        etExpirationTime = findViewById(R.id.etExpirationTime);
         btnClear = findViewById(R.id.btnClearAdd);
         btnAdd = findViewById(R.id.btnAdd);
 
         myFunctions.setActionDoneButton(etTask);
-        myFunctions.setOnClickEtDateListener(this, etSlaDate);
-        myFunctions.setOnClickBtnClearListener(btnClear, etTask, etSlaDate);
+        myFunctions.setOnClickEtDateListener(this, etExpirationTime);
+        myFunctions.setOnClickBtnClearListener(btnClear, etTask, etExpirationTime);
 
-        setOnClickBtnAddListener();
-    }
-
-    private void setOnClickBtnAddListener() {
         btnAdd.setOnClickListener(v -> {
-            if (etTask.getText().toString().equals("") || etSlaDate.getText().toString().equals("")) {
+            if (etTask.getText().toString().equals("") || etExpirationTime.getText().toString().equals("")) {
                 Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
             } else {
                 btnAdd.setClickable(false);
 
+                Intent intent = new Intent();
                 SQLiteHelper myDB = new SQLiteHelper(this);
-                LocalDate expirationDate = LocalDate.parse(etSlaDate.getText().toString(), dtf);
-                TaskModel task = new TaskModel(etTask.getText().toString(), expirationDate.toString());
-
+                LocalDate date = LocalDate.parse(etExpirationTime.getText().toString(), dtf);
+                task = new TaskModel(etTask.getText().toString(), date.toString());
                 long result = myDB.createTask(task);
 
-                if (result == -1) {
-                    Toast.makeText(this, "Falha ao criar a tarefa.", Toast.LENGTH_SHORT).show();
-                } else {
-                    Intent taskData = new Intent();
-                    task.setId(result);
-                    taskData.putExtra("task", task);
-                    setResult(1, taskData);
-                    finish();
-                }
+                startResultAction(result, intent);
             }
         });
+    }
+
+    public void startResultAction(long result, Intent intent) {
+        if (result == -1) {
+            Toast.makeText(this, "Falha ao criar a tarefa.", Toast.LENGTH_SHORT).show();
+        } else {
+            task.setId(result);
+            intent.putExtra("task", task);
+            setResult(1, intent);
+            finish();
+        }
     }
 }
