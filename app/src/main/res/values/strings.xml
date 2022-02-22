@@ -7,7 +7,7 @@
     <string name="btnUpdateText">Atualizar</string>
     <string name="expirationTimeText">Expira HOJE!</string>
     <string name="btnFinishText">Concluir</string>
-    <string name="btnDeleteText">Excluir</string>
+    <string name="btnUndoText">Desfazer</string>
     <string name="expirationDaysText">Expira em %d dia (s)</string>
     <string name="expirationTodayText">Expira hoje !</string>
     <string name="finishedText">Concluída em %s</string>
