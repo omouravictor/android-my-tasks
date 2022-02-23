@@ -19,8 +19,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
-import org.joda.time.LocalDate;
-
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -127,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startSortBuilder() {
-        if (tabLayout.getTabAt(0).isSelected()) {
+        if (isFirstTabSelected()) {
             builder.setMessage("Deseja ordenar por tempo de expiração?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
                 adaptOnHoldTasks.sortTasksArrayBySlaDate();
@@ -146,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startDeleteAllBuilder() {
-        if (tabLayout.getTabAt(0).isSelected()) {
+        if (isFirstTabSelected()) {
             builder.setMessage("Deseja excluir todas as tarefas em espera?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
                 myDB.deleteOnHoldTasks();
@@ -204,6 +202,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public boolean isFirstTabSelected() {
+        return tabLayout.getTabAt(0).isSelected();
+    }
+
     @SuppressLint("RestrictedApi")
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -212,7 +214,6 @@ public class MainActivity extends AppCompatActivity {
 
         m.setOptionalIconsVisible(true);
         getMenuInflater().inflate(R.menu.my_menu, menu);
-
         menu.getItem(3).setVisible(false);
 
         return super.onCreateOptionsMenu(menu);
