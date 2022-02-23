@@ -20,8 +20,6 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
 
@@ -54,7 +52,8 @@ public class MainActivity extends AppCompatActivity {
         startBtnAdd();
         startActivityResult();
         startAdaptersAndFragments();
-        startLayoutTab();
+        startTabLayout();
+        startViewPager();
     }
 
     private void startBtnAdd() {
@@ -75,6 +74,9 @@ public class MainActivity extends AppCompatActivity {
                         } else if (resultCode == 2) {
                             int position = result.getData().getIntExtra("position", 0);
                             adaptOnHoldTasks.updateTask(position, task);
+                        } else if (resultCode == 3) {
+                            int position = result.getData().getIntExtra("position", 0);
+                            adaptFinishedTasks.updateTask(position, task);
                         }
                     }
                 }
@@ -82,19 +84,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startAdaptersAndFragments() {
-        LocalDate currentDate = new LocalDate();
-        DateTimeFormatter dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
-
-        /*
-        myDB.deleteAllTasks();
-        myDB.createTask(new TaskModel("TESTE1", "10/02/2022", 1, "10/02/2022"));
-        myDB.createTask(new TaskModel("TESTE2", currentDate.toString(dtf), 1, currentDate.toString(dtf)));
-        myDB.createTask(new TaskModel("TESTE3", currentDate.toString(dtf)));
-        myDB.createTask(new TaskModel("TESTE4", "23/04/2022"));
-         */
-
-        adaptOnHoldTasks = new TaskAdapter(this, actResult, myDB, myDB.getAllTasksOnHold(), dtf, currentDate);
-        adaptFinishedTasks = new TaskAdapter(this, actResult, myDB, myDB.getAllFinishedTasks(), dtf, currentDate);
+        adaptOnHoldTasks = new TaskAdapter(this, actResult, myDB, myDB.getAllTasksOnHold());
+        adaptFinishedTasks = new TaskAdapter(this, actResult, myDB, myDB.getAllFinishedTasks());
 
         adaptOnHoldTasks.setFinishedTasksAdapter(adaptFinishedTasks);
         adaptFinishedTasks.setOnHoldTaskAdapter(adaptOnHoldTasks);
@@ -103,13 +94,33 @@ public class MainActivity extends AppCompatActivity {
         fragFinishedTasks = new FinishedTasksFragment(adaptFinishedTasks);
     }
 
-    public void startLayoutTab() {
-        vp2 = findViewById(R.id.viewPager2);
+    public void startTabLayout() {
         tabLayout = findViewById(R.id.tabLayout);
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                myOnTabSelected(tab);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
+        });
+    }
+
+    public void startViewPager() {
         vpAdapter = new ViewPagerAdapter(this);
+        vp2 = findViewById(R.id.viewPager2);
+
         vpAdapter.addFragment(fragOnHoldTasks, "Em espera");
         vpAdapter.addFragment(fragFinishedTasks, "Concluídas");
         vp2.setAdapter(vpAdapter);
+
         new TabLayoutMediator(
                 tabLayout, vp2, (tab, position) -> tab.setText(vpAdapter.getTitles().get(position))
         ).attach();
@@ -182,14 +193,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void myOnTabSelected(TabLayout.Tab tab) {
-        MenuItem finishAll = myMenu.getItem(2);
-        MenuItem undoAll = myMenu.getItem(3);
-        if (tab.getPosition() == 0) {
-            finishAll.setVisible(true);
-            undoAll.setVisible(false);
-        } else {
-            finishAll.setVisible(false);
-            undoAll.setVisible(true);
+        if (myMenu != null) {
+            if (tab.getPosition() == 0) {
+                myMenu.getItem(2).setVisible(true);
+                myMenu.getItem(3).setVisible(false);
+            } else {
+                myMenu.getItem(2).setVisible(false);
+                myMenu.getItem(3).setVisible(true);
+            }
         }
     }
 
@@ -202,23 +213,7 @@ public class MainActivity extends AppCompatActivity {
         m.setOptionalIconsVisible(true);
         getMenuInflater().inflate(R.menu.my_menu, menu);
 
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                myOnTabSelected(tab);
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                myOnTabSelected(tab);
-            }
-        });
-
-        tabLayout.getTabAt(0).select();
+        menu.getItem(3).setVisible(false);
 
         return super.onCreateOptionsMenu(menu);
     }
