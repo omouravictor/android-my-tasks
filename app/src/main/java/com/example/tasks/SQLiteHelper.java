@@ -71,14 +71,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return result;
     }
 
-    public long deleteTask(@NonNull TaskModel task) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        long result;
-
-        result = db.delete(TABLE_NAME, "id=" + task.getId(), null);
-        return result;
-    }
-
     public ArrayList<TaskModel> deleteSelectedTasks(ArrayList<TaskModel> selectedTasks) {
         SQLiteDatabase db = this.getWritableDatabase();
         ArrayList<TaskModel> deletedTasks = new ArrayList<>();
@@ -89,11 +81,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         }
 
         return deletedTasks;
-    }
-
-    public void deleteAllTasks() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DELETE FROM " + TABLE_NAME);
     }
 
     public void deleteOnHoldTasks() {
