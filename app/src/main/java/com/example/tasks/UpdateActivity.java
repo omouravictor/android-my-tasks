@@ -31,7 +31,7 @@ public class UpdateActivity extends AppCompatActivity {
         init();
     }
 
-    private void init() {
+    public void init() {
         dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
         myFunctions = new MyFunctions();
         etTask = findViewById(R.id.etTaskUpdate);

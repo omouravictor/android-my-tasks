@@ -25,9 +25,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
-    private final MyFunctions myFunctions;
     private TaskAdapter adaptFinishedTasks;
     private TaskAdapter adaptOnHoldTasks;
+    private ActionMode myActionMode;
+    private final MyFunctions myFunctions;
     private final Context context;
     private final ActivityResultLauncher<Intent> actResult;
     private final SQLiteHelper myDB;
@@ -36,7 +37,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private final Intent updateActivityIntent;
     private final AlertDialog.Builder builder;
     private boolean isActionMode;
-    private ActionMode myActionMode;
     private final ArrayList<TaskModel> selectedTasks;
     private final ArrayList<TaskViewHolder> selectedHolders;
     private final ArrayList<TaskViewHolder> allHolders;
@@ -152,7 +152,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         return allTasks.size();
     }
 
-    private void setOnHoldTaskLayout(TaskModel task, TaskViewHolder holder) {
+    public void setOnHoldTaskLayout(TaskModel task, TaskViewHolder holder) {
         int days = Days.daysBetween(currentDate, LocalDate.parse(task.getExpirationDate())).getDays();
         if (days > 0) {
             int white = context.getColor(R.color.white);
@@ -238,7 +238,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         notifyItemRangeChanged(0, getItemCount());
     }
 
-    private void myOnCreateActionMode(ActionMode mode, Menu menu, TaskModel task) {
+    public void myOnCreateActionMode(ActionMode mode, Menu menu, TaskModel task) {
         myActionMode = mode;
         isActionMode = true;
 
@@ -272,7 +272,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
     }
 
-    private void putAllHoldersAsNotSelected() {
+    public void putAllHoldersAsNotSelected() {
         for (TaskViewHolder holder : allHolders) {
             holder.isSelected = false;
             holder.btnComplete.setEnabled(true);
@@ -280,7 +280,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
     }
 
-    private void putAllHoldersAsSelected() {
+    public void putAllHoldersAsSelected() {
         for (TaskViewHolder holder : allHolders) {
             holder.isSelected = true;
             holder.btnComplete.setEnabled(false);
@@ -288,7 +288,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
     }
 
-    private void menuItemFinish() {
+    public void menuItemFinish() {
         if (!selectedTasks.isEmpty()) {
             builder.setMessage("Concluir " + selectedTasks.size() + " tarefa(s) selecionada(s)?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
@@ -303,7 +303,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
     }
 
-    private void menuItemBackToOnHold() {
+    public void menuItemBackToOnHold() {
         if (!selectedTasks.isEmpty()) {
             builder.setMessage("Desfazer " + selectedTasks.size() + " tarefa(s) selecionada(s)?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
@@ -318,7 +318,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
     }
 
-    private void menuItemDelete() {
+    public void menuItemDelete() {
         builder.setMessage("Exluir " + selectedTasks.size() + " tarefa(s) selecionada(s)?");
         builder.setPositiveButton("Sim", (dialog, which) -> {
             ArrayList<TaskModel> deletedTasks = myDB.deleteSelectedTasks(selectedTasks);
@@ -332,7 +332,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         builder.show();
     }
 
-    private void menuItemSelectAll() {
+    public void menuItemSelectAll() {
         if (selectedTasks.size() == allTasks.size()) {
             putAllHoldersAsNotSelected();
             clearSelectedTasksAndHolders();
@@ -344,7 +344,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         myActionMode.setTitle(String.valueOf(selectedTasks.size()));
     }
 
-    private void myOnActionItemClicked(MenuItem item) {
+    public void myOnActionItemClicked(MenuItem item) {
         if (item.getItemId() == R.id.finish)
             menuItemFinish();
         else if (item.getItemId() == R.id.backToOnHold)
@@ -355,7 +355,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             menuItemSelectAll();
     }
 
-    private void putHoldersAsNotSelected(ArrayList<TaskViewHolder> holders) {
+    public void putHoldersAsNotSelected(ArrayList<TaskViewHolder> holders) {
         for (TaskViewHolder holder : holders) {
             holder.isSelected = false;
             holder.btnComplete.setEnabled(true);
@@ -363,13 +363,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
     }
 
-    private void myOnDestroyActionMode() {
+    public void myOnDestroyActionMode() {
         isActionMode = false;
         putHoldersAsNotSelected(selectedHolders);
         if (!selectedTasks.isEmpty() && !selectedHolders.isEmpty()) clearSelectedTasksAndHolders();
     }
 
-    private void myOnPrepareActionMode(TaskViewHolder holder, TaskModel task) {
+    public void myOnPrepareActionMode(TaskViewHolder holder, TaskModel task) {
         if (!holder.isSelected) {
             holder.btnComplete.setEnabled(false);
             holder.isSelected = true;
@@ -409,13 +409,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         notifyItemChanged(position);
     }
 
-    private void deleteTask(int position) {
+    public void deleteTask(int position) {
         allTasks.remove(position);
         allHolders.remove(position);
         notifyItemRemoved(position);
     }
 
-    private void deleteSelectedTasks(ArrayList<TaskModel> tasks) {
+    public void deleteSelectedTasks(ArrayList<TaskModel> tasks) {
         for (TaskModel task : tasks) {
             int index = allTasks.indexOf(task);
             deleteTask(index);

@@ -27,7 +27,7 @@ public class AddActivity extends AppCompatActivity {
         init();
     }
 
-    private void init() {
+     void init() {
         dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
         myFunctions = new MyFunctions();
         etTask = findViewById(R.id.etTaskAdd);
@@ -56,7 +56,7 @@ public class AddActivity extends AppCompatActivity {
         });
     }
 
-    public void startResultAction(long result, Intent intent) {
+    void startResultAction(long result, Intent intent) {
         if (result == -1) {
             Toast.makeText(this, "Falha ao criar a tarefa.", Toast.LENGTH_SHORT).show();
         } else {

@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         init();
     }
 
-    private void init() {
+    public void init() {
         myDB = new SQLiteHelper(this);
         builder = new AlertDialog.Builder(this);
         startBtnAdd();
@@ -54,13 +54,13 @@ public class MainActivity extends AppCompatActivity {
         startViewPager();
     }
 
-    private void startBtnAdd() {
+    public void startBtnAdd() {
         btnAdd = findViewById(R.id.btnAdd);
         addActivityIntent = new Intent(this, AddActivity.class);
         btnAdd.setOnClickListener(v -> actResult.launch(addActivityIntent));
     }
 
-    private void startActivityResult() {
+    public void startActivityResult() {
         actResult = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         ).attach();
     }
 
-    private void startSortBuilder() {
+    public void startSortBuilder() {
         if (isFirstTabSelected()) {
             builder.setMessage("Deseja ordenar por tempo de expiração?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
-    private void startDeleteAllBuilder() {
+    public void startDeleteAllBuilder() {
         if (isFirstTabSelected()) {
             builder.setMessage("Deseja excluir todas as tarefas em espera?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
-    private void startFinishAllBuilder() {
+    public void startFinishAllBuilder() {
         builder.setMessage("Deseja concluir todas as tarefas?");
         builder.setPositiveButton("Sim", (dialog, which) -> {
             ArrayList<TaskModel> tasks = adaptOnHoldTasks.getAllTasks();
@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
-    private void startUndoAllBuilder() {
+    public void startUndoAllBuilder() {
         builder.setMessage("Deseja desfazer todas as tarefas?");
         builder.setPositiveButton("Sim", (dialog, which) -> {
             ArrayList<TaskModel> tasks = adaptFinishedTasks.getAllTasks();
