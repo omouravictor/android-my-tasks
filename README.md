@@ -9,6 +9,4 @@
 
 Some screens of the App:
 
-<img src="./assets/tasks_on_hold.png" />
-<img src="./assets/finished_tasks.png" />
-<img src="./assets/add_task.png" />
+<img src="./assets/app-screens.png" />
