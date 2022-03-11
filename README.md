@@ -15,6 +15,6 @@ Some application screens:
 
 The idea of the App is:
 
-_"Have control over tasks that have due dates."_
+_"Manage tasks with an expiration date."_
 
 **PS:** There's a big market behind this context that can be extended to other areas, I'll be so glad if you could find any idea based on this project to build your own business!
