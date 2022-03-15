@@ -126,14 +126,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void startSortBuilder() {
         if (isFirstTabSelected()) {
-            builder.setMessage("Deseja ordenar por tempo de expiração?");
+            builder.setMessage("Deseja ordenar por data de expiração?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
                 adaptOnHoldTasks.sortTasksArrayBySlaDate();
                 dialog.dismiss();
             });
             builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
         } else {
-            builder.setMessage("Deseja ordenar por tempo de conclusão?");
+            builder.setMessage("Deseja ordenar por data de conclusão?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
                 adaptFinishedTasks.sortTasksArrayByFinishedDate();
                 dialog.dismiss();
