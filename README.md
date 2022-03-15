@@ -26,3 +26,26 @@ This project is part of my personal portfolio, so, I'll be happy if you could pr
 Also, you can use this Project as you wish, be for study, be for make improvements or earn money with it!
 
 It's free!
+
+## Functionalities
+
+- Undo a task
+
+- Finish a task
+
+- Undo all tasks
+
+- Finish all tasks
+
+- Delete all tasks
+
+- Get a list with tasks to do
+
+- Get a list with finished tasks
+
+- Create, update, read and delete a task
+
+- Sort tasks by:
+  - Expiration date
+  - Finished date
+
