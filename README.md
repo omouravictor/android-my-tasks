@@ -49,3 +49,6 @@ It's free!
   - Expiration date
   - Finished date
 
+## Installer
+
+If you want to test the App in the Production mode, the installer is on below:
