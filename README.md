@@ -29,15 +29,9 @@ It's free!
 
 ## Functionalities
 
-- Undo a task
+- Finish and Undo a task
 
-- Finish a task
-
-- Undo all tasks
-
-- Finish all tasks
-
-- Delete all tasks
+- Finish and Undo all tasks
 
 - Get a list with tasks to do
 
@@ -48,6 +42,8 @@ It's free!
 - Sort tasks by:
   - Expiration date
   - Finished date
+
+- Delete all tasks
 
 ## Installer
 
