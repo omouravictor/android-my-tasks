@@ -27,24 +27,6 @@ Also, you can use this Project as you wish, be for study, be for make improvemen
 
 It's free!
 
-## Functionalities
-
-- Finish and Undo a task
-
-- Finish and Undo all tasks
-
-- Get a list with tasks to do
-
-- Get a list with finished tasks
-
-- Create, update, read and delete a task
-
-- Sort tasks by:
-  - Expiration date
-  - Finished date
-
-- Delete all tasks
-
 ## Installer
 
 If you want to test the App in the Production mode, the installer is on below:
