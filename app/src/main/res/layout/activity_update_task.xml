@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/darkWhite"
     android:focusableInTouchMode="true"
-    tools:context=".activity.UpdateActivity">
+    tools:context=".activity.UpdateTaskActivity">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/layTaskUpdate"

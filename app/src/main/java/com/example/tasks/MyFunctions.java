@@ -55,10 +55,16 @@ public class MyFunctions {
         });
     }
 
-    public void setOnClickBtnClearListener(@NonNull Button btnClear, EditText etTask, EditText etDate) {
+    public void setOnClickTaskBtnClearListener(@NonNull Button btnClear, EditText etTask, EditText etDate) {
         btnClear.setOnClickListener(v -> {
             etTask.setText("");
             etDate.setText("");
+        });
+    }
+
+    public void setOnClickCategoryBtnClearListener(@NonNull Button btnClear, EditText etCategory) {
+        btnClear.setOnClickListener(v -> {
+            etCategory.setText("");
         });
     }
 

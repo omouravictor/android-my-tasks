@@ -17,7 +17,7 @@ import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-public class AddActivity extends AppCompatActivity {
+public class CreateTaskActivity extends AppCompatActivity {
 
     DateTimeFormatter dtf;
     MyFunctions myFunctions;
@@ -28,7 +28,7 @@ public class AddActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add);
+        setContentView(R.layout.activity_create_task);
         init();
     }
 
@@ -42,7 +42,7 @@ public class AddActivity extends AppCompatActivity {
 
         myFunctions.setActionDoneButton(etTask);
         myFunctions.setOnClickEtDateListener(this, etExpirationTime);
-        myFunctions.setOnClickBtnClearListener(btnClear, etTask, etExpirationTime);
+        myFunctions.setOnClickTaskBtnClearListener(btnClear, etTask, etExpirationTime);
 
         btnAdd.setOnClickListener(v -> {
             if (etTask.getText().toString().equals("") || etExpirationTime.getText().toString().equals("")) {

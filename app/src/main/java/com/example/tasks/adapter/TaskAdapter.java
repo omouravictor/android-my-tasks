@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tasks.MyFunctions;
 import com.example.tasks.R;
-import com.example.tasks.activity.UpdateActivity;
+import com.example.tasks.activity.UpdateTaskActivity;
 import com.example.tasks.data_base.SQLiteHelper;
 import com.example.tasks.model.TaskModel;
 
@@ -59,7 +59,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         this.allTasks = allTasks;
         myFunctions = new MyFunctions();
         currentDate = LocalDate.now();
-        updateActivityIntent = new Intent(context, UpdateActivity.class);
+        updateActivityIntent = new Intent(context, UpdateTaskActivity.class);
         builder = new AlertDialog.Builder(context);
         builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
         selectedTasks = new ArrayList<>();
