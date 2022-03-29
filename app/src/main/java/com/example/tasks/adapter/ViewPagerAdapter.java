@@ -1,4 +1,4 @@
-package com.example.tasks;
+package com.example.tasks.adapter;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;

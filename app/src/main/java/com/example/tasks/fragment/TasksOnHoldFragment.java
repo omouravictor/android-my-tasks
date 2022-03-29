@@ -1,4 +1,4 @@
-package com.example.tasks;
+package com.example.tasks.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,6 +8,9 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.tasks.R;
+import com.example.tasks.adapter.TaskAdapter;
 
 public class TasksOnHoldFragment extends Fragment {
 

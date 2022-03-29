@@ -1,4 +1,4 @@
-package com.example.tasks;
+package com.example.tasks.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +17,12 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.tasks.MyFunctions;
+import com.example.tasks.R;
+import com.example.tasks.activity.UpdateActivity;
+import com.example.tasks.data_base.SQLiteHelper;
+import com.example.tasks.model.TaskModel;
 
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
@@ -253,7 +259,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         myDB.updateTask(task);
     }
 
-    void putTasksAsFinished(ArrayList<TaskModel> tasksArray) {
+    public void putTasksAsFinished(ArrayList<TaskModel> tasksArray) {
         for (TaskModel task : tasksArray) {
             task.finish(currentDate.toString());
             myDB.updateTask(task);
@@ -265,7 +271,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         myDB.updateTask(task);
     }
 
-    void putTasksAsOnHold(ArrayList<TaskModel> tasksArray) {
+    public void putTasksAsOnHold(ArrayList<TaskModel> tasksArray) {
         for (TaskModel task : tasksArray) {
             task.undo();
             myDB.updateTask(task);

@@ -1,4 +1,4 @@
-package com.example.tasks;
+package com.example.tasks.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +7,11 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.tasks.MyFunctions;
+import com.example.tasks.R;
+import com.example.tasks.data_base.SQLiteHelper;
+import com.example.tasks.model.TaskModel;
 
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -27,7 +32,7 @@ public class AddActivity extends AppCompatActivity {
         init();
     }
 
-     void init() {
+    void init() {
         dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
         myFunctions = new MyFunctions();
         etTask = findViewById(R.id.etTaskAdd);

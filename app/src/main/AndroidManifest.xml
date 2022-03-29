@@ -11,14 +11,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".UpdateActivity"
+            android:name=".activity.UpdateActivity"
             android:exported="true" />
         <activity
-            android:name=".AddActivity"
+            android:name=".activity.AddActivity"
             android:exported="true"
             android:windowSoftInputMode="stateVisible" />
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

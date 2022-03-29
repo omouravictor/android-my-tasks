@@ -1,4 +1,4 @@
-package com.example.tasks;
+package com.example.tasks.data_base;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.example.tasks.model.TaskModel;
 
 import java.util.ArrayList;
 

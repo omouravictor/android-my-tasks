@@ -1,4 +1,4 @@
-package com.example.tasks;
+package com.example.tasks.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -15,6 +15,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.tasks.R;
+import com.example.tasks.adapter.TaskAdapter;
+import com.example.tasks.adapter.ViewPagerAdapter;
+import com.example.tasks.data_base.SQLiteHelper;
+import com.example.tasks.fragment.FinishedTasksFragment;
+import com.example.tasks.fragment.TasksOnHoldFragment;
+import com.example.tasks.model.TaskModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
