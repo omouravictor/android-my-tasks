@@ -56,7 +56,6 @@ public class CreateCategoryActivity extends AppCompatActivity {
         if (result == -1) {
             Toast.makeText(this, "Falha ao criar a categoria.", Toast.LENGTH_SHORT).show();
         } else {
-            category.setId(result);
             intent.putExtra("category", category);
             setResult(1, intent);
             finish();

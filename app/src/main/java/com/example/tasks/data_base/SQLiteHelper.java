@@ -25,7 +25,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String TASK_COLUMN_IS_FINISHED = "is_finished";
     private static final String TASK_COLUMN_FINISHED_DATE = "finished_date";
     private static final String CATEGORY_TABLE_NAME = "tb_category";
-    private static final String CATEGORY_COLUMN_ID = "id";
     private static final String CATEGORY_COLUMN_NAME = "name";
 
     public SQLiteHelper(@Nullable Context context) {
@@ -43,8 +42,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         db.execSQL(createTbTaskQuery);
 
         String createTbCategoryQuery = ("CREATE TABLE " + CATEGORY_TABLE_NAME + "("
-                + CATEGORY_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + CATEGORY_COLUMN_NAME + " TEXT" + ")");
+                + CATEGORY_COLUMN_NAME + " TEXT PRIMARY KEY" + ")");
         db.execSQL(createTbCategoryQuery);
     }
 
@@ -182,8 +180,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             cursor = db.rawQuery(query, null);
             while (cursor.moveToNext()) {
                 CategoryModel category = new CategoryModel(
-                        cursor.getLong(0),
-                        cursor.getString(1)
+                        cursor.getString(0)
                 );
                 categories.add(category);
             }

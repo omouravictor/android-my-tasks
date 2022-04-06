@@ -9,16 +9,10 @@ import java.util.ArrayList;
 
 public class CategoryModel implements Parcelable {
 
-    private long id;
     private String name;
     private ArrayList<TaskModel> tasksList;
 
     public CategoryModel(String name) {
-        this.name = name;
-    }
-
-    public CategoryModel(long id, String name) {
-        this.id = id;
         this.name = name;
     }
 
@@ -27,14 +21,7 @@ public class CategoryModel implements Parcelable {
         this.tasksList = tasksList;
     }
 
-    public CategoryModel(long id, String name, ArrayList<TaskModel> tasksList) {
-        this.id = id;
-        this.name = name;
-        this.tasksList = tasksList;
-    }
-
     protected CategoryModel(@NonNull Parcel in) {
-        id = in.readLong();
         name = in.readString();
         tasksList = in.readArrayList(TaskModel.class.getClassLoader());
     }
@@ -58,17 +45,8 @@ public class CategoryModel implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
-        dest.writeLong(id);
         dest.writeString(name);
         dest.writeList(tasksList);
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getName() {
