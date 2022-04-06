@@ -13,6 +13,15 @@ public class CategoryModel implements Parcelable {
     private String name;
     private ArrayList<TaskModel> tasksList;
 
+    public CategoryModel(String name) {
+        this.name = name;
+    }
+
+    public CategoryModel(long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public CategoryModel(String name, ArrayList<TaskModel> tasksList) {
         this.name = name;
         this.tasksList = tasksList;
