@@ -11,17 +11,21 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activity.UpdateActivity"
+            android:name=".activity.UpdateTaskActivity"
             android:exported="true" />
         <activity
-            android:name=".activity.AddActivity"
+            android:name=".activity.CreateTaskActivity"
             android:exported="true"
             android:windowSoftInputMode="stateVisible" />
+        <activity
+            android:name=".activity.CreateCategoryActivity"
+            android:exported="true" />
         <activity
             android:name=".activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

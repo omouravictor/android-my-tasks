@@ -9,20 +9,24 @@ import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.tasks.model.CategoryModel;
 import com.example.tasks.model.TaskModel;
 
 import java.util.ArrayList;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME = "Task.db";
+    private static final String DATABASE_NAME = "MyTask.db";
     private static final int DATABASE_VERSION = 1;
-    private static final String TABLE_NAME = "tb_tasks";
-    private static final String COLUMN_ID = "id";
-    private static final String COLUMN_NAME = "name";
-    private static final String COLUMN_EXPIRATION_DATE = "expiration_date";
-    private static final String COLUMN_IS_FINISHED = "is_finished";
-    private static final String COLUMN_FINISHED_DATE = "finished_date";
+    private static final String TASK_TABLE_NAME = "tb_task";
+    private static final String TASK_COLUMN_ID = "id";
+    private static final String TASK_COLUMN_NAME = "name";
+    private static final String TASK_COLUMN_EXPIRATION_DATE = "expiration_date";
+    private static final String TASK_COLUMN_IS_FINISHED = "is_finished";
+    private static final String TASK_COLUMN_FINISHED_DATE = "finished_date";
+    private static final String CATEGORY_TABLE_NAME = "tb_category";
+    private static final String CATEGORY_COLUMN_ID = "id";
+    private static final String CATEGORY_COLUMN_NAME = "name";
 
     public SQLiteHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -30,18 +34,24 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(@NonNull SQLiteDatabase db) {
-        String query = ("CREATE TABLE " + TABLE_NAME + "("
-                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + COLUMN_NAME + " TEXT,"
-                + COLUMN_EXPIRATION_DATE + " DATE,"
-                + COLUMN_IS_FINISHED + " INTEGER,"
-                + COLUMN_FINISHED_DATE + " DATE" + ")");
-        db.execSQL(query);
+        String createTbTaskQuery = ("CREATE TABLE " + TASK_TABLE_NAME + "("
+                + TASK_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + TASK_COLUMN_NAME + " TEXT,"
+                + TASK_COLUMN_EXPIRATION_DATE + " DATE,"
+                + TASK_COLUMN_IS_FINISHED + " INTEGER,"
+                + TASK_COLUMN_FINISHED_DATE + " DATE" + ")");
+        db.execSQL(createTbTaskQuery);
+
+        String createTbCategoryQuery = ("CREATE TABLE " + CATEGORY_TABLE_NAME + "("
+                + CATEGORY_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + CATEGORY_COLUMN_NAME + " TEXT" + ")");
+        db.execSQL(createTbCategoryQuery);
     }
 
     @Override
     public void onUpgrade(@NonNull SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TASK_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + CATEGORY_TABLE_NAME);
         onCreate(db);
     }
 
@@ -50,12 +60,23 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         long result;
 
-        cv.put(COLUMN_NAME, task.getName());
-        cv.put(COLUMN_EXPIRATION_DATE, task.getExpirationDate());
-        cv.put(COLUMN_IS_FINISHED, task.getIsFinished());
-        cv.put(COLUMN_FINISHED_DATE, task.getFinishedDate());
+        cv.put(TASK_COLUMN_NAME, task.getName());
+        cv.put(TASK_COLUMN_EXPIRATION_DATE, task.getExpirationDate());
+        cv.put(TASK_COLUMN_IS_FINISHED, task.getIsFinished());
+        cv.put(TASK_COLUMN_FINISHED_DATE, task.getFinishedDate());
 
-        result = db.insert(TABLE_NAME, null, cv);
+        result = db.insert(TASK_TABLE_NAME, null, cv);
+        return result;
+    }
+
+    public long createCategory(@NonNull CategoryModel category) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        long result;
+
+        cv.put(CATEGORY_COLUMN_NAME, category.getName());
+
+        result = db.insert(CATEGORY_TABLE_NAME, null, cv);
         return result;
     }
 
@@ -64,12 +85,12 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         long result;
 
-        cv.put(COLUMN_NAME, task.getName());
-        cv.put(COLUMN_EXPIRATION_DATE, task.getExpirationDate());
-        cv.put(COLUMN_IS_FINISHED, task.getIsFinished());
-        cv.put(COLUMN_FINISHED_DATE, task.getFinishedDate());
+        cv.put(TASK_COLUMN_NAME, task.getName());
+        cv.put(TASK_COLUMN_EXPIRATION_DATE, task.getExpirationDate());
+        cv.put(TASK_COLUMN_IS_FINISHED, task.getIsFinished());
+        cv.put(TASK_COLUMN_FINISHED_DATE, task.getFinishedDate());
 
-        result = db.update(TABLE_NAME, cv, "id=" + task.getId(), null);
+        result = db.update(TASK_TABLE_NAME, cv, "id=" + task.getId(), null);
         return result;
     }
 
@@ -78,7 +99,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         ArrayList<TaskModel> deletedTasks = new ArrayList<>();
 
         for (TaskModel task : selectedTasks) {
-            long result = db.delete(TABLE_NAME, "id=" + task.getId(), null);
+            long result = db.delete(TASK_TABLE_NAME, "id=" + task.getId(), null);
             if (result == 1) deletedTasks.add(task);
         }
 
@@ -87,20 +108,20 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     public void deleteOnHoldTasks() {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DELETE FROM " + TABLE_NAME + " WHERE " + COLUMN_IS_FINISHED + " = 0");
+        db.execSQL("DELETE FROM " + TASK_TABLE_NAME + " WHERE " + TASK_COLUMN_IS_FINISHED + " = 0");
     }
 
     public void deleteFinishedTasks() {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DELETE FROM " + TABLE_NAME + " WHERE " + COLUMN_IS_FINISHED + " = 1");
+        db.execSQL("DELETE FROM " + TASK_TABLE_NAME + " WHERE " + TASK_COLUMN_IS_FINISHED + " = 1");
     }
 
     public ArrayList<TaskModel> getAllTasksOnHold() {
         ArrayList<TaskModel> onHoldTasks = new ArrayList<>();
         String query = "SELECT *" +
-                " FROM " + TABLE_NAME +
-                " WHERE " + COLUMN_IS_FINISHED + " = 0" +
-                " ORDER BY " + COLUMN_EXPIRATION_DATE + " ASC";
+                " FROM " + TASK_TABLE_NAME +
+                " WHERE " + TASK_COLUMN_IS_FINISHED + " = 0" +
+                " ORDER BY " + TASK_COLUMN_EXPIRATION_DATE + " ASC";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor;
 
@@ -125,9 +146,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public ArrayList<TaskModel> getAllFinishedTasks() {
         ArrayList<TaskModel> finishedTasks = new ArrayList<>();
         String query = "SELECT *" +
-                " FROM " + TABLE_NAME +
-                " WHERE " + COLUMN_IS_FINISHED + " = 1" +
-                " ORDER BY " + COLUMN_FINISHED_DATE + " DESC";
+                " FROM " + TASK_TABLE_NAME +
+                " WHERE " + TASK_COLUMN_IS_FINISHED + " = 1" +
+                " ORDER BY " + TASK_COLUMN_FINISHED_DATE + " DESC";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor;
 
@@ -147,5 +168,28 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         }
 
         return finishedTasks;
+    }
+
+    public ArrayList<CategoryModel> getAllCategories() {
+        ArrayList<CategoryModel> categories = new ArrayList<>();
+        String query = "SELECT *" +
+                " FROM " + CATEGORY_TABLE_NAME +
+                " ORDER BY " + CATEGORY_COLUMN_NAME + " ASC";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor;
+
+        if (db != null) {
+            cursor = db.rawQuery(query, null);
+            while (cursor.moveToNext()) {
+                CategoryModel category = new CategoryModel(
+                        cursor.getLong(0),
+                        cursor.getString(1)
+                );
+                categories.add(category);
+            }
+            cursor.close();
+        }
+
+        return categories;
     }
 }
