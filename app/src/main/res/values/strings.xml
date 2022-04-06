@@ -20,4 +20,6 @@
     <string name="menuItemDeleteAllText">Excluir tudo</string>
     <string name="menuItemUndoTaskText">Desfazer</string>
     <string name="menuItemUndoAllText">Desfazer tudo</string>
+    <string name="categoryTextHint">Categoria</string>
+    <string name="btnCreateText">Criar</string>
 </resources>
