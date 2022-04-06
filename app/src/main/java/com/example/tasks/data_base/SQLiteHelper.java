@@ -22,7 +22,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String TASK_COLUMN_ID = "id";
     private static final String TASK_COLUMN_NAME = "name";
     private static final String TASK_COLUMN_EXPIRATION_DATE = "expiration_date";
-    private static final String TASK_COLUMN_IS_FINISHED = "is_finished";
     private static final String TASK_COLUMN_FINISHED_DATE = "finished_date";
     private static final String CATEGORY_TABLE_NAME = "tb_category";
     private static final String CATEGORY_COLUMN_NAME = "name";
@@ -37,7 +36,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 + TASK_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + TASK_COLUMN_NAME + " TEXT,"
                 + TASK_COLUMN_EXPIRATION_DATE + " DATE,"
-                + TASK_COLUMN_IS_FINISHED + " INTEGER,"
                 + TASK_COLUMN_FINISHED_DATE + " DATE" + ")");
         db.execSQL(createTbTaskQuery);
 
@@ -60,7 +58,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
         cv.put(TASK_COLUMN_NAME, task.getName());
         cv.put(TASK_COLUMN_EXPIRATION_DATE, task.getExpirationDate());
-        cv.put(TASK_COLUMN_IS_FINISHED, task.getIsFinished());
         cv.put(TASK_COLUMN_FINISHED_DATE, task.getFinishedDate());
 
         result = db.insert(TASK_TABLE_NAME, null, cv);
@@ -85,7 +82,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
         cv.put(TASK_COLUMN_NAME, task.getName());
         cv.put(TASK_COLUMN_EXPIRATION_DATE, task.getExpirationDate());
-        cv.put(TASK_COLUMN_IS_FINISHED, task.getIsFinished());
         cv.put(TASK_COLUMN_FINISHED_DATE, task.getFinishedDate());
 
         result = db.update(TASK_TABLE_NAME, cv, "id=" + task.getId(), null);
@@ -106,19 +102,19 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     public void deleteOnHoldTasks() {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DELETE FROM " + TASK_TABLE_NAME + " WHERE " + TASK_COLUMN_IS_FINISHED + " = 0");
+        db.execSQL("DELETE FROM " + TASK_TABLE_NAME + " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NULL");
     }
 
     public void deleteFinishedTasks() {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DELETE FROM " + TASK_TABLE_NAME + " WHERE " + TASK_COLUMN_IS_FINISHED + " = 1");
+        db.execSQL("DELETE FROM " + TASK_TABLE_NAME + " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NOT NULL");
     }
 
     public ArrayList<TaskModel> getAllTasksOnHold() {
         ArrayList<TaskModel> onHoldTasks = new ArrayList<>();
         String query = "SELECT *" +
                 " FROM " + TASK_TABLE_NAME +
-                " WHERE " + TASK_COLUMN_IS_FINISHED + " = 0" +
+                " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NULL" +
                 " ORDER BY " + TASK_COLUMN_EXPIRATION_DATE + " ASC";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor;
@@ -130,8 +126,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                         cursor.getLong(0),
                         cursor.getString(1),
                         cursor.getString(2),
-                        cursor.getInt(3),
-                        cursor.getString(4)
+                        cursor.getString(3)
                 );
                 onHoldTasks.add(task);
             }
@@ -145,7 +140,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         ArrayList<TaskModel> finishedTasks = new ArrayList<>();
         String query = "SELECT *" +
                 " FROM " + TASK_TABLE_NAME +
-                " WHERE " + TASK_COLUMN_IS_FINISHED + " = 1" +
+                " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NOT NULL" +
                 " ORDER BY " + TASK_COLUMN_FINISHED_DATE + " DESC";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor;
@@ -157,8 +152,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                         cursor.getLong(0),
                         cursor.getString(1),
                         cursor.getString(2),
-                        cursor.getInt(3),
-                        cursor.getString(4)
+                        cursor.getString(3)
                 );
                 finishedTasks.add(task);
             }

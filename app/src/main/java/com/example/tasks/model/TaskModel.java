@@ -9,7 +9,6 @@ public class TaskModel implements Parcelable {
 
     private long id;
     private String name;
-    private int isFinished = 0;
     private String finishedDate;
     private String expirationDate;
 
@@ -18,17 +17,15 @@ public class TaskModel implements Parcelable {
         this.expirationDate = expirationDate;
     }
 
-    public TaskModel(String name, String expirationDate, int isFinished, String finishedDate) {
+    public TaskModel(String name, String expirationDate, String finishedDate) {
         this.name = name;
-        setIsFinished(isFinished);
-        this.finishedDate = finishedDate;
         this.expirationDate = expirationDate;
+        this.finishedDate = finishedDate;
     }
 
-    public TaskModel(long id, String name, String expirationDate, int isFinished, String finishedDate) {
+    public TaskModel(long id, String name, String expirationDate, String finishedDate) {
         this.id = id;
         this.name = name;
-        setIsFinished(isFinished);
         this.finishedDate = finishedDate;
         this.expirationDate = expirationDate;
     }
@@ -36,7 +33,6 @@ public class TaskModel implements Parcelable {
     protected TaskModel(@NonNull Parcel in) {
         id = in.readLong();
         name = in.readString();
-        isFinished = in.readInt();
         finishedDate = in.readString();
         expirationDate = in.readString();
     }
@@ -62,23 +58,20 @@ public class TaskModel implements Parcelable {
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeLong(id);
         dest.writeString(name);
-        dest.writeInt(isFinished);
         dest.writeString(finishedDate);
         dest.writeString(expirationDate);
     }
 
     public void finish(String finishedDate) {
-        this.isFinished = 1;
         this.finishedDate = finishedDate;
     }
 
     public void undo() {
-        this.isFinished = 0;
         this.finishedDate = null;
     }
 
     public boolean isFinished() {
-        return isFinished == 1;
+        return finishedDate != null;
     }
 
     public long getId() {
@@ -103,14 +96,6 @@ public class TaskModel implements Parcelable {
 
     public void setExpirationDate(String expirationDate) {
         this.expirationDate = expirationDate;
-    }
-
-    public int getIsFinished() {
-        return isFinished;
-    }
-
-    public void setIsFinished(int isFinished) {
-        if (isFinished == 1) this.isFinished = 1;
     }
 
     public String getFinishedDate() {
