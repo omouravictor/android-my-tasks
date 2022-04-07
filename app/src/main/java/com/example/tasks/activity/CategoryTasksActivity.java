@@ -21,6 +21,7 @@ import com.example.tasks.adapter.ViewPagerAdapter;
 import com.example.tasks.data_base.SQLiteHelper;
 import com.example.tasks.fragment.FinishedTasksFragment;
 import com.example.tasks.fragment.TasksOnHoldFragment;
+import com.example.tasks.model.CategoryModel;
 import com.example.tasks.model.TaskModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 
 public class CategoryTasksActivity extends AppCompatActivity {
 
+    CategoryModel category;
     TasksOnHoldFragment fragOnHoldTasks;
     FinishedTasksFragment fragFinishedTasks;
     AlertDialog.Builder builder;
@@ -46,6 +48,10 @@ public class CategoryTasksActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        category = getIntent().getParcelableExtra("category");
+        setTitle(category.getName());
+
         getSupportActionBar().setElevation(0);
         setContentView(R.layout.activity_category_tasks);
         init();
