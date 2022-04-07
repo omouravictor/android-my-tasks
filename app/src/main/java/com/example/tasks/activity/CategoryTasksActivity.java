@@ -47,7 +47,7 @@ public class CategoryTasksActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setElevation(0);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_category_tasks);
         init();
     }
 

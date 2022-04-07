@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startAdapterAndRecyclerView() {
-        adaptCategory = new CategoryAdapter(myDB.getAllCategories());
+        adaptCategory = new CategoryAdapter(this, actResult, myDB.getAllCategories());
 
         rvCategory = findViewById(R.id.rvCategory);
         rvCategory.setLayoutManager(new LinearLayoutManager(this));
