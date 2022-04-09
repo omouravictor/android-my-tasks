@@ -16,10 +16,11 @@ import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.tasks.R;
-import com.example.tasks.adapter.TaskAdapter;
+import com.example.tasks.adapter.FinishedTaskAdapter;
+import com.example.tasks.adapter.OnHoldTaskAdapter;
 import com.example.tasks.adapter.ViewPagerAdapter;
 import com.example.tasks.data_base.SQLiteHelper;
-import com.example.tasks.fragment.FinishedTasksFragment;
+import com.example.tasks.fragment.FinishedTaskFragment;
 import com.example.tasks.fragment.TasksOnHoldFragment;
 import com.example.tasks.model.CategoryModel;
 import com.example.tasks.model.TaskModel;
@@ -33,16 +34,14 @@ public class CategoryTasksActivity extends AppCompatActivity {
 
     CategoryModel category;
     TasksOnHoldFragment fragOnHoldTasks;
-    FinishedTasksFragment fragFinishedTasks;
+    FinishedTaskFragment fragFinishedTasks;
     AlertDialog.Builder builder;
     ActivityResultLauncher<Intent> actResult;
-    TaskAdapter adaptOnHoldTasks, adaptFinishedTasks;
+    OnHoldTaskAdapter adaptOnHoldTasks;
+    FinishedTaskAdapter adaptFinishedTasks;
     SQLiteHelper myDB;
     TabLayout tabLayout;
     ViewPager2 vp2;
-    ViewPagerAdapter vpAdapter;
-    FloatingActionButton btnAdd;
-    Intent addActivityIntent;
     Menu myMenu;
 
     @Override
@@ -68,9 +67,11 @@ public class CategoryTasksActivity extends AppCompatActivity {
     }
 
     public void startBtnAdd() {
-        btnAdd = findViewById(R.id.btnAdd);
-        addActivityIntent = new Intent(this, CreateTaskActivity.class);
-        btnAdd.setOnClickListener(v -> actResult.launch(addActivityIntent));
+        FloatingActionButton btnAdd = findViewById(R.id.btnAdd);
+        Intent createTaskActivity = new Intent(this, CreateTaskActivity.class);
+
+        createTaskActivity.putExtra("category", category);
+        btnAdd.setOnClickListener(v -> actResult.launch(createTaskActivity));
     }
 
     public void startActivityResult() {
@@ -95,14 +96,14 @@ public class CategoryTasksActivity extends AppCompatActivity {
     }
 
     public void startAdaptersAndFragments() {
-        adaptOnHoldTasks = new TaskAdapter(this, actResult, myDB, myDB.getAllTasksOnHold());
-        adaptFinishedTasks = new TaskAdapter(this, actResult, myDB, myDB.getAllFinishedTasks());
+        adaptOnHoldTasks = new OnHoldTaskAdapter(this, actResult, myDB, myDB.getAllTasksOnHold());
+        adaptFinishedTasks = new FinishedTaskAdapter(this, actResult, myDB, myDB.getAllFinishedTasks());
 
         adaptOnHoldTasks.setFinishedTasksAdapter(adaptFinishedTasks);
         adaptFinishedTasks.setOnHoldTaskAdapter(adaptOnHoldTasks);
 
         fragOnHoldTasks = new TasksOnHoldFragment(adaptOnHoldTasks);
-        fragFinishedTasks = new FinishedTasksFragment(adaptFinishedTasks);
+        fragFinishedTasks = new FinishedTaskFragment(adaptFinishedTasks);
     }
 
     public void startTabLayout() {
@@ -125,7 +126,7 @@ public class CategoryTasksActivity extends AppCompatActivity {
     }
 
     public void startViewPager() {
-        vpAdapter = new ViewPagerAdapter(this);
+        ViewPagerAdapter vpAdapter = new ViewPagerAdapter(this);
         vp2 = findViewById(R.id.viewPager2);
 
         vpAdapter.addFragment(fragOnHoldTasks, "Em espera");

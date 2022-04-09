@@ -10,15 +10,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tasks.R;
-import com.example.tasks.adapter.TaskAdapter;
+import com.example.tasks.adapter.OnHoldTaskAdapter;
 
 public class TasksOnHoldFragment extends Fragment {
 
     View view;
     RecyclerView recyclerView;
-    TaskAdapter adapter;
+    OnHoldTaskAdapter adapter;
 
-    public TasksOnHoldFragment(TaskAdapter adapter) {
+    public TasksOnHoldFragment(OnHoldTaskAdapter adapter) {
         this.adapter = adapter;
     }
 

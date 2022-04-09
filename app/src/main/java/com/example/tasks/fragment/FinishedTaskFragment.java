@@ -10,15 +10,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tasks.R;
-import com.example.tasks.adapter.TaskAdapter;
+import com.example.tasks.adapter.FinishedTaskAdapter;
 
-public class FinishedTasksFragment extends Fragment {
+public class FinishedTaskFragment extends Fragment {
 
     View view;
     RecyclerView recyclerView;
-    TaskAdapter adapter;
+    FinishedTaskAdapter adapter;
 
-    public FinishedTasksFragment(TaskAdapter adapter) {
+    public FinishedTaskFragment(FinishedTaskAdapter adapter) {
         this.adapter = adapter;
     }
 
