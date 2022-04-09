@@ -50,11 +50,14 @@ public class CreateTaskActivity extends AppCompatActivity {
             } else {
                 btnAdd.setClickable(false);
 
+                long result;
                 Intent intent = new Intent();
                 SQLiteHelper myDB = new SQLiteHelper(this);
                 LocalDate date = LocalDate.parse(etExpirationTime.getText().toString(), dtf);
-                task = new TaskModel(etTask.getText().toString(), date.toString());
-                long result = myDB.createTask(task);
+                String categoryName = getIntent().getStringExtra("categoryName");
+
+                task = new TaskModel(etTask.getText().toString(), date.toString(), categoryName);
+                result = myDB.createTask(task);
 
                 startResultAction(result, intent);
             }
@@ -68,7 +71,7 @@ public class CreateTaskActivity extends AppCompatActivity {
             task.setId(result);
             intent.putExtra("task", task);
             setResult(1, intent);
-            finish();
         }
+        finish();
     }
 }
