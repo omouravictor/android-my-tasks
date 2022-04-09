@@ -20,6 +20,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String TASK_TABLE_NAME = "tb_task";
     private static final String TASK_COLUMN_ID = "id";
+    private static final String TASK_COLUMN_CATEGORY_NAME = "category_name";
     private static final String TASK_COLUMN_NAME = "name";
     private static final String TASK_COLUMN_EXPIRATION_DATE = "expiration_date";
     private static final String TASK_COLUMN_FINISHED_DATE = "finished_date";
@@ -32,16 +33,23 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(@NonNull SQLiteDatabase db) {
-        String createTbTaskQuery = ("CREATE TABLE " + TASK_TABLE_NAME + "("
-                + TASK_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + TASK_COLUMN_NAME + " TEXT,"
-                + TASK_COLUMN_EXPIRATION_DATE + " DATE,"
-                + TASK_COLUMN_FINISHED_DATE + " DATE" + ")");
-        db.execSQL(createTbTaskQuery);
+        db.execSQL(
+                "CREATE TABLE " + CATEGORY_TABLE_NAME + "("
+                        + CATEGORY_COLUMN_NAME + " TEXT PRIMARY KEY"
+                        + ")"
+        );
 
-        String createTbCategoryQuery = ("CREATE TABLE " + CATEGORY_TABLE_NAME + "("
-                + CATEGORY_COLUMN_NAME + " TEXT PRIMARY KEY" + ")");
-        db.execSQL(createTbCategoryQuery);
+        db.execSQL(
+                "CREATE TABLE " + TASK_TABLE_NAME + "("
+                        + TASK_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                        + TASK_COLUMN_NAME + " TEXT NOT NULL,"
+                        + TASK_COLUMN_EXPIRATION_DATE + " DATE NOT NULL,"
+                        + TASK_COLUMN_FINISHED_DATE + " DATE,"
+                        + TASK_COLUMN_CATEGORY_NAME + " TEXT NOT NULL,"
+                        + "FOREIGN KEY (" + TASK_COLUMN_CATEGORY_NAME + ") " +
+                        "REFERENCES " + CATEGORY_TABLE_NAME + " (" + CATEGORY_COLUMN_NAME + ")"
+                        + ")"
+        );
     }
 
     @Override
@@ -59,6 +67,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         cv.put(TASK_COLUMN_NAME, task.getName());
         cv.put(TASK_COLUMN_EXPIRATION_DATE, task.getExpirationDate());
         cv.put(TASK_COLUMN_FINISHED_DATE, task.getFinishedDate());
+        cv.put(TASK_COLUMN_CATEGORY_NAME, task.getCategoryName());
 
         result = db.insert(TASK_TABLE_NAME, null, cv);
         return result;
@@ -83,6 +92,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         cv.put(TASK_COLUMN_NAME, task.getName());
         cv.put(TASK_COLUMN_EXPIRATION_DATE, task.getExpirationDate());
         cv.put(TASK_COLUMN_FINISHED_DATE, task.getFinishedDate());
+        cv.put(TASK_COLUMN_CATEGORY_NAME, task.getCategoryName());
 
         result = db.update(TASK_TABLE_NAME, cv, "id=" + task.getId(), null);
         return result;
@@ -126,7 +136,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                         cursor.getLong(0),
                         cursor.getString(1),
                         cursor.getString(2),
-                        cursor.getString(3)
+                        cursor.getString(3),
+                        cursor.getString(4)
                 );
                 onHoldTasks.add(task);
             }
@@ -152,7 +163,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                         cursor.getLong(0),
                         cursor.getString(1),
                         cursor.getString(2),
-                        cursor.getString(3)
+                        cursor.getString(3),
+                        cursor.getString(4)
                 );
                 finishedTasks.add(task);
             }
