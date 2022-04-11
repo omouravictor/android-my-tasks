@@ -70,7 +70,7 @@ public class CategoryTasksActivity extends AppCompatActivity {
         FloatingActionButton btnAdd = findViewById(R.id.btnAdd);
         Intent createTaskActivity = new Intent(this, CreateTaskActivity.class);
 
-        createTaskActivity.putExtra("category", category);
+        createTaskActivity.putExtra("categoryName", category.getName());
         btnAdd.setOnClickListener(v -> actResult.launch(createTaskActivity));
     }
 
@@ -96,8 +96,8 @@ public class CategoryTasksActivity extends AppCompatActivity {
     }
 
     public void startAdaptersAndFragments() {
-        adaptOnHoldTasks = new OnHoldTaskAdapter(this, actResult, myDB, myDB.getAllTasksOnHold());
-        adaptFinishedTasks = new FinishedTaskAdapter(this, actResult, myDB, myDB.getAllFinishedTasks());
+        adaptOnHoldTasks = new OnHoldTaskAdapter(this, actResult, myDB, category.getName());
+        adaptFinishedTasks = new FinishedTaskAdapter(this, actResult, myDB, category.getName());
 
         adaptOnHoldTasks.setFinishedTasksAdapter(adaptFinishedTasks);
         adaptFinishedTasks.setOnHoldTaskAdapter(adaptOnHoldTasks);

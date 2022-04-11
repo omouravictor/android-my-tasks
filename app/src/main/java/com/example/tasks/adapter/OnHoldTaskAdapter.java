@@ -48,12 +48,12 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
             Context context,
             ActivityResultLauncher<Intent> actResult,
             SQLiteHelper myDB,
-            ArrayList<TaskModel> allTasks
+            String categoryName
     ) {
         this.context = context;
         this.actResult = actResult;
         this.myDB = myDB;
-        this.allTasks = allTasks;
+        this.allTasks = myDB.getAllOnHoldTasksOfCategory(categoryName);
         currentDate = LocalDate.now();
         updateActivityIntent = new Intent(context, UpdateTaskActivity.class);
         builder = new AlertDialog.Builder(context);

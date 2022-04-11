@@ -50,12 +50,12 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
             Context context,
             ActivityResultLauncher<Intent> actResult,
             SQLiteHelper myDB,
-            ArrayList<TaskModel> allTasks
+            String categoryName
     ) {
         this.context = context;
         this.actResult = actResult;
         this.myDB = myDB;
-        this.allTasks = allTasks;
+        this.allTasks = myDB.getAllFinishedTasksOfCategory(categoryName);
         myFunctions = new MyFunctions();
         currentDate = LocalDate.now();
         updateActivityIntent = new Intent(context, UpdateTaskActivity.class);
