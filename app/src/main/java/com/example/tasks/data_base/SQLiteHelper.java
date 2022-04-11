@@ -126,38 +126,44 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 " FROM " + TASK_TABLE_NAME +
                 " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NULL" +
                 " ORDER BY " + TASK_COLUMN_EXPIRATION_DATE + " ASC";
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor;
 
-        if (db != null) {
-            cursor = db.rawQuery(query, null);
-            while (cursor.moveToNext()) {
-                TaskModel task = new TaskModel(
-                        cursor.getLong(0),
-                        cursor.getString(1),
-                        cursor.getString(2),
-                        cursor.getString(3),
-                        cursor.getString(4)
-                );
-                onHoldTasks.add(task);
-            }
-            cursor.close();
-        }
-
-        return onHoldTasks;
+        return getTasks(query);
     }
 
     public ArrayList<TaskModel> getAllFinishedTasks() {
-        ArrayList<TaskModel> finishedTasks = new ArrayList<>();
         String query = "SELECT *" +
                 " FROM " + TASK_TABLE_NAME +
                 " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NOT NULL" +
                 " ORDER BY " + TASK_COLUMN_FINISHED_DATE + " DESC";
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor;
 
+        return getTasks(query);
+    }
+
+    public ArrayList<TaskModel> getAllOnHoldTasksOfCategory(String categoryName) {
+        String query = "SELECT *" +
+                " FROM " + TASK_TABLE_NAME +
+                " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NULL" + " AND " +
+                TASK_COLUMN_CATEGORY_NAME + " = '" + categoryName + "'" +
+                " ORDER BY " + TASK_COLUMN_EXPIRATION_DATE + " ASC";
+
+        return getTasks(query);
+    }
+
+    public ArrayList<TaskModel> getAllFinishedTasksOfCategory(String categoryName) {
+        String query = "SELECT *" +
+                " FROM " + TASK_TABLE_NAME +
+                " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NOT NULL" + " AND " +
+                TASK_COLUMN_CATEGORY_NAME + " = '" + categoryName + "'" +
+                " ORDER BY " + TASK_COLUMN_EXPIRATION_DATE + " ASC";
+
+        return getTasks(query);
+    }
+
+    ArrayList<TaskModel> getTasks(String query) {
+        ArrayList<TaskModel> tasks = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
         if (db != null) {
-            cursor = db.rawQuery(query, null);
+            Cursor cursor = db.rawQuery(query, null);
             while (cursor.moveToNext()) {
                 TaskModel task = new TaskModel(
                         cursor.getLong(0),
@@ -166,12 +172,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                         cursor.getString(3),
                         cursor.getString(4)
                 );
-                finishedTasks.add(task);
+                tasks.add(task);
             }
             cursor.close();
         }
-
-        return finishedTasks;
+        return tasks;
     }
 
     public ArrayList<CategoryModel> getAllCategories() {
