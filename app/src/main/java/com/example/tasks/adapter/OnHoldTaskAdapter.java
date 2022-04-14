@@ -160,7 +160,6 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
         int days = Days.daysBetween(currentDate, LocalDate.parse(task.getExpirationDate())).getDays();
         if (days > 0) {
             int white = context.getColor(R.color.white);
-            holder.itemView.setBackgroundColor(white);
             holder.background = white;
             holder.tvExpirationTime.setText(context.getString(R.string.expirationDaysText, days));
         } else if (days == 0) {
