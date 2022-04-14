@@ -170,8 +170,8 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
 
         holder.itemView.setBackgroundColor(green);
         holder.background = green;
-        holder.tvExpirationTime.setText(context.getString(R.string.finishedText, dateFormatText));
-        holder.btnComplete.setText(R.string.btnUndoText);
+        holder.tvExpirationTime.setText(context.getString(R.string.finished_in, dateFormatText));
+        holder.btnComplete.setText(R.string.undo);
     }
 
     public void prepareFinishedTasks(TaskModel task, TaskViewHolder holder) {

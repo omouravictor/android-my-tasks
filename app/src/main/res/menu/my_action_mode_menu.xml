@@ -6,27 +6,27 @@
         android:id="@+id/finish"
         android:icon="@drawable/ic_white_check"
         android:orderInCategory="0"
-        android:title="@string/menuItemFinishText"
+        android:title="@string/finish"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/backToOnHold"
         android:icon="@drawable/ic_white_undo_task"
         android:orderInCategory="1"
-        android:title="@string/menuItemUndoTaskText"
+        android:title="@string/undo"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/delete"
         android:icon="@drawable/ic_white_delete"
         android:orderInCategory="2"
-        android:title="@string/menuItemDeleteText"
+        android:title="@string/delete"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/selectAll"
         android:icon="@drawable/ic_white_select_all"
         android:orderInCategory="3"
-        android:title="@string/menuItemSelectAllText"
+        android:title="@string/select_all"
         app:showAsAction="ifRoom" />
 
 </menu>

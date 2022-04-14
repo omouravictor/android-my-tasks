@@ -15,7 +15,7 @@
         android:layout_marginStart="25dp"
         android:layout_marginTop="25dp"
         android:layout_marginEnd="25dp"
-        android:hint="@string/taskTextHint"
+        android:hint="@string/task"
         app:counterEnabled="true"
         app:counterMaxLength="50"
         app:endIconMode="clear_text"
@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
         android:layout_marginEnd="25dp"
-        android:hint="@string/slaDateTextHint"
+        android:hint="@string/expires_in"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/layTaskAdd">
@@ -78,7 +78,7 @@
                 android:id="@+id/btnClearAdd"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="@string/btnClearText"
+                android:text="@string/clear"
                 android:textAllCaps="false"
                 android:textSize="15sp" />
         </LinearLayout>
@@ -94,7 +94,7 @@
                 android:id="@+id/btnAdd"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="@string/btnAddText"
+                android:text="@string/add"
                 android:textAllCaps="false"
                 android:textSize="15sp" />
 

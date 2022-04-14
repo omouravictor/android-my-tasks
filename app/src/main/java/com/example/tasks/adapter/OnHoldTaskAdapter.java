@@ -161,17 +161,17 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
         if (days > 0) {
             int white = context.getColor(R.color.white);
             holder.background = white;
-            holder.tvExpirationTime.setText(context.getString(R.string.expirationDaysText, days));
+            holder.tvExpirationTime.setText(context.getString(R.string.expires_in_x_days, days));
         } else if (days == 0) {
             int yellow = context.getColor(R.color.lightYellow);
             holder.itemView.setBackgroundColor(yellow);
             holder.background = yellow;
-            holder.tvExpirationTime.setText(R.string.expirationTodayText);
+            holder.tvExpirationTime.setText(R.string.expires_today);
         } else {
             int red = context.getColor(R.color.lightRed);
             holder.itemView.setBackgroundColor(red);
             holder.background = red;
-            holder.tvExpirationTime.setText(R.string.expiredText);
+            holder.tvExpirationTime.setText(R.string.expired);
         }
     }
 
