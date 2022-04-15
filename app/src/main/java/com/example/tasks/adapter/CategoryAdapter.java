@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tasks.R;
 import com.example.tasks.activity.CategoryTasksActivity;
+import com.example.tasks.data_base.SQLiteHelper;
 import com.example.tasks.model.CategoryModel;
 
 import java.util.ArrayList;
@@ -21,31 +22,36 @@ import java.util.ArrayList;
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
 
     private final Context context;
+    private final SQLiteHelper myDB;
     private final ActivityResultLauncher<Intent> actResult;
     private final ArrayList<CategoryModel> allCategories;
     private final Intent categoryTasksActivityIntent;
 
     public CategoryAdapter(
             Context context,
-            ActivityResultLauncher<Intent> actResult,
-            ArrayList<CategoryModel> allCategories
-    ) {
+            SQLiteHelper myDB,
+            ActivityResultLauncher<Intent> actResult
+            ) {
         this.context = context;
+        this.myDB = myDB;
         this.actResult = actResult;
-        this.allCategories = allCategories;
+        this.allCategories = myDB.getAllCategories();
         categoryTasksActivityIntent = new Intent(context, CategoryTasksActivity.class);
     }
 
     public static class CategoryViewHolder extends RecyclerView.ViewHolder {
-        TextView tvCategoryName;
-        Button btnComplete;
+        TextView tvCategoryName, tvQtdOnHoldTask, tvQtdFinishedTask;
+        ImageButton imbEditCategory, imbDeleteCategory;
         boolean isSelected;
         int background;
 
         public CategoryViewHolder(@NonNull View itemView) {
             super(itemView);
             tvCategoryName = itemView.findViewById(R.id.tvCategoryName);
-            btnComplete = itemView.findViewById(R.id.btnFinish);
+            tvQtdOnHoldTask = itemView.findViewById(R.id.tvQtdOnHoldTask);
+            tvQtdFinishedTask = itemView.findViewById(R.id.tvQtdFinishedTask);
+            imbEditCategory = itemView.findViewById(R.id.imbEditCategory);
+            imbDeleteCategory = itemView.findViewById(R.id.imbDeleteCategory);
         }
     }
 
@@ -62,6 +68,9 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         CategoryModel category = allCategories.get(position);
 
         holder.tvCategoryName.setText(category.getName());
+
+        holder.tvQtdOnHoldTask.setText("Em espera: " + myDB.getQtdOnHoldTask(category.getName()));
+        holder.tvQtdFinishedTask.setText("Concluídas: " + myDB.getQtdFinishedTask(category.getName()));
 
         holder.itemView.setOnClickListener(v -> {
             categoryTasksActivityIntent.putExtra("category", category);

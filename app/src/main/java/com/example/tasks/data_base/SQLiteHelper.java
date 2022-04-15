@@ -1,5 +1,6 @@
 package com.example.tasks.data_base;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -26,6 +27,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String TASK_COLUMN_FINISHED_DATE = "finished_date";
     private static final String CATEGORY_TABLE_NAME = "tb_category";
     private static final String CATEGORY_COLUMN_NAME = "name";
+    private final SQLiteDatabase db = this.getReadableDatabase();
+    private String query;
 
     public SQLiteHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -60,7 +63,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 
     public long createTask(@NonNull TaskModel task) {
-        SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         long result;
 
@@ -74,7 +76,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 
     public long createCategory(@NonNull CategoryModel category) {
-        SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         long result;
 
@@ -85,7 +86,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 
     public long updateTask(@NonNull TaskModel task) {
-        SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         long result;
 
@@ -99,7 +99,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<TaskModel> deleteSelectedTasks(ArrayList<TaskModel> selectedTasks) {
-        SQLiteDatabase db = this.getWritableDatabase();
         ArrayList<TaskModel> deletedTasks = new ArrayList<>();
 
         for (TaskModel task : selectedTasks) {
@@ -111,18 +110,15 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 
     public void deleteOnHoldTasks() {
-        SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM " + TASK_TABLE_NAME + " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NULL");
     }
 
     public void deleteFinishedTasks() {
-        SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM " + TASK_TABLE_NAME + " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NOT NULL");
     }
 
     public ArrayList<TaskModel> getAllTasksOnHold() {
-        ArrayList<TaskModel> onHoldTasks = new ArrayList<>();
-        String query = "SELECT *" +
+        query = "SELECT *" +
                 " FROM " + TASK_TABLE_NAME +
                 " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NULL" +
                 " ORDER BY " + TASK_COLUMN_EXPIRATION_DATE + " ASC";
@@ -131,7 +127,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<TaskModel> getAllFinishedTasks() {
-        String query = "SELECT *" +
+        query = "SELECT *" +
                 " FROM " + TASK_TABLE_NAME +
                 " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NOT NULL" +
                 " ORDER BY " + TASK_COLUMN_FINISHED_DATE + " DESC";
@@ -140,7 +136,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<TaskModel> getAllOnHoldTasksOfCategory(String categoryName) {
-        String query = "SELECT *" +
+        query = "SELECT *" +
                 " FROM " + TASK_TABLE_NAME +
                 " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NULL" + " AND " +
                 TASK_COLUMN_CATEGORY_NAME + " = '" + categoryName + "'" +
@@ -150,7 +146,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<TaskModel> getAllFinishedTasksOfCategory(String categoryName) {
-        String query = "SELECT *" +
+        query = "SELECT *" +
                 " FROM " + TASK_TABLE_NAME +
                 " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NOT NULL" + " AND " +
                 TASK_COLUMN_CATEGORY_NAME + " = '" + categoryName + "'" +
@@ -159,9 +155,28 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return getTasks(query);
     }
 
+    @SuppressLint("Recycle")
+    public int getQtdFinishedTask(String categoryName) {
+        query = "SELECT " + TASK_COLUMN_ID +
+                " FROM " + TASK_TABLE_NAME +
+                " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NOT NULL" + " AND " +
+                TASK_COLUMN_CATEGORY_NAME + " = '" + categoryName + "'";
+
+        return db.rawQuery(query, null).getCount();
+    }
+
+    @SuppressLint("Recycle")
+    public int getQtdOnHoldTask(String categoryName) {
+        query = "SELECT " + TASK_COLUMN_ID +
+                " FROM " + TASK_TABLE_NAME +
+                " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NULL" + " AND " +
+                TASK_COLUMN_CATEGORY_NAME + " = '" + categoryName + "'";
+
+       return db.rawQuery(query, null).getCount();
+    }
+
     ArrayList<TaskModel> getTasks(String query) {
         ArrayList<TaskModel> tasks = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
         if (db != null) {
             Cursor cursor = db.rawQuery(query, null);
             while (cursor.moveToNext()) {
@@ -181,10 +196,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     public ArrayList<CategoryModel> getAllCategories() {
         ArrayList<CategoryModel> categories = new ArrayList<>();
-        String query = "SELECT *" +
+        query = "SELECT *" +
                 " FROM " + CATEGORY_TABLE_NAME +
                 " ORDER BY " + CATEGORY_COLUMN_NAME + " ASC";
-        SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor;
 
         if (db != null) {
