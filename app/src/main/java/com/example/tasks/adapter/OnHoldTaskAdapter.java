@@ -1,6 +1,6 @@
 package com.example.tasks.adapter;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.view.ActionMode;
@@ -32,7 +32,8 @@ import java.util.Comparator;
 public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.TaskViewHolder> {
     private FinishedTaskAdapter adaptFinishedTasks;
     private ActionMode myActionMode;
-    private final Context context;
+    private final int catAdaptPosition;
+    private final Activity activity;
     private final ActivityResultLauncher<Intent> actResult;
     private final SQLiteHelper myDB;
     private final ArrayList<TaskModel> allTasks;
@@ -45,18 +46,20 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
     private final ArrayList<TaskViewHolder> allHolders;
 
     public OnHoldTaskAdapter(
-            Context context,
+            Activity activity,
+            int catAdaptPosition,
             ActivityResultLauncher<Intent> actResult,
             SQLiteHelper myDB,
             String categoryName
     ) {
-        this.context = context;
+        this.activity = activity;
+        this.catAdaptPosition = catAdaptPosition;
         this.actResult = actResult;
         this.myDB = myDB;
         this.allTasks = myDB.getAllOnHoldTasksOfCategory(categoryName);
         currentDate = LocalDate.now();
-        updateActivityIntent = new Intent(context, UpdateTaskActivity.class);
-        builder = new AlertDialog.Builder(context);
+        updateActivityIntent = new Intent(activity, UpdateTaskActivity.class);
+        builder = new AlertDialog.Builder(activity);
         builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
         selectedTasks = new ArrayList<>();
         selectedHolders = new ArrayList<>();
@@ -159,16 +162,15 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
     public void setOnHoldTaskLayout(TaskModel task, TaskViewHolder holder) {
         int days = Days.daysBetween(currentDate, LocalDate.parse(task.getExpirationDate())).getDays();
         if (days > 0) {
-            int white = context.getColor(R.color.white);
-            holder.background = white;
-            holder.tvExpirationTime.setText(context.getString(R.string.expires_in_x_days, days));
+            holder.background = activity.getColor(R.color.white);
+            holder.tvExpirationTime.setText(activity.getString(R.string.expires_in_x_days, days));
         } else if (days == 0) {
-            int yellow = context.getColor(R.color.lightYellow);
+            int yellow = activity.getColor(R.color.lightYellow);
             holder.itemView.setBackgroundColor(yellow);
             holder.background = yellow;
             holder.tvExpirationTime.setText(R.string.expires_today);
         } else {
-            int red = context.getColor(R.color.lightRed);
+            int red = activity.getColor(R.color.lightRed);
             holder.itemView.setBackgroundColor(red);
             holder.background = red;
             holder.tvExpirationTime.setText(R.string.expired);
@@ -257,9 +259,13 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
         builder.setMessage("Exluir " + selectedTasks.size() + " tarefa(s) selecionada(s)?");
         builder.setPositiveButton("Sim", (dialog, which) -> {
             ArrayList<TaskModel> deletedTasks = myDB.deleteSelectedTasks(selectedTasks);
+
             deleteSelectedTasks(deletedTasks);
+            activity.setResult(3, new Intent().putExtra("position", catAdaptPosition));
+
             if (deletedTasks.size() != selectedTasks.size())
-                Toast.makeText(context, "Falha ao deletar alguma(s) tarefa(s).", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, "Falha ao deletar alguma(s) tarefa(s).", Toast.LENGTH_SHORT).show();
+
             putHoldersAsNotSelected(selectedHolders);
             myActionMode.finish();
             dialog.dismiss();

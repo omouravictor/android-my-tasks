@@ -62,6 +62,9 @@ public class MainActivity extends AppCompatActivity {
                         CategoryModel category = result.getData().getParcelableExtra("category");
                         if (resultCode == 1) {
                             adaptCategory.addCategory(category);
+                        } else if (resultCode == 3) {
+                            int position = result.getData().getIntExtra("position", -1);
+                            adaptCategory.refreshCategory(position);
                         }
                     }
                 }

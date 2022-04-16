@@ -1,5 +1,6 @@
 package com.example.tasks.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -34,7 +35,8 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
     private OnHoldTaskAdapter adaptOnHoldTasks;
     private ActionMode myActionMode;
     private final MyFunctions myFunctions;
-    private final Context context;
+    private final int catAdapPosition;
+    private final Activity activity;
     private final ActivityResultLauncher<Intent> actResult;
     private final SQLiteHelper myDB;
     private final ArrayList<TaskModel> allTasks;
@@ -47,19 +49,21 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
     private final ArrayList<TaskViewHolder> allHolders;
 
     public FinishedTaskAdapter(
-            Context context,
+            Activity activity,
+            int catAdapPosition,
             ActivityResultLauncher<Intent> actResult,
             SQLiteHelper myDB,
             String categoryName
     ) {
-        this.context = context;
+        this.activity = activity;
+        this.catAdapPosition = catAdapPosition;
         this.actResult = actResult;
         this.myDB = myDB;
         this.allTasks = myDB.getAllFinishedTasksOfCategory(categoryName);
         myFunctions = new MyFunctions();
         currentDate = LocalDate.now();
-        updateActivityIntent = new Intent(context, UpdateTaskActivity.class);
-        builder = new AlertDialog.Builder(context);
+        updateActivityIntent = new Intent(activity, UpdateTaskActivity.class);
+        builder = new AlertDialog.Builder(activity);
         builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
         selectedTasks = new ArrayList<>();
         selectedHolders = new ArrayList<>();
@@ -160,7 +164,7 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
     }
 
     public void setFinishedTaskLayout(TaskModel task, TaskViewHolder holder) {
-        int green = context.getColor(R.color.green);
+        int green = activity.getColor(R.color.green);
         LocalDate finishedDate = LocalDate.parse(task.getFinishedDate());
         String dateFormatText = myFunctions.getDateText(
                 finishedDate.getDayOfMonth(),
@@ -170,7 +174,7 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
 
         holder.itemView.setBackgroundColor(green);
         holder.background = green;
-        holder.tvExpirationTime.setText(context.getString(R.string.finished_in, dateFormatText));
+        holder.tvExpirationTime.setText(activity.getString(R.string.finished_in, dateFormatText));
         holder.btnComplete.setText(R.string.undo);
     }
 
@@ -257,9 +261,13 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
         builder.setMessage("Exluir " + selectedTasks.size() + " tarefa(s) selecionada(s)?");
         builder.setPositiveButton("Sim", (dialog, which) -> {
             ArrayList<TaskModel> deletedTasks = myDB.deleteSelectedTasks(selectedTasks);
+
             deleteSelectedTasks(deletedTasks);
+            activity.setResult(3, new Intent().putExtra("position", catAdapPosition));
+
             if (deletedTasks.size() != selectedTasks.size())
-                Toast.makeText(context, "Falha ao deletar alguma(s) tarefa(s).", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, "Falha ao deletar alguma(s) tarefa(s).", Toast.LENGTH_SHORT).show();
+
             putHoldersAsNotSelected(selectedHolders);
             myActionMode.finish();
             dialog.dismiss();

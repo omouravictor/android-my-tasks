@@ -31,6 +31,7 @@ import java.util.ArrayList;
 
 public class CategoryTasksActivity extends AppCompatActivity {
 
+    int catAdapPosition;
     String categoryName;
     TasksOnHoldFragment fragOnHoldTasks;
     FinishedTaskFragment fragFinishedTasks;
@@ -47,7 +48,9 @@ public class CategoryTasksActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        catAdapPosition = getIntent().getIntExtra("position", -1);
         categoryName = getIntent().getStringExtra("categoryName");
+
         setTitle(categoryName);
 
         getSupportActionBar().setElevation(0);
@@ -95,8 +98,8 @@ public class CategoryTasksActivity extends AppCompatActivity {
     }
 
     public void startAdaptersAndFragments() {
-        adaptOnHoldTasks = new OnHoldTaskAdapter(this, actResult, myDB, categoryName);
-        adaptFinishedTasks = new FinishedTaskAdapter(this, actResult, myDB, categoryName);
+        adaptOnHoldTasks = new OnHoldTaskAdapter(this, catAdapPosition, actResult, myDB, categoryName);
+        adaptFinishedTasks = new FinishedTaskAdapter(this, catAdapPosition, actResult, myDB, categoryName);
 
         adaptOnHoldTasks.setFinishedTasksAdapter(adaptFinishedTasks);
         adaptFinishedTasks.setOnHoldTaskAdapter(adaptOnHoldTasks);

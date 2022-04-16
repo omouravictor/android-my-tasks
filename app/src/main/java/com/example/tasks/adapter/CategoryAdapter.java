@@ -21,7 +21,6 @@ import java.util.ArrayList;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
 
-    private final Context context;
     private final SQLiteHelper myDB;
     private final ActivityResultLauncher<Intent> actResult;
     private final ArrayList<CategoryModel> allCategories;
@@ -31,8 +30,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
             Context context,
             SQLiteHelper myDB,
             ActivityResultLauncher<Intent> actResult
-            ) {
-        this.context = context;
+    ) {
         this.myDB = myDB;
         this.actResult = actResult;
         this.allCategories = myDB.getAllCategories();
@@ -74,6 +72,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
         holder.itemView.setOnClickListener(v -> {
             categoryTasksActivityIntent.putExtra("categoryName", category.getName());
+            categoryTasksActivityIntent.putExtra("position", holder.getAdapterPosition());
             actResult.launch(categoryTasksActivityIntent);
         });
     }
@@ -86,5 +85,9 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     public void addCategory(CategoryModel category) {
         allCategories.add(category);
         notifyItemInserted(getItemCount());
+    }
+
+    public void refreshCategory(int position) {
+        notifyItemChanged(position);
     }
 }
