@@ -73,7 +73,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         holder.tvQtdFinishedTask.setText("Concluídas: " + myDB.getQtdFinishedTask(category.getName()));
 
         holder.itemView.setOnClickListener(v -> {
-            categoryTasksActivityIntent.putExtra("category", category);
+            categoryTasksActivityIntent.putExtra("categoryName", category.getName());
             actResult.launch(categoryTasksActivityIntent);
         });
     }

@@ -22,7 +22,6 @@ import com.example.tasks.adapter.ViewPagerAdapter;
 import com.example.tasks.data_base.SQLiteHelper;
 import com.example.tasks.fragment.FinishedTaskFragment;
 import com.example.tasks.fragment.TasksOnHoldFragment;
-import com.example.tasks.model.CategoryModel;
 import com.example.tasks.model.TaskModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
@@ -32,7 +31,7 @@ import java.util.ArrayList;
 
 public class CategoryTasksActivity extends AppCompatActivity {
 
-    CategoryModel category;
+    String categoryName;
     TasksOnHoldFragment fragOnHoldTasks;
     FinishedTaskFragment fragFinishedTasks;
     AlertDialog.Builder builder;
@@ -48,8 +47,8 @@ public class CategoryTasksActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        category = getIntent().getParcelableExtra("category");
-        setTitle(category.getName());
+        categoryName = getIntent().getStringExtra("categoryName");
+        setTitle(categoryName);
 
         getSupportActionBar().setElevation(0);
         setContentView(R.layout.activity_category_tasks);
@@ -70,7 +69,7 @@ public class CategoryTasksActivity extends AppCompatActivity {
         FloatingActionButton btnAdd = findViewById(R.id.btnAdd);
         Intent createTaskActivity = new Intent(this, CreateTaskActivity.class);
 
-        createTaskActivity.putExtra("categoryName", category.getName());
+        createTaskActivity.putExtra("categoryName", categoryName);
         btnAdd.setOnClickListener(v -> actResult.launch(createTaskActivity));
     }
 
@@ -96,8 +95,8 @@ public class CategoryTasksActivity extends AppCompatActivity {
     }
 
     public void startAdaptersAndFragments() {
-        adaptOnHoldTasks = new OnHoldTaskAdapter(this, actResult, myDB, category.getName());
-        adaptFinishedTasks = new FinishedTaskAdapter(this, actResult, myDB, category.getName());
+        adaptOnHoldTasks = new OnHoldTaskAdapter(this, actResult, myDB, categoryName);
+        adaptFinishedTasks = new FinishedTaskAdapter(this, actResult, myDB, categoryName);
 
         adaptOnHoldTasks.setFinishedTasksAdapter(adaptFinishedTasks);
         adaptFinishedTasks.setOnHoldTaskAdapter(adaptOnHoldTasks);
