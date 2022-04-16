@@ -335,12 +335,14 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
     public void addTask(TaskModel task) {
         allTasks.add(task);
         notifyItemInserted(getItemCount());
+        activity.setResult(3, new Intent().putExtra("position", catAdaptPosition));
     }
 
     public void addAllTasks(ArrayList<TaskModel> tasks) {
         int positionStart = getItemCount();
         allTasks.addAll(tasks);
         notifyItemRangeInserted(positionStart, tasks.size());
+        activity.setResult(3, new Intent().putExtra("position", catAdaptPosition));
     }
 
     public void updateTask(int position, TaskModel task) {
