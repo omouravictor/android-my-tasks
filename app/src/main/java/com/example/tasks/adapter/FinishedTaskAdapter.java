@@ -1,7 +1,6 @@
 package com.example.tasks.adapter;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.view.ActionMode;
@@ -35,7 +34,7 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
     private OnHoldTaskAdapter adaptOnHoldTasks;
     private ActionMode myActionMode;
     private final MyFunctions myFunctions;
-    private final int catAdapPosition;
+    private final int catAdaptPosition;
     private final Activity activity;
     private final ActivityResultLauncher<Intent> actResult;
     private final SQLiteHelper myDB;
@@ -56,7 +55,7 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
             String categoryName
     ) {
         this.activity = activity;
-        this.catAdapPosition = catAdapPosition;
+        this.catAdaptPosition = catAdapPosition;
         this.actResult = actResult;
         this.myDB = myDB;
         this.allTasks = myDB.getAllFinishedTasksOfCategory(categoryName);
@@ -263,7 +262,7 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
             ArrayList<TaskModel> deletedTasks = myDB.deleteSelectedTasks(selectedTasks);
 
             deleteSelectedTasks(deletedTasks);
-            activity.setResult(3, new Intent().putExtra("position", catAdapPosition));
+            activity.setResult(3, new Intent().putExtra("position", catAdaptPosition));
 
             if (deletedTasks.size() != selectedTasks.size())
                 Toast.makeText(activity, "Falha ao deletar alguma(s) tarefa(s).", Toast.LENGTH_SHORT).show();
@@ -337,12 +336,14 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
     public void addTask(TaskModel task) {
         allTasks.add(task);
         notifyItemInserted(getItemCount());
+        activity.setResult(3, new Intent().putExtra("position", catAdaptPosition));
     }
 
     public void addAllTasks(ArrayList<TaskModel> tasks) {
         int positionStart = getItemCount();
         allTasks.addAll(tasks);
         notifyItemRangeInserted(positionStart, tasks.size());
+        activity.setResult(3, new Intent().putExtra("position", catAdaptPosition));
     }
 
     public void updateTask(int position, TaskModel task) {
