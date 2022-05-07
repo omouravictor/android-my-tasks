@@ -40,6 +40,12 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 
     @Override
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
+        db.execSQL("PRAGMA foreign_keys = ON;");
+    }
+
+    @Override
     public void onCreate(@NonNull SQLiteDatabase db) {
         db.execSQL(
                 "CREATE TABLE " + CATEGORY_TABLE_NAME + "("
@@ -57,8 +63,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                         + TASK_COLUMN_EXPIRATION_DATE + " DATE NOT NULL,"
                         + TASK_COLUMN_FINISHED_DATE + " DATE,"
                         + TASK_COLUMN_CATEGORY_ID + " INTEGER NOT NULL,"
-                        + "FOREIGN KEY (" + TASK_COLUMN_CATEGORY_ID + ") " +
-                        "REFERENCES " + CATEGORY_TABLE_NAME + " (" + CATEGORY_COLUMN_ID + ")"
+
+                        + " FOREIGN KEY (" + TASK_COLUMN_CATEGORY_ID + ")"
+                        + " REFERENCES " + CATEGORY_TABLE_NAME + "(" + CATEGORY_COLUMN_ID + ")"
+                        + " ON DELETE CASCADE"
                         + ")"
         );
     }
