@@ -50,24 +50,23 @@ public class CreateTaskActivity extends AppCompatActivity {
             } else {
                 btnAdd.setClickable(false);
 
-                long result;
                 Intent intent = new Intent();
                 SQLiteHelper myDB = new SQLiteHelper(this);
                 LocalDate date = LocalDate.parse(etExpirationTime.getText().toString(), dtf);
                 long categoryId = getIntent().getLongExtra("categoryId", -1);
                 task = new TaskModel(etTask.getText().toString(), date.toString(), categoryId);
-                result = myDB.createTask(task);
+                long resultID = myDB.createTask(task);
 
-                startResultAction(result, intent);
+                startResultAction(resultID, intent);
             }
         });
     }
 
-    void startResultAction(long result, Intent intent) {
-        if (result == -1) {
+    void startResultAction(long resultID, Intent intent) {
+        if (resultID == -1) {
             Toast.makeText(this, "Falha ao criar a tarefa.", Toast.LENGTH_SHORT).show();
         } else {
-            task.setId(result);
+            task.setId(resultID);
             intent.putExtra("task", task);
             setResult(1, intent);
             finish();

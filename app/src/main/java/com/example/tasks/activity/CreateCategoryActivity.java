@@ -45,18 +45,18 @@ public class CreateCategoryActivity extends AppCompatActivity {
                 Intent intent = new Intent();
                 SQLiteHelper myDB = new SQLiteHelper(this);
                 category = new CategoryModel(etCategory.getText().toString());
-                long result = myDB.createCategory(category);
+                long resultID = myDB.createCategory(category);
 
-                startResultAction(result, intent);
+                startResultAction(resultID, intent);
             }
         });
     }
 
-    void startResultAction(long result, Intent intent) {
-        if (result == -1) {
+    void startResultAction(long resultID, Intent intent) {
+        if (resultID == -1) {
             Toast.makeText(this, "Falha ao criar a categoria.", Toast.LENGTH_SHORT).show();
         } else {
-            category.setId(result);
+            category.setId(resultID);
             intent.putExtra("category", category);
             setResult(1, intent);
             finish();
