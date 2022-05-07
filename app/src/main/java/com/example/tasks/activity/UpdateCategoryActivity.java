@@ -13,52 +13,74 @@ import com.example.tasks.R;
 import com.example.tasks.data_base.SQLiteHelper;
 import com.example.tasks.model.CategoryModel;
 
-public class CreateCategoryActivity extends AppCompatActivity {
+import org.joda.time.LocalDate;
+
+public class UpdateCategoryActivity extends AppCompatActivity {
 
     MyFunctions myFunctions;
     EditText etCategory;
-    Button btnClear, btnCreate;
+    Button btnClear, btnUpdate;
     CategoryModel category;
+    int position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_category);
+        setContentView(R.layout.activity_update_category);
         init();
     }
 
     void init() {
         myFunctions = new MyFunctions();
-        etCategory = findViewById(R.id.etCategoryName);
-        btnClear = findViewById(R.id.btnClearCategory);
-        btnCreate = findViewById(R.id.btnCreateCategory);
+        etCategory = findViewById(R.id.etUpdateCategoryName);
+        btnClear = findViewById(R.id.btnClearUpdateCategory);
+        btnUpdate = findViewById(R.id.btnUpdateCategory);
 
         myFunctions.setActionDoneButton(etCategory);
         myFunctions.setOnClickCategoryBtnClearListener(btnClear, etCategory);
 
-        btnCreate.setOnClickListener(v -> {
-            if (etCategory.getText().toString().equals("")) {
+        btnUpdate.setOnClickListener(v -> {
+            if (etCategory.getText().length() == 0) {
                 Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
             } else {
-                btnCreate.setClickable(false);
+                btnUpdate.setClickable(false);
 
                 Intent intent = new Intent();
                 SQLiteHelper myDB = new SQLiteHelper(this);
-                category = new CategoryModel(etCategory.getText().toString());
-                long result = myDB.createCategory(category);
+                long result;
 
+                updateCategory();
+                result = myDB.updateCategory(category);
                 startResultAction(result, intent);
             }
         });
+
+        getIntentData();
+        setIntentData();
+    }
+
+    public void updateCategory() {
+        category.setName(etCategory.getText().toString());
+    }
+
+    public void getIntentData() {
+        Intent intent = getIntent();
+
+        position = intent.getIntExtra("position", 0);
+        category = intent.getParcelableExtra("category");
+    }
+
+    public void setIntentData() {
+        etCategory.setText(category.getName());
     }
 
     void startResultAction(long result, Intent intent) {
         if (result == -1) {
-            Toast.makeText(this, "Falha ao criar a categoria.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Falha ao atualizar a categoria.", Toast.LENGTH_SHORT).show();
         } else {
-            category.setId(result);
             intent.putExtra("category", category);
-            setResult(1, intent);
+            intent.putExtra("position", position);
+            setResult(2, intent);
             finish();
         }
     }

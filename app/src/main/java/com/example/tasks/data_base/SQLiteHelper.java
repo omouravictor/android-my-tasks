@@ -19,16 +19,21 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "MyTask.db";
     private static final int DATABASE_VERSION = 1;
+
     private static final String TASK_TABLE_NAME = "tb_task";
     private static final String TASK_COLUMN_ID = "id";
-    private static final String TASK_COLUMN_CATEGORY_NAME = "category_name";
     private static final String TASK_COLUMN_NAME = "name";
+    private static final String TASK_COLUMN_DESCRIPTION = "description";
+    private static final String TASK_COLUMN_STATUS = "status";
     private static final String TASK_COLUMN_EXPIRATION_DATE = "expiration_date";
     private static final String TASK_COLUMN_FINISHED_DATE = "finished_date";
+    private static final String TASK_COLUMN_CATEGORY_ID = "category_id";
+
     private static final String CATEGORY_TABLE_NAME = "tb_category";
     private static final String CATEGORY_COLUMN_NAME = "name";
+    private static final String CATEGORY_COLUMN_ID = "id";
+
     private final SQLiteDatabase db = this.getReadableDatabase();
-    private String query;
 
     public SQLiteHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -38,7 +43,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public void onCreate(@NonNull SQLiteDatabase db) {
         db.execSQL(
                 "CREATE TABLE " + CATEGORY_TABLE_NAME + "("
-                        + CATEGORY_COLUMN_NAME + " TEXT PRIMARY KEY"
+                        + CATEGORY_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                        + CATEGORY_COLUMN_NAME + " TEXT NOT NULL"
                         + ")"
         );
 
@@ -46,11 +52,13 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 "CREATE TABLE " + TASK_TABLE_NAME + "("
                         + TASK_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                         + TASK_COLUMN_NAME + " TEXT NOT NULL,"
+                        + TASK_COLUMN_DESCRIPTION + " TEXT,"
+                        + TASK_COLUMN_STATUS + " INTEGER NOT NULL,"
                         + TASK_COLUMN_EXPIRATION_DATE + " DATE NOT NULL,"
                         + TASK_COLUMN_FINISHED_DATE + " DATE,"
-                        + TASK_COLUMN_CATEGORY_NAME + " TEXT NOT NULL,"
-                        + "FOREIGN KEY (" + TASK_COLUMN_CATEGORY_NAME + ") " +
-                        "REFERENCES " + CATEGORY_TABLE_NAME + " (" + CATEGORY_COLUMN_NAME + ")"
+                        + TASK_COLUMN_CATEGORY_ID + " INTEGER NOT NULL,"
+                        + "FOREIGN KEY (" + TASK_COLUMN_CATEGORY_ID + ") " +
+                        "REFERENCES " + CATEGORY_TABLE_NAME + " (" + CATEGORY_COLUMN_ID + ")"
                         + ")"
         );
     }
@@ -63,39 +71,48 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 
     public long createTask(@NonNull TaskModel task) {
-        ContentValues cv = new ContentValues();
-        long result;
+        ContentValues cv = getTaskContentValues(task);
 
-        cv.put(TASK_COLUMN_NAME, task.getName());
-        cv.put(TASK_COLUMN_EXPIRATION_DATE, task.getExpirationDate());
-        cv.put(TASK_COLUMN_FINISHED_DATE, task.getFinishedDate());
-        cv.put(TASK_COLUMN_CATEGORY_NAME, task.getCategoryName());
-
-        result = db.insert(TASK_TABLE_NAME, null, cv);
-        return result;
+        return db.insert(TASK_TABLE_NAME, null, cv);
     }
 
     public long createCategory(@NonNull CategoryModel category) {
-        ContentValues cv = new ContentValues();
-        long result;
+        ContentValues cv = getCategoryContentValues(category);
 
-        cv.put(CATEGORY_COLUMN_NAME, category.getName());
-
-        result = db.insert(CATEGORY_TABLE_NAME, null, cv);
-        return result;
+        return db.insert(CATEGORY_TABLE_NAME, null, cv);
     }
 
     public long updateTask(@NonNull TaskModel task) {
+        ContentValues cv = getTaskContentValues(task);
+
+        return db.update(TASK_TABLE_NAME, cv, "id=" + task.getId(), null);
+    }
+
+    public long updateCategory(CategoryModel category) {
+        ContentValues cv = getCategoryContentValues(category);
+
+        return db.update(CATEGORY_TABLE_NAME, cv, "id=" + category.getId(), null);
+    }
+
+    ContentValues getTaskContentValues(TaskModel task) {
         ContentValues cv = new ContentValues();
-        long result;
 
         cv.put(TASK_COLUMN_NAME, task.getName());
+        cv.put(TASK_COLUMN_DESCRIPTION, task.getDescription());
+        cv.put(TASK_COLUMN_STATUS, task.getStatus());
         cv.put(TASK_COLUMN_EXPIRATION_DATE, task.getExpirationDate());
         cv.put(TASK_COLUMN_FINISHED_DATE, task.getFinishedDate());
-        cv.put(TASK_COLUMN_CATEGORY_NAME, task.getCategoryName());
+        cv.put(TASK_COLUMN_CATEGORY_ID, task.getCategoryId());
 
-        result = db.update(TASK_TABLE_NAME, cv, "id=" + task.getId(), null);
-        return result;
+        return cv;
+    }
+
+    ContentValues getCategoryContentValues(CategoryModel category) {
+        ContentValues cv = new ContentValues();
+
+        cv.put(CATEGORY_COLUMN_NAME, category.getName());
+
+        return cv;
     }
 
     public ArrayList<TaskModel> deleteSelectedTasks(ArrayList<TaskModel> selectedTasks) {
@@ -109,6 +126,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return deletedTasks;
     }
 
+    public long deleteCategory(CategoryModel category) {
+        return db.delete(CATEGORY_TABLE_NAME, "id=" + category.getId(), null);
+    }
+
     public void deleteOnHoldTasks() {
         db.execSQL("DELETE FROM " + TASK_TABLE_NAME + " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NULL");
     }
@@ -118,64 +139,72 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<TaskModel> getAllTasksOnHold() {
-        query = "SELECT *" +
+        String query = "SELECT *" +
                 " FROM " + TASK_TABLE_NAME +
                 " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NULL" +
                 " ORDER BY " + TASK_COLUMN_EXPIRATION_DATE + " ASC";
 
-        return getTasks(query);
+        return getTasksFromDb(query);
     }
 
     public ArrayList<TaskModel> getAllFinishedTasks() {
-        query = "SELECT *" +
+        String query = "SELECT *" +
                 " FROM " + TASK_TABLE_NAME +
                 " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NOT NULL" +
                 " ORDER BY " + TASK_COLUMN_FINISHED_DATE + " DESC";
 
-        return getTasks(query);
+        return getTasksFromDb(query);
     }
 
-    public ArrayList<TaskModel> getAllOnHoldTasksOfCategory(String categoryName) {
-        query = "SELECT *" +
+    public ArrayList<TaskModel> getAllOnHoldTasksOfCategory(long categoryId) {
+        String query = "SELECT *" +
                 " FROM " + TASK_TABLE_NAME +
                 " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NULL" + " AND " +
-                TASK_COLUMN_CATEGORY_NAME + " = '" + categoryName + "'" +
+                TASK_COLUMN_CATEGORY_ID + " = '" + categoryId + "'" +
                 " ORDER BY " + TASK_COLUMN_EXPIRATION_DATE + " ASC";
 
-        return getTasks(query);
+        return getTasksFromDb(query);
     }
 
-    public ArrayList<TaskModel> getAllFinishedTasksOfCategory(String categoryName) {
-        query = "SELECT *" +
+    public ArrayList<TaskModel> getAllFinishedTasksOfCategory(long categoryId) {
+        String query = "SELECT *" +
                 " FROM " + TASK_TABLE_NAME +
                 " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NOT NULL" + " AND " +
-                TASK_COLUMN_CATEGORY_NAME + " = '" + categoryName + "'" +
+                TASK_COLUMN_CATEGORY_ID + " = '" + categoryId + "'" +
                 " ORDER BY " + TASK_COLUMN_EXPIRATION_DATE + " ASC";
 
-        return getTasks(query);
+        return getTasksFromDb(query);
     }
 
     @SuppressLint("Recycle")
-    public int getQtdFinishedTask(String categoryName) {
-        query = "SELECT " + TASK_COLUMN_ID +
+    public int getQtdFinishedTask(long categoryId) {
+        String query = "SELECT " + TASK_COLUMN_ID +
                 " FROM " + TASK_TABLE_NAME +
                 " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NOT NULL" + " AND " +
-                TASK_COLUMN_CATEGORY_NAME + " = '" + categoryName + "'";
+                TASK_COLUMN_CATEGORY_ID + " = '" + categoryId + "'";
 
         return db.rawQuery(query, null).getCount();
     }
 
     @SuppressLint("Recycle")
-    public int getQtdOnHoldTask(String categoryName) {
-        query = "SELECT " + TASK_COLUMN_ID +
+    public int getQtdOnHoldTask(long categoryId) {
+        String query = "SELECT " + TASK_COLUMN_ID +
                 " FROM " + TASK_TABLE_NAME +
                 " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NULL" + " AND " +
-                TASK_COLUMN_CATEGORY_NAME + " = '" + categoryName + "'";
+                TASK_COLUMN_CATEGORY_ID + " = '" + categoryId + "'";
 
-       return db.rawQuery(query, null).getCount();
+        return db.rawQuery(query, null).getCount();
     }
 
-    ArrayList<TaskModel> getTasks(String query) {
+    public ArrayList<CategoryModel> getAllCategories() {
+        String query = "SELECT *" +
+                " FROM " + CATEGORY_TABLE_NAME +
+                " ORDER BY " + CATEGORY_COLUMN_NAME + " ASC";
+
+        return getCategoriesFromDb(query);
+    }
+
+    ArrayList<TaskModel> getTasksFromDb(String query) {
         ArrayList<TaskModel> tasks = new ArrayList<>();
         if (db != null) {
             Cursor cursor = db.rawQuery(query, null);
@@ -184,8 +213,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                         cursor.getLong(0),
                         cursor.getString(1),
                         cursor.getString(2),
-                        cursor.getString(3),
-                        cursor.getString(4)
+                        cursor.getInt(3),
+                        cursor.getString(4),
+                        cursor.getString(5),
+                        cursor.getLong(6)
                 );
                 tasks.add(task);
             }
@@ -194,24 +225,20 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return tasks;
     }
 
-    public ArrayList<CategoryModel> getAllCategories() {
+    ArrayList<CategoryModel> getCategoriesFromDb(String query) {
         ArrayList<CategoryModel> categories = new ArrayList<>();
-        query = "SELECT *" +
-                " FROM " + CATEGORY_TABLE_NAME +
-                " ORDER BY " + CATEGORY_COLUMN_NAME + " ASC";
-        Cursor cursor;
 
         if (db != null) {
-            cursor = db.rawQuery(query, null);
+            Cursor cursor = db.rawQuery(query, null);
             while (cursor.moveToNext()) {
                 CategoryModel category = new CategoryModel(
-                        cursor.getString(0)
+                        cursor.getLong(0),
+                        cursor.getString(1)
                 );
                 categories.add(category);
             }
             cursor.close();
         }
-
         return categories;
     }
 }

@@ -49,16 +49,16 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
 
     public FinishedTaskAdapter(
             Activity activity,
-            int catAdapPosition,
+            int catAdaptPosition,
             ActivityResultLauncher<Intent> actResult,
             SQLiteHelper myDB,
-            String categoryName
+            long categoryId
     ) {
         this.activity = activity;
-        this.catAdaptPosition = catAdapPosition;
+        this.catAdaptPosition = catAdaptPosition;
         this.actResult = actResult;
         this.myDB = myDB;
-        this.allTasks = myDB.getAllFinishedTasksOfCategory(categoryName);
+        this.allTasks = myDB.getAllFinishedTasksOfCategory(categoryId);
         myFunctions = new MyFunctions();
         currentDate = LocalDate.now();
         updateActivityIntent = new Intent(activity, UpdateTaskActivity.class);

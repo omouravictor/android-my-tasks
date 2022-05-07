@@ -7,13 +7,20 @@ import androidx.annotation.NonNull;
 
 public class CategoryModel implements Parcelable {
 
+    private long id;
     private String name;
+
+    public CategoryModel(long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     public CategoryModel(String name) {
         this.name = name;
     }
 
     protected CategoryModel(@NonNull Parcel in) {
+        id = in.readLong();
         name = in.readString();
     }
 
@@ -36,6 +43,7 @@ public class CategoryModel implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeLong(id);
         dest.writeString(name);
     }
 
@@ -47,4 +55,11 @@ public class CategoryModel implements Parcelable {
         this.name = name;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 }

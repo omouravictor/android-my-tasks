@@ -9,30 +9,44 @@ public class TaskModel implements Parcelable {
 
     private long id;
     private String name;
+    private String description;
+    private int status;
     private String expirationDate;
     private String finishedDate;
-    private String categoryName;
+    private long categoryId;
 
-    public TaskModel(String name, String expirationDate, String categoryName) {
+    public TaskModel(String name, String expirationDate, long categoryId) {
         this.name = name;
         this.expirationDate = expirationDate;
-        this.categoryName = categoryName;
+        this.categoryId = categoryId;
     }
 
-    public TaskModel(long id, String name, String expirationDate, String finishedDate, String categoryName) {
+    public TaskModel(
+            long id,
+            String name,
+            String description,
+            int status,
+            String expirationDate,
+            String finishedDate,
+            long categoryId
+    ) {
         this.id = id;
         this.name = name;
+        this.description = description;
+        this.status = status;
         this.expirationDate = expirationDate;
         this.finishedDate = finishedDate;
-        this.categoryName = categoryName;
+        this.categoryId = categoryId;
     }
 
     protected TaskModel(@NonNull Parcel in) {
         id = in.readLong();
         name = in.readString();
+        description = in.readString();
+        status = in.readInt();
         expirationDate = in.readString();
         finishedDate = in.readString();
-        categoryName = in.readString();
+        categoryId = in.readLong();
     }
 
     public static final Creator<TaskModel> CREATOR = new Creator<TaskModel>() {
@@ -56,9 +70,11 @@ public class TaskModel implements Parcelable {
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeLong(id);
         dest.writeString(name);
+        dest.writeString(description);
+        dest.writeInt(status);
         dest.writeString(expirationDate);
         dest.writeString(finishedDate);
-        dest.writeString(categoryName);
+        dest.writeLong(categoryId);
     }
 
     public void finish(String finishedDate) {
@@ -89,6 +105,22 @@ public class TaskModel implements Parcelable {
         this.name = name;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
     public String getExpirationDate() {
         return expirationDate;
     }
@@ -105,11 +137,11 @@ public class TaskModel implements Parcelable {
         this.finishedDate = finishedDate;
     }
 
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
+    public long getCategoryId() {
+        return categoryId;
     }
 
-    public String getCategoryName() {
-        return categoryName;
+    public void setCategoryId(long categoryId) {
+        this.categoryId = categoryId;
     }
 }

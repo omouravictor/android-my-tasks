@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tasks.R;
 import com.example.tasks.activity.CategoryTasksActivity;
+import com.example.tasks.activity.UpdateCategoryActivity;
+import com.example.tasks.activity.UpdateTaskActivity;
 import com.example.tasks.data_base.SQLiteHelper;
 import com.example.tasks.model.CategoryModel;
 
@@ -25,6 +27,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     private final ActivityResultLauncher<Intent> actResult;
     private final ArrayList<CategoryModel> allCategories;
     private final Intent categoryTasksActivityIntent;
+    private final Intent updateActivityIntent;
 
     public CategoryAdapter(
             Context context,
@@ -35,6 +38,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         this.actResult = actResult;
         this.allCategories = myDB.getAllCategories();
         categoryTasksActivityIntent = new Intent(context, CategoryTasksActivity.class);
+        updateActivityIntent = new Intent(context, UpdateCategoryActivity.class);
     }
 
     public static class CategoryViewHolder extends RecyclerView.ViewHolder {
@@ -67,11 +71,23 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
         holder.tvCategoryName.setText(category.getName());
 
-        holder.tvQtdOnHoldTask.setText("Em espera: " + myDB.getQtdOnHoldTask(category.getName()));
-        holder.tvQtdFinishedTask.setText("Concluídas: " + myDB.getQtdFinishedTask(category.getName()));
+        holder.tvQtdOnHoldTask.setText("Em espera: " + myDB.getQtdOnHoldTask(category.getId()));
+        holder.tvQtdFinishedTask.setText("Concluídas: " + myDB.getQtdFinishedTask(category.getId()));
+
+        holder.imbEditCategory.setOnClickListener(v -> {
+            updateActivityIntent.putExtra("category", category);
+            updateActivityIntent.putExtra("position", holder.getAdapterPosition());
+            actResult.launch(updateActivityIntent);
+        });
+
+        holder.imbDeleteCategory.setOnClickListener(v -> {
+            myDB.deleteCategory(category);
+            allCategories.remove(position);
+            notifyItemRemoved(position);
+        });
 
         holder.itemView.setOnClickListener(v -> {
-            categoryTasksActivityIntent.putExtra("categoryName", category.getName());
+            categoryTasksActivityIntent.putExtra("category", category);
             categoryTasksActivityIntent.putExtra("position", holder.getAdapterPosition());
             actResult.launch(categoryTasksActivityIntent);
         });
@@ -85,6 +101,11 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     public void addCategory(CategoryModel category) {
         allCategories.add(category);
         notifyItemInserted(getItemCount());
+    }
+
+    public void updateCategory(int position, CategoryModel category) {
+        allCategories.set(position, category);
+        notifyItemChanged(position);
     }
 
     public void refreshCategory(int position) {

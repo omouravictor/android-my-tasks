@@ -14,6 +14,9 @@
             android:name=".activity.UpdateTaskActivity"
             android:exported="true" />
         <activity
+            android:name=".activity.UpdateCategoryActivity"
+            android:exported="true" />
+        <activity
             android:name=".activity.CreateTaskActivity"
             android:exported="true"
             android:windowSoftInputMode="stateVisible" />
