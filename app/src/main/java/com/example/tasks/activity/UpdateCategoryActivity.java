@@ -21,7 +21,7 @@ public class UpdateCategoryActivity extends AppCompatActivity {
     EditText etCategory;
     Button btnClear, btnUpdate;
     CategoryModel category;
-    int position;
+    int catAdaptPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +66,8 @@ public class UpdateCategoryActivity extends AppCompatActivity {
     public void getIntentData() {
         Intent intent = getIntent();
 
-        position = intent.getIntExtra("position", 0);
         category = intent.getParcelableExtra("category");
+        catAdaptPosition = intent.getIntExtra("catAdaptPosition", 0);
     }
 
     public void setIntentData() {
@@ -79,7 +79,7 @@ public class UpdateCategoryActivity extends AppCompatActivity {
             Toast.makeText(this, "Falha ao atualizar a categoria.", Toast.LENGTH_SHORT).show();
         } else {
             intent.putExtra("category", category);
-            intent.putExtra("position", position);
+            intent.putExtra("catAdaptPosition", catAdaptPosition);
             setResult(2, intent);
             finish();
         }

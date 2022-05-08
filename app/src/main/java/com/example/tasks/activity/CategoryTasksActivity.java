@@ -49,8 +49,8 @@ public class CategoryTasksActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        catAdaptPosition = getIntent().getIntExtra("position", -1);
         category = getIntent().getParcelableExtra("category");
+        catAdaptPosition = getIntent().getIntExtra("catAdaptPosition", -1);
 
         setTitle(category.getName());
 
@@ -87,10 +87,10 @@ public class CategoryTasksActivity extends AppCompatActivity {
                         if (resultCode == 1) {
                             adaptOnHoldTasks.addTask(task);
                         } else if (resultCode == 2) {
-                            int position = result.getData().getIntExtra("position", 0);
+                            int position = result.getData().getIntExtra("taskAdaptPosition", 0);
                             adaptOnHoldTasks.updateTask(position, task);
                         } else if (resultCode == 3) {
-                            int position = result.getData().getIntExtra("position", 0);
+                            int position = result.getData().getIntExtra("taskAdaptPosition", 0);
                             adaptFinishedTasks.updateTask(position, task);
                         }
                     }

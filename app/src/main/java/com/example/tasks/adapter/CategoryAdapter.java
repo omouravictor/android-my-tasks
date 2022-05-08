@@ -29,8 +29,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     private final SQLiteHelper myDB;
     private final ActivityResultLauncher<Intent> actResult;
     private final ArrayList<CategoryModel> allCategories;
-    private final Intent categoryTasksActivityIntent;
-    private final Intent updateActivityIntent;
+    private final Intent categoryTasksActIntent;
+    private final Intent updateActIntent;
 
     public CategoryAdapter(
             Context context,
@@ -40,8 +40,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         this.myDB = myDB;
         this.actResult = actResult;
         this.allCategories = myDB.getAllCategories();
-        categoryTasksActivityIntent = new Intent(context, CategoryTasksActivity.class);
-        updateActivityIntent = new Intent(context, UpdateCategoryActivity.class);
+        categoryTasksActIntent = new Intent(context, CategoryTasksActivity.class);
+        updateActIntent = new Intent(context, UpdateCategoryActivity.class);
     }
 
     public static class CategoryViewHolder extends RecyclerView.ViewHolder {
@@ -78,9 +78,9 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         holder.tvQtdFinishedTask.setText("Concluídas: " + myDB.getQtdFinishedTask(category.getId()));
 
         holder.imbEditCategory.setOnClickListener(v -> {
-            updateActivityIntent.putExtra("category", category);
-            updateActivityIntent.putExtra("position", holder.getAdapterPosition());
-            actResult.launch(updateActivityIntent);
+            updateActIntent.putExtra("category", category);
+            updateActIntent.putExtra("catAdaptPosition", holder.getAdapterPosition());
+            actResult.launch(updateActIntent);
         });
 
         holder.imbDeleteCategory.setOnClickListener(v -> {
@@ -103,9 +103,9 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         });
 
         holder.itemView.setOnClickListener(v -> {
-            categoryTasksActivityIntent.putExtra("category", category);
-            categoryTasksActivityIntent.putExtra("position", holder.getAdapterPosition());
-            actResult.launch(categoryTasksActivityIntent);
+            categoryTasksActIntent.putExtra("category", category);
+            categoryTasksActIntent.putExtra("catAdaptPosition", holder.getAdapterPosition());
+            actResult.launch(categoryTasksActIntent);
         });
     }
 

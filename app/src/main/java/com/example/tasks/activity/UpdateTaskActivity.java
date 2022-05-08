@@ -26,7 +26,7 @@ public class UpdateTaskActivity extends AppCompatActivity {
     TextInputLayout laySlaDateUpdate;
     Button btnClear, btnUpdate;
     TaskModel task;
-    int position;
+    int taskAdaptPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,8 +72,8 @@ public class UpdateTaskActivity extends AppCompatActivity {
     public void getIntentData() {
         Intent intent = getIntent();
 
-        position = intent.getIntExtra("position", 0);
         task = intent.getParcelableExtra("task");
+        taskAdaptPosition = intent.getIntExtra("taskAdaptPosition", 0);
     }
 
     public void setIntentData() {
@@ -110,7 +110,7 @@ public class UpdateTaskActivity extends AppCompatActivity {
             Toast.makeText(this, "Falha ao atualizar a tarefa.", Toast.LENGTH_SHORT).show();
         } else {
             intent.putExtra("task", task);
-            intent.putExtra("position", position);
+            intent.putExtra("taskAdaptPosition", taskAdaptPosition);
             finish();
         }
     }

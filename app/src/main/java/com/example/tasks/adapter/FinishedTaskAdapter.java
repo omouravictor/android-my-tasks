@@ -117,7 +117,7 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
         holder.itemView.setOnClickListener(v -> {
             if (!isActionMode) {
                 updateActivityIntent.putExtra("task", task);
-                updateActivityIntent.putExtra("position", holder.getAdapterPosition());
+                updateActivityIntent.putExtra("taskAdaptPosition", holder.getAdapterPosition());
                 actResult.launch(updateActivityIntent);
             } else
                 myOnPrepareActionMode(holder, task);
@@ -336,14 +336,14 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
     public void addTask(TaskModel task) {
         allTasks.add(task);
         notifyItemInserted(getItemCount());
-        activity.setResult(3, new Intent().putExtra("position", catAdaptPosition));
+        activity.setResult(3, new Intent().putExtra("catAdaptPosition", catAdaptPosition));
     }
 
     public void addAllTasks(ArrayList<TaskModel> tasks) {
         int positionStart = getItemCount();
         allTasks.addAll(tasks);
         notifyItemRangeInserted(positionStart, tasks.size());
-        activity.setResult(3, new Intent().putExtra("position", catAdaptPosition));
+        activity.setResult(3, new Intent().putExtra("catAdaptPosition", catAdaptPosition));
     }
 
     public void updateTask(int position, TaskModel task) {

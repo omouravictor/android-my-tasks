@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
     ActivityResultLauncher<Intent> actResult;
     RecyclerView rvCategory;
-    Intent createCategoryActivityIntent;
+    Intent createCategoryActIntent;
     CategoryAdapter adaptCategory;
     FloatingActionButton btnAdd;
     SQLiteHelper myDB;
@@ -41,8 +41,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void startBtnAdd() {
         btnAdd = findViewById(R.id.btnAdd);
-        createCategoryActivityIntent = new Intent(this, CreateCategoryActivity.class);
-        btnAdd.setOnClickListener(v -> actResult.launch(createCategoryActivityIntent));
+        createCategoryActIntent = new Intent(this, CreateCategoryActivity.class);
+        btnAdd.setOnClickListener(v -> actResult.launch(createCategoryActIntent));
     }
 
     public void startAdapterAndRecyclerView() {
@@ -63,10 +63,10 @@ public class MainActivity extends AppCompatActivity {
                         if (resultCode == 1) {
                             adaptCategory.addCategory(category);
                         } else if (resultCode == 2) {
-                            int position = result.getData().getIntExtra("position", 0);
-                            adaptCategory.updateCategory(position, category);
+                            int catAdaptPosition = result.getData().getIntExtra("catAdaptPosition", 0);
+                            adaptCategory.updateCategory(catAdaptPosition, category);
                         } else if (resultCode == 3) {
-                            int position = result.getData().getIntExtra("position", -1);
+                            int position = result.getData().getIntExtra("catAdaptPosition", -1);
                             adaptCategory.refreshCategory(position);
                         }
                     }
