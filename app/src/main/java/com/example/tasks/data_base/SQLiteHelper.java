@@ -138,12 +138,16 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return db.delete(CATEGORY_TABLE_NAME, "id=" + category.getId(), null);
     }
 
-    public void deleteOnHoldTasks() {
-        db.execSQL("DELETE FROM " + TASK_TABLE_NAME + " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NULL");
+    public void deleteOnHoldTasks(long categoryId) {
+        db.execSQL("DELETE FROM " + TASK_TABLE_NAME
+                + " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NULL"
+                + " AND " + TASK_COLUMN_CATEGORY_ID + "=" + categoryId);
     }
 
-    public void deleteFinishedTasks() {
-        db.execSQL("DELETE FROM " + TASK_TABLE_NAME + " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NOT NULL");
+    public void deleteFinishedTasks(long categoryId) {
+        db.execSQL("DELETE FROM " + TASK_TABLE_NAME
+                + " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NOT NULL"
+                + " AND " + TASK_COLUMN_CATEGORY_ID + "=" + categoryId);
     }
 
     public ArrayList<TaskModel> getAllTasksOnHold() {

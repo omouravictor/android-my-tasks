@@ -32,8 +32,8 @@ import java.util.ArrayList;
 
 public class CategoryTasksActivity extends AppCompatActivity {
 
-    int catAdaptPosition;
     CategoryModel category;
+    int catAdaptPosition;
     TasksOnHoldFragment fragOnHoldTasks;
     FinishedTaskFragment fragFinishedTasks;
     AlertDialog.Builder builder;
@@ -164,20 +164,21 @@ public class CategoryTasksActivity extends AppCompatActivity {
         if (isFirstTabSelected()) {
             builder.setMessage("Deseja excluir todas as tarefas em espera?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
-                myDB.deleteOnHoldTasks();
+                myDB.deleteOnHoldTasks(category.getId());
                 adaptOnHoldTasks.deleteAllTasks();
+                setResult(3, new Intent().putExtra("catAdaptPosition", catAdaptPosition));
                 dialog.dismiss();
             });
-            builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
         } else {
             builder.setMessage("Deseja excluir todas as tarefas concluídas?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
-                myDB.deleteFinishedTasks();
+                myDB.deleteFinishedTasks(category.getId());
                 adaptFinishedTasks.deleteAllTasks();
+                setResult(3, new Intent().putExtra("catAdaptPosition", catAdaptPosition));
                 dialog.dismiss();
             });
-            builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
         }
+        builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
         builder.show();
     }
 
