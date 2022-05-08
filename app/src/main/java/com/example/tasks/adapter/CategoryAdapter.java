@@ -7,9 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tasks.R;
@@ -18,6 +20,7 @@ import com.example.tasks.activity.UpdateCategoryActivity;
 import com.example.tasks.activity.UpdateTaskActivity;
 import com.example.tasks.data_base.SQLiteHelper;
 import com.example.tasks.model.CategoryModel;
+import com.example.tasks.model.TaskModel;
 
 import java.util.ArrayList;
 
@@ -81,9 +84,22 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         });
 
         holder.imbDeleteCategory.setOnClickListener(v -> {
-            myDB.deleteCategory(category);
-            allCategories.remove(position);
-            notifyItemRemoved(position);
+            AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+
+            builder.setMessage("Deseja exluir '" + category.getName() + "' e todas suas tarefas?");
+
+            builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
+
+            builder.setPositiveButton("Sim", (dialog, which) -> {
+                int index = allCategories.indexOf(category);
+                myDB.deleteCategory(category);
+
+                allCategories.remove(index);
+                notifyItemRemoved(index);
+                dialog.dismiss();
+            });
+
+            builder.show();
         });
 
         holder.itemView.setOnClickListener(v -> {
