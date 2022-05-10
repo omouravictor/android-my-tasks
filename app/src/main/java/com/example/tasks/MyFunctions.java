@@ -8,6 +8,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -55,23 +56,35 @@ public class MyFunctions {
         });
     }
 
-    public void setOnClickTaskBtnClearListener(@NonNull Button btnClear, EditText etTask, EditText etDate) {
+    public void setOnClickTaskBtnClearListener(
+            @NonNull Button btnClear,
+            EditText etTittle,
+            EditText etDescription,
+            EditText etDate
+    ) {
         btnClear.setOnClickListener(v -> {
-            etTask.setText("");
+            etTittle.setText("");
+            etDescription.setText("");
             etDate.setText("");
         });
     }
 
     public void setOnClickCategoryBtnClearListener(@NonNull Button btnClear, EditText etCategory) {
-        btnClear.setOnClickListener(v -> {
-            etCategory.setText("");
-        });
+        btnClear.setOnClickListener(v -> etCategory.setText(""));
     }
 
-    public void setActionDoneButton(@NonNull EditText etTask) {
+    public void setActionDoneButton(@NonNull EditText editText) {
         // Enables textMultiLine EditText with ActionDone button (without Enter button)
-        etTask.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        etTask.setRawInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        editText.setRawInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+    }
+
+    public boolean requiredFieldsEmpty(Context context, EditText et1, EditText et2) {
+        if (et1.getText().toString().isEmpty() || et2.getText().toString().isEmpty()) {
+            Toast.makeText(context, "Preencha os campos requeridos", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return false;
     }
 
 }
