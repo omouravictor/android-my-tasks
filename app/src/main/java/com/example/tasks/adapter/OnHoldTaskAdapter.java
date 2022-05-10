@@ -162,7 +162,9 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
     public void setOnHoldTaskLayout(TaskModel task, TaskViewHolder holder) {
         int days = Days.daysBetween(currentDate, LocalDate.parse(task.getExpirationDate())).getDays();
         if (days > 0) {
-            holder.background = activity.getColor(R.color.white);
+            int white = activity.getColor(R.color.white);
+            holder.itemView.setBackgroundColor(white);
+            holder.background = white;
             holder.tvExpirationTime.setText(activity.getString(R.string.expires_in_x_days, days));
         } else if (days == 0) {
             int yellow = activity.getColor(R.color.lightYellow);
