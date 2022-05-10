@@ -8,14 +8,14 @@
     tools:context=".activity.CreateTaskActivity">
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/layTaskAdd"
+        android:id="@+id/layTittleAdd"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
         android:layout_marginTop="25dp"
         android:layout_marginEnd="25dp"
-        android:hint="@string/task"
+        android:hint="@string/tittle"
         app:counterEnabled="true"
         app:counterMaxLength="50"
         app:endIconMode="clear_text"
@@ -24,11 +24,36 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etTaskAdd"
+            android:id="@+id/etTittleAdd"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="textMultiLine"
             android:maxLength="50"
+            android:minHeight="70dp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layDescriptionAdd"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="25dp"
+        android:hint="@string/description"
+        app:counterEnabled="true"
+        app:counterMaxLength="200"
+        app:endIconMode="clear_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layTittleAdd">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etDescriptionAdd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:maxLength="200"
             android:minHeight="70dp" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -38,14 +63,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="25dp"
         android:hint="@string/expires_in"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/layTaskAdd">
+        app:layout_constraintTop_toBottomOf="@+id/layDescriptionAdd">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etExpirationTime"
+            android:id="@+id/etExpirationTimeAdd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:cursorVisible="false"
@@ -57,7 +83,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="50dp"
         android:layout_marginEnd="25dp"
         android:baselineAligned="false"
         android:gravity="center"

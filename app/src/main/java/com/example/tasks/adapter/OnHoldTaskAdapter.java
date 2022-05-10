@@ -89,8 +89,8 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvTaskName = itemView.findViewById(R.id.tvTaskName);
-            tvExpirationTime = itemView.findViewById(R.id.expirationTime);
+            tvTaskName = itemView.findViewById(R.id.tvTittle);
+            tvExpirationTime = itemView.findViewById(R.id.tvExpirationTime);
             btnComplete = itemView.findViewById(R.id.btnFinish);
         }
     }
@@ -109,7 +109,7 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
 
         TaskModel task = allTasks.get(position);
 
-        holder.tvTaskName.setText(task.getName());
+        holder.tvTaskName.setText(task.getTittle());
 
         holder.itemView.setOnClickListener(v -> {
             if (!isActionMode) {
@@ -181,7 +181,7 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
         setOnHoldTaskLayout(task, holder);
 
         holder.btnComplete.setOnClickListener(v -> {
-            builder.setMessage("Concluir '" + task.getName() + "'?");
+            builder.setMessage("Concluir '" + task.getTittle() + "'?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
                 deleteTask(holder.getAdapterPosition());
                 putTasksAsFinished(task);

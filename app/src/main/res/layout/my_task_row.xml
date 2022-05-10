@@ -15,7 +15,7 @@
         android:padding="12dp">
 
         <TextView
-            android:id="@+id/tvTaskName"
+            android:id="@+id/tvTittle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
@@ -23,12 +23,12 @@
             android:textColor="@color/darkGray"
             android:textSize="17.5sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/expirationTime"
+            app:layout_constraintBottom_toTopOf="@+id/tvExpirationTime"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/expirationTime"
+            android:id="@+id/tvExpirationTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/expires_in"

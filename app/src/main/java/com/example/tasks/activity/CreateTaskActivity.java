@@ -21,7 +21,7 @@ public class CreateTaskActivity extends AppCompatActivity {
 
     DateTimeFormatter dtf;
     MyFunctions myFunctions;
-    EditText etTask, etExpirationTime;
+    EditText etTittle, etDescription, etExpirationTime;
     Button btnClear, btnAdd;
     TaskModel task;
 
@@ -35,26 +35,30 @@ public class CreateTaskActivity extends AppCompatActivity {
     void init() {
         dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
         myFunctions = new MyFunctions();
-        etTask = findViewById(R.id.etTaskAdd);
-        etExpirationTime = findViewById(R.id.etExpirationTime);
+        etTittle = findViewById(R.id.etTittleAdd);
+        etDescription = findViewById(R.id.etDescriptionAdd);
+        etExpirationTime = findViewById(R.id.etExpirationTimeAdd);
         btnClear = findViewById(R.id.btnClearAdd);
         btnAdd = findViewById(R.id.btnAdd);
 
-        myFunctions.setActionDoneButton(etTask);
+        myFunctions.setActionDoneButton(etTittle);
+        myFunctions.setActionDoneButton(etDescription);
         myFunctions.setOnClickEtDateListener(this, etExpirationTime);
-        myFunctions.setOnClickTaskBtnClearListener(btnClear, etTask, etExpirationTime);
+        myFunctions.setOnClickTaskBtnClearListener(btnClear, etTittle, etDescription, etExpirationTime);
 
         btnAdd.setOnClickListener(v -> {
-            if (etTask.getText().toString().equals("") || etExpirationTime.getText().toString().equals("")) {
-                Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
-            } else {
+            if (!myFunctions.requiredFieldsEmpty(this, etTittle, etExpirationTime)) {
                 btnAdd.setClickable(false);
 
                 Intent intent = new Intent();
                 SQLiteHelper myDB = new SQLiteHelper(this);
                 LocalDate date = LocalDate.parse(etExpirationTime.getText().toString(), dtf);
                 long categoryId = getIntent().getLongExtra("categoryId", -1);
-                task = new TaskModel(etTask.getText().toString(), date.toString(), categoryId);
+                task = new TaskModel(
+                        etTittle.getText().toString(),
+                        etDescription.getText().toString(),
+                        date.toString(),
+                        categoryId);
                 long resultID = myDB.createTask(task);
 
                 startResultAction(resultID, intent);

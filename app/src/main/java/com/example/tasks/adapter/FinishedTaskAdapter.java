@@ -92,8 +92,8 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvTaskName = itemView.findViewById(R.id.tvTaskName);
-            tvExpirationTime = itemView.findViewById(R.id.expirationTime);
+            tvTaskName = itemView.findViewById(R.id.tvTittle);
+            tvExpirationTime = itemView.findViewById(R.id.tvExpirationTime);
             btnComplete = itemView.findViewById(R.id.btnFinish);
         }
     }
@@ -112,7 +112,7 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
 
         TaskModel task = allTasks.get(position);
 
-        holder.tvTaskName.setText(task.getName());
+        holder.tvTaskName.setText(task.getTittle());
 
         holder.itemView.setOnClickListener(v -> {
             if (!isActionMode) {
@@ -182,7 +182,7 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
 
         holder.btnComplete.setEnabled(true);
         holder.btnComplete.setOnClickListener(v -> {
-            builder.setMessage("Desfazer '" + task.getName() + "'?");
+            builder.setMessage("Desfazer '" + task.getTittle() + "'?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
                 deleteTask(holder.getAdapterPosition());
                 putTasksAsOnHold(task);

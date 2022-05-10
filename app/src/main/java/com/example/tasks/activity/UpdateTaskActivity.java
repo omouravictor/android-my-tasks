@@ -22,7 +22,7 @@ public class UpdateTaskActivity extends AppCompatActivity {
 
     DateTimeFormatter dtf;
     MyFunctions myFunctions;
-    EditText etTask, etExpirationTime;
+    EditText etTittle, etDescription, etExpirationTime;
     TextInputLayout laySlaDateUpdate;
     Button btnClear, btnUpdate;
     TaskModel task;
@@ -38,20 +38,20 @@ public class UpdateTaskActivity extends AppCompatActivity {
     public void init() {
         dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
         myFunctions = new MyFunctions();
-        etTask = findViewById(R.id.etTaskUpdate);
+        etTittle = findViewById(R.id.etTittleUpdate);
+        etDescription = findViewById(R.id.etDescriptionUpdate);
         etExpirationTime = findViewById(R.id.etExpirationTimeUpdate);
         laySlaDateUpdate = findViewById(R.id.laySlaDateUpdate);
         btnClear = findViewById(R.id.btnClearUpdate);
         btnUpdate = findViewById(R.id.btnUpdate);
 
-        myFunctions.setActionDoneButton(etTask);
+        myFunctions.setActionDoneButton(etTittle);
+        myFunctions.setActionDoneButton(etDescription);
         myFunctions.setOnClickEtDateListener(this, etExpirationTime);
-        myFunctions.setOnClickTaskBtnClearListener(btnClear, etTask, etExpirationTime);
+        myFunctions.setOnClickTaskBtnClearListener(btnClear, etTittle, etDescription, etExpirationTime);
 
         btnUpdate.setOnClickListener((v) -> {
-            if (etTask.getText().toString().equals("") || etExpirationTime.getText().toString().equals("")) {
-                Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
-            } else {
+            if (!myFunctions.requiredFieldsEmpty(this, etTittle, etExpirationTime)) {
                 btnUpdate.setClickable(false);
 
                 Intent intent = new Intent();
@@ -86,15 +86,19 @@ public class UpdateTaskActivity extends AppCompatActivity {
             laySlaDateUpdate.setHint("Concluída em");
         }
 
-        etTask.setText(task.getName());
-        etTask.setSelection(etTask.getText().length());
+        etTittle.setText(task.getTittle());
+        etTittle.setSelection(etTittle.getText().length());
+
+        etDescription.setText(task.getDescription());
+
         etExpirationTime.setText(date.toString(dtf));
     }
 
     public void setTaskAttributes(Intent intent) {
         LocalDate date = LocalDate.parse(etExpirationTime.getText().toString(), dtf);
 
-        task.setName(etTask.getText().toString());
+        task.setTittle(etTittle.getText().toString());
+        task.setDescription(etDescription.getText().toString());
 
         if (!task.isFinished()) {
             setResult(2, intent);

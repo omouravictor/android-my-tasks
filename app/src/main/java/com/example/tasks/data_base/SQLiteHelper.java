@@ -22,7 +22,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     private static final String TASK_TABLE_NAME = "tb_task";
     private static final String TASK_COLUMN_ID = "id";
-    private static final String TASK_COLUMN_NAME = "name";
+    private static final String TASK_COLUMN_TITTLE = "tittle";
     private static final String TASK_COLUMN_DESCRIPTION = "description";
     private static final String TASK_COLUMN_STATUS = "status";
     private static final String TASK_COLUMN_EXPIRATION_DATE = "expiration_date";
@@ -57,7 +57,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         db.execSQL(
                 "CREATE TABLE " + TASK_TABLE_NAME + "("
                         + TASK_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                        + TASK_COLUMN_NAME + " TEXT NOT NULL,"
+                        + TASK_COLUMN_TITTLE + " TEXT NOT NULL,"
                         + TASK_COLUMN_DESCRIPTION + " TEXT,"
                         + TASK_COLUMN_STATUS + " INTEGER NOT NULL,"
                         + TASK_COLUMN_EXPIRATION_DATE + " DATE NOT NULL,"
@@ -105,7 +105,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     ContentValues getTaskContentValues(TaskModel task) {
         ContentValues cv = new ContentValues();
 
-        cv.put(TASK_COLUMN_NAME, task.getName());
+        cv.put(TASK_COLUMN_TITTLE, task.getTittle());
         cv.put(TASK_COLUMN_DESCRIPTION, task.getDescription());
         cv.put(TASK_COLUMN_STATUS, task.getStatus());
         cv.put(TASK_COLUMN_EXPIRATION_DATE, task.getExpirationDate());
@@ -139,21 +139,21 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 
     public void deleteOnHoldTasks(long categoryId) {
-        db.execSQL("DELETE FROM " + TASK_TABLE_NAME
-                + " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NULL"
-                + " AND " + TASK_COLUMN_CATEGORY_ID + "=" + categoryId);
+        db.execSQL("DELETE FROM " + TASK_TABLE_NAME +
+                " WHERE " + TASK_COLUMN_STATUS + " = 0" +
+                " AND " + TASK_COLUMN_CATEGORY_ID + "=" + categoryId);
     }
 
     public void deleteFinishedTasks(long categoryId) {
-        db.execSQL("DELETE FROM " + TASK_TABLE_NAME
-                + " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NOT NULL"
-                + " AND " + TASK_COLUMN_CATEGORY_ID + "=" + categoryId);
+        db.execSQL("DELETE FROM " + TASK_TABLE_NAME +
+                " WHERE " + TASK_COLUMN_STATUS + " = 1" +
+                " AND " + TASK_COLUMN_CATEGORY_ID + "=" + categoryId);
     }
 
     public ArrayList<TaskModel> getAllTasksOnHold() {
         String query = "SELECT *" +
                 " FROM " + TASK_TABLE_NAME +
-                " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NULL" +
+                " WHERE " + TASK_COLUMN_STATUS + " = 0" +
                 " ORDER BY " + TASK_COLUMN_EXPIRATION_DATE + " ASC";
 
         return getTasksFromDb(query);
@@ -162,7 +162,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public ArrayList<TaskModel> getAllFinishedTasks() {
         String query = "SELECT *" +
                 " FROM " + TASK_TABLE_NAME +
-                " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NOT NULL" +
+                " WHERE " + TASK_COLUMN_STATUS + " = 1" +
                 " ORDER BY " + TASK_COLUMN_FINISHED_DATE + " DESC";
 
         return getTasksFromDb(query);
@@ -171,8 +171,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public ArrayList<TaskModel> getAllOnHoldTasksOfCategory(long categoryId) {
         String query = "SELECT *" +
                 " FROM " + TASK_TABLE_NAME +
-                " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NULL" + " AND " +
-                TASK_COLUMN_CATEGORY_ID + " = '" + categoryId + "'" +
+                " WHERE " + TASK_COLUMN_STATUS + " = 0" + " AND " +
+                TASK_COLUMN_CATEGORY_ID + " = " + categoryId +
                 " ORDER BY " + TASK_COLUMN_EXPIRATION_DATE + " ASC";
 
         return getTasksFromDb(query);
@@ -181,8 +181,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public ArrayList<TaskModel> getAllFinishedTasksOfCategory(long categoryId) {
         String query = "SELECT *" +
                 " FROM " + TASK_TABLE_NAME +
-                " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NOT NULL" + " AND " +
-                TASK_COLUMN_CATEGORY_ID + " = '" + categoryId + "'" +
+                " WHERE " + TASK_COLUMN_STATUS + " = 1" + " AND " +
+                TASK_COLUMN_CATEGORY_ID + " = " + categoryId +
                 " ORDER BY " + TASK_COLUMN_EXPIRATION_DATE + " ASC";
 
         return getTasksFromDb(query);
@@ -192,8 +192,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public int getQtdFinishedTask(long categoryId) {
         String query = "SELECT " + TASK_COLUMN_ID +
                 " FROM " + TASK_TABLE_NAME +
-                " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NOT NULL" + " AND " +
-                TASK_COLUMN_CATEGORY_ID + " = '" + categoryId + "'";
+                " WHERE " + TASK_COLUMN_STATUS + " = 1" + " AND " +
+                TASK_COLUMN_CATEGORY_ID + " = " + categoryId;
 
         return db.rawQuery(query, null).getCount();
     }
@@ -202,8 +202,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public int getQtdOnHoldTask(long categoryId) {
         String query = "SELECT " + TASK_COLUMN_ID +
                 " FROM " + TASK_TABLE_NAME +
-                " WHERE " + TASK_COLUMN_FINISHED_DATE + " IS NULL" + " AND " +
-                TASK_COLUMN_CATEGORY_ID + " = '" + categoryId + "'";
+                " WHERE " + TASK_COLUMN_STATUS + " = 0" + " AND " +
+                TASK_COLUMN_CATEGORY_ID + " = " + categoryId;
 
         return db.rawQuery(query, null).getCount();
     }

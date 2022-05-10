@@ -8,22 +8,23 @@ import androidx.annotation.NonNull;
 public class TaskModel implements Parcelable {
 
     private long id;
-    private String name;
+    private String tittle;
     private String description;
-    private int status;
+    private int status = 0;
     private String expirationDate;
     private String finishedDate;
     private long categoryId;
 
-    public TaskModel(String name, String expirationDate, long categoryId) {
-        this.name = name;
+    public TaskModel(String tittle, String description, String expirationDate, long categoryId) {
+        this.tittle = tittle;
+        this.description = description;
         this.expirationDate = expirationDate;
         this.categoryId = categoryId;
     }
 
     public TaskModel(
             long id,
-            String name,
+            String tittle,
             String description,
             int status,
             String expirationDate,
@@ -31,7 +32,7 @@ public class TaskModel implements Parcelable {
             long categoryId
     ) {
         this.id = id;
-        this.name = name;
+        this.tittle = tittle;
         this.description = description;
         this.status = status;
         this.expirationDate = expirationDate;
@@ -41,7 +42,7 @@ public class TaskModel implements Parcelable {
 
     protected TaskModel(@NonNull Parcel in) {
         id = in.readLong();
-        name = in.readString();
+        tittle = in.readString();
         description = in.readString();
         status = in.readInt();
         expirationDate = in.readString();
@@ -69,7 +70,7 @@ public class TaskModel implements Parcelable {
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeLong(id);
-        dest.writeString(name);
+        dest.writeString(tittle);
         dest.writeString(description);
         dest.writeInt(status);
         dest.writeString(expirationDate);
@@ -78,15 +79,17 @@ public class TaskModel implements Parcelable {
     }
 
     public void finish(String finishedDate) {
+        this.status = 1;
         this.finishedDate = finishedDate;
     }
 
     public void undo() {
+        this.status = 0;
         this.finishedDate = null;
     }
 
     public boolean isFinished() {
-        return finishedDate != null;
+        return status == 1;
     }
 
     public long getId() {
@@ -97,12 +100,12 @@ public class TaskModel implements Parcelable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getTittle() {
+        return tittle;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTittle(String tittle) {
+        this.tittle = tittle;
     }
 
     public String getDescription() {

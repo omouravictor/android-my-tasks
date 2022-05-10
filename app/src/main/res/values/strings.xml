@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Tasks</string>
     <string name="task">Tarefa</string>
+    <string name="tittle">Título *</string>
     <string name="category">Categoria</string>
     <string name="create">Criar</string>
     <string name="finish">Concluir</string>
@@ -10,7 +11,7 @@
     <string name="clear">Limpar</string>
     <string name="add">Adicionar</string>
     <string name="update">Editar</string>
-    <string name="expires_in">Expira em</string>
+    <string name="expires_in">Expira em *</string>
     <string name="expires_today">Expira hoje !</string>
     <string name="expires_in_x_days">Expira em %d dia (s)</string>
     <string name="expired">Expirada :(</string>
@@ -19,4 +20,5 @@
     <string name="select_all">Selecionar tudo</string>
     <string name="delete_all">Excluir tudo</string>
     <string name="undo_all">Desfazer tudo</string>
+    <string name="description">Descrição</string>
 </resources>
