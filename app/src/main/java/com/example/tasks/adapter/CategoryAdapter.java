@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
@@ -17,10 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.tasks.R;
 import com.example.tasks.activity.CategoryTasksActivity;
 import com.example.tasks.activity.UpdateCategoryActivity;
-import com.example.tasks.activity.UpdateTaskActivity;
 import com.example.tasks.data_base.SQLiteHelper;
 import com.example.tasks.model.CategoryModel;
-import com.example.tasks.model.TaskModel;
 
 import java.util.ArrayList;
 
