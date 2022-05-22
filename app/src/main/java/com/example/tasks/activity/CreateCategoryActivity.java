@@ -1,6 +1,7 @@
 package com.example.tasks.activity;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,7 +19,6 @@ public class CreateCategoryActivity extends AppCompatActivity {
     MyFunctions myFunctions;
     EditText etCategory;
     Button btnClear, btnCreate;
-    CategoryModel category;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,30 +36,34 @@ public class CreateCategoryActivity extends AppCompatActivity {
         myFunctions.setActionDoneButton(etCategory);
         myFunctions.setOnClickCategoryBtnClearListener(btnClear, etCategory);
 
+        SQLiteHelper myDB = new SQLiteHelper(this);
+        Intent intent = new Intent();
+
         btnCreate.setOnClickListener(v -> {
-            if (etCategory.getText().toString().equals("")) {
-                Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
-            } else {
-                btnCreate.setClickable(false);
-
-                Intent intent = new Intent();
-                SQLiteHelper myDB = new SQLiteHelper(this);
-                category = new CategoryModel(etCategory.getText().toString());
-                long resultID = myDB.createCategory(category);
-
-                startResultAction(resultID, intent);
-            }
+            if (!myFunctions.categoryRequiredFieldsEmpty(this, etCategory))
+                createCategory(myDB, intent);
         });
     }
 
-    void startResultAction(long resultID, Intent intent) {
-        if (resultID == -1) {
-            Toast.makeText(this, "Falha ao criar a categoria.", Toast.LENGTH_SHORT).show();
-        } else {
+    void createCategory(SQLiteHelper myDB, Intent intent) {
+        try {
+            btnCreate.setClickable(false);
+
+            CategoryModel category = new CategoryModel(etCategory.getText().toString());
+            long resultID = myDB.createCategory(category);
+
             category.setId(resultID);
             intent.putExtra("category", category);
             setResult(1, intent);
             finish();
+
+        } catch (SQLiteConstraintException e) {
+            Toast.makeText(this, "Essa categoria já existe", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "Houve um erro", Toast.LENGTH_SHORT).show();
+        } finally {
+            btnCreate.setClickable(true);
         }
     }
+
 }

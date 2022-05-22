@@ -50,34 +50,25 @@ public class UpdateTaskActivity extends AppCompatActivity {
         myFunctions.setOnClickEtDateListener(this, etExpirationTime);
         myFunctions.setOnClickTaskBtnClearListener(btnClear, etTittle, etDescription, etExpirationTime);
 
+        SQLiteHelper myDB = new SQLiteHelper(this);
+        Intent intent = new Intent();
+
+        getAndSetIntentData();
+
         btnUpdate.setOnClickListener((v) -> {
-            if (!myFunctions.requiredFieldsEmpty(this, etTittle, etExpirationTime)) {
-                btnUpdate.setClickable(false);
-
-                Intent intent = new Intent();
-                SQLiteHelper myDB = new SQLiteHelper(this);
-                long result;
-
-                setTaskAttributes(intent);
-                result = myDB.updateTask(task);
-                startResultAction(result, intent);
-            }
+            if (!myFunctions.taskRequiredFieldsEmpty(this, etTittle, etExpirationTime))
+                updateTask(myDB, intent);
         });
 
-        getIntentData();
-        setIntentData();
     }
 
 
-    public void getIntentData() {
+    public void getAndSetIntentData() {
+        LocalDate date;
         Intent intent = getIntent();
 
         task = intent.getParcelableExtra("task");
-        taskAdaptPosition = intent.getIntExtra("taskAdaptPosition", 0);
-    }
-
-    public void setIntentData() {
-        LocalDate date;
+        taskAdaptPosition = intent.getIntExtra("taskAdaptPosition", -1);
 
         if (!task.isFinished()) {
             date = LocalDate.parse(task.getExpirationDate());
@@ -109,13 +100,23 @@ public class UpdateTaskActivity extends AppCompatActivity {
         }
     }
 
-    public void startResultAction(long result, Intent intent) {
-        if (result == 0) {
-            Toast.makeText(this, "Falha ao atualizar a tarefa.", Toast.LENGTH_SHORT).show();
-        } else {
+    void updateTask(SQLiteHelper myDB, Intent intent) {
+        try {
+            btnUpdate.setClickable(false);
+
+            setTaskAttributes(intent);
+
+            myDB.updateTask(task);
+
             intent.putExtra("task", task);
             intent.putExtra("taskAdaptPosition", taskAdaptPosition);
             finish();
+
+        } catch (Exception e) {
+            Toast.makeText(this, "Houve um erro", Toast.LENGTH_SHORT).show();
+        } finally {
+            btnUpdate.setClickable(true);
         }
     }
+
 }

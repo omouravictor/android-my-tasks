@@ -23,7 +23,6 @@ public class CreateTaskActivity extends AppCompatActivity {
     MyFunctions myFunctions;
     EditText etTittle, etDescription, etExpirationTime;
     Button btnClear, btnAdd;
-    TaskModel task;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,34 +45,38 @@ public class CreateTaskActivity extends AppCompatActivity {
         myFunctions.setOnClickEtDateListener(this, etExpirationTime);
         myFunctions.setOnClickTaskBtnClearListener(btnClear, etTittle, etDescription, etExpirationTime);
 
+        SQLiteHelper myDB = new SQLiteHelper(this);
+        Intent intent = new Intent();
+
         btnAdd.setOnClickListener(v -> {
-            if (!myFunctions.requiredFieldsEmpty(this, etTittle, etExpirationTime)) {
-                btnAdd.setClickable(false);
-
-                Intent intent = new Intent();
-                SQLiteHelper myDB = new SQLiteHelper(this);
-                LocalDate date = LocalDate.parse(etExpirationTime.getText().toString(), dtf);
-                long categoryId = getIntent().getLongExtra("categoryId", -1);
-                task = new TaskModel(
-                        etTittle.getText().toString(),
-                        etDescription.getText().toString(),
-                        date.toString(),
-                        categoryId);
-                long resultID = myDB.createTask(task);
-
-                startResultAction(resultID, intent);
-            }
+            if (!myFunctions.taskRequiredFieldsEmpty(this, etTittle, etExpirationTime))
+                createTask(myDB, intent);
         });
     }
 
-    void startResultAction(long resultID, Intent intent) {
-        if (resultID == -1) {
-            Toast.makeText(this, "Falha ao criar a tarefa.", Toast.LENGTH_SHORT).show();
-        } else {
+    void createTask(SQLiteHelper myDB, Intent intent) {
+        try {
+            btnAdd.setClickable(false);
+
+            LocalDate date = LocalDate.parse(etExpirationTime.getText().toString(), dtf);
+            long categoryId = getIntent().getLongExtra("categoryId", -1);
+            TaskModel task = new TaskModel(
+                    etTittle.getText().toString(),
+                    etDescription.getText().toString(),
+                    date.toString(),
+                    categoryId);
+            long resultID = myDB.createTask(task);
+
             task.setId(resultID);
             intent.putExtra("task", task);
             setResult(1, intent);
             finish();
+
+        } catch (Exception e) {
+            Toast.makeText(this, "Houve um erro", Toast.LENGTH_SHORT).show();
+        } finally {
+            btnAdd.setClickable(true);
         }
     }
+
 }

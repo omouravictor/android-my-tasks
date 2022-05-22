@@ -1,6 +1,7 @@
 package com.example.tasks.activity;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,8 +13,6 @@ import com.example.tasks.MyFunctions;
 import com.example.tasks.R;
 import com.example.tasks.data_base.SQLiteHelper;
 import com.example.tasks.model.CategoryModel;
-
-import org.joda.time.LocalDate;
 
 public class UpdateCategoryActivity extends AppCompatActivity {
 
@@ -39,49 +38,47 @@ public class UpdateCategoryActivity extends AppCompatActivity {
         myFunctions.setActionDoneButton(etCategory);
         myFunctions.setOnClickCategoryBtnClearListener(btnClear, etCategory);
 
+        SQLiteHelper myDB = new SQLiteHelper(this);
+        Intent intent = new Intent();
+
+        getAndSetIntentData();
+
         btnUpdate.setOnClickListener(v -> {
-            if (etCategory.getText().length() == 0) {
-                Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
-            } else {
-                btnUpdate.setClickable(false);
-
-                Intent intent = new Intent();
-                SQLiteHelper myDB = new SQLiteHelper(this);
-                long result;
-
-                updateCategory();
-                result = myDB.updateCategory(category);
-                startResultAction(result, intent);
-            }
+            if (!myFunctions.categoryRequiredFieldsEmpty(this, etCategory))
+                updateCategory(myDB, intent);
         });
 
-        getIntentData();
-        setIntentData();
     }
 
-    public void updateCategory() {
-        category.setName(etCategory.getText().toString());
-    }
-
-    public void getIntentData() {
+    public void getAndSetIntentData() {
         Intent intent = getIntent();
 
         category = intent.getParcelableExtra("category");
-        catAdaptPosition = intent.getIntExtra("catAdaptPosition", 0);
-    }
+        catAdaptPosition = intent.getIntExtra("catAdaptPosition", -1);
 
-    public void setIntentData() {
         etCategory.setText(category.getName());
     }
 
-    void startResultAction(long result, Intent intent) {
-        if (result == -1) {
-            Toast.makeText(this, "Falha ao atualizar a categoria.", Toast.LENGTH_SHORT).show();
-        } else {
+    void updateCategory(SQLiteHelper myDB, Intent intent) {
+        try {
+            btnUpdate.setClickable(false);
+
+            category.setName(etCategory.getText().toString());
+
+            myDB.updateCategory(category);
+
             intent.putExtra("category", category);
             intent.putExtra("catAdaptPosition", catAdaptPosition);
             setResult(2, intent);
             finish();
+
+        } catch (SQLiteConstraintException e) {
+            Toast.makeText(this, "Essa categoria já existe", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "Houve um erro", Toast.LENGTH_SHORT).show();
+        } finally {
+            btnUpdate.setClickable(true);
         }
     }
+
 }
