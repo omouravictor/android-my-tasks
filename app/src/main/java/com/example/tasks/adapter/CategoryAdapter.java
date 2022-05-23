@@ -21,6 +21,7 @@ import com.example.tasks.data_base.SQLiteHelper;
 import com.example.tasks.model.CategoryModel;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
 
@@ -45,8 +46,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     public static class CategoryViewHolder extends RecyclerView.ViewHolder {
         TextView tvCategoryName, tvQtdOnHoldTask, tvQtdFinishedTask;
         ImageButton imbEditCategory, imbDeleteCategory;
-        boolean isSelected;
-        int background;
 
         public CategoryViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -128,7 +127,17 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         notifyItemChanged(position);
     }
 
+    public void deleteAll() {
+        allCategories.clear();
+        notifyDataSetChanged();
+    }
+
     public void refreshCategory(int position) {
         notifyItemChanged(position);
+    }
+
+    public void sortCategoryByName() {
+        allCategories.sort(Comparator.comparing(CategoryModel::getName));
+        notifyItemRangeChanged(0, getItemCount());
     }
 }
