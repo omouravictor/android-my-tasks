@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
@@ -81,18 +82,24 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         });
 
         holder.imbDeleteCategory.setOnClickListener(v -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+            Context context = v.getContext();
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
             builder.setMessage("Deseja exluir '" + category.getName() + "' e todas suas tarefas?");
 
             builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
 
             builder.setPositiveButton("Sim", (dialog, which) -> {
-                int index = allCategories.indexOf(category);
-                myDB.deleteCategory(category);
 
-                allCategories.remove(index);
-                notifyItemRemoved(index);
+                try {
+                    int index = allCategories.indexOf(category);
+                    myDB.deleteCategory(category);
+                    allCategories.remove(index);
+                    notifyItemRemoved(index);
+                } catch (Exception e) {
+                    Toast.makeText(context, "Houve um erro", Toast.LENGTH_SHORT).show();
+                }
+
                 dialog.dismiss();
             });
 
