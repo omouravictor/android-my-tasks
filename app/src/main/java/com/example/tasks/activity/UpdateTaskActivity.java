@@ -35,7 +35,7 @@ public class UpdateTaskActivity extends AppCompatActivity {
         init();
     }
 
-    public void init() {
+    void init() {
         dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
         myFunctions = new MyFunctions();
         etTittle = findViewById(R.id.etTittleUpdate);
@@ -63,7 +63,7 @@ public class UpdateTaskActivity extends AppCompatActivity {
     }
 
 
-    public void getAndSetIntentData() {
+    void getAndSetIntentData() {
         LocalDate date;
         Intent intent = getIntent();
 
@@ -85,7 +85,7 @@ public class UpdateTaskActivity extends AppCompatActivity {
         etExpirationTime.setText(date.toString(dtf));
     }
 
-    public void setTaskAttributes(Intent intent) {
+    void setTaskAttributes(Intent intent) {
         LocalDate date = LocalDate.parse(etExpirationTime.getText().toString(), dtf);
 
         task.setTittle(etTittle.getText().toString());

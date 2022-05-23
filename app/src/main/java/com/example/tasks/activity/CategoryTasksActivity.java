@@ -59,7 +59,7 @@ public class CategoryTasksActivity extends AppCompatActivity {
         init();
     }
 
-    public void init() {
+    void init() {
         myDB = new SQLiteHelper(this);
         builder = new AlertDialog.Builder(this);
         startBtnAdd();
@@ -69,7 +69,7 @@ public class CategoryTasksActivity extends AppCompatActivity {
         startViewPager();
     }
 
-    public void startBtnAdd() {
+    void startBtnAdd() {
         FloatingActionButton btnAdd = findViewById(R.id.btnAdd);
         Intent createTaskActivity = new Intent(this, CreateTaskActivity.class);
 
@@ -77,7 +77,7 @@ public class CategoryTasksActivity extends AppCompatActivity {
         btnAdd.setOnClickListener(v -> actResult.launch(createTaskActivity));
     }
 
-    public void startActivityResult() {
+    void startActivityResult() {
         actResult = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -98,7 +98,7 @@ public class CategoryTasksActivity extends AppCompatActivity {
         );
     }
 
-    public void startAdaptersAndFragments() {
+    void startAdaptersAndFragments() {
         adaptOnHoldTasks = new OnHoldTaskAdapter(this, catAdaptPosition, actResult, myDB, category.getId());
         adaptFinishedTasks = new FinishedTaskAdapter(this, catAdaptPosition, actResult, myDB, category.getId());
 
@@ -109,7 +109,7 @@ public class CategoryTasksActivity extends AppCompatActivity {
         fragFinishedTasks = new FinishedTaskFragment(adaptFinishedTasks);
     }
 
-    public void startTabLayout() {
+    void startTabLayout() {
         tabLayout = findViewById(R.id.tabLayout);
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -128,7 +128,7 @@ public class CategoryTasksActivity extends AppCompatActivity {
         });
     }
 
-    public void startViewPager() {
+    void startViewPager() {
         ViewPagerAdapter vpAdapter = new ViewPagerAdapter(this);
         vp2 = findViewById(R.id.viewPager2);
 
@@ -141,7 +141,7 @@ public class CategoryTasksActivity extends AppCompatActivity {
         ).attach();
     }
 
-    public void startSortBuilder() {
+    void startSortBuilder() {
         if (isFirstTabSelected()) {
             builder.setMessage("Deseja ordenar por data de expiração?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
@@ -160,7 +160,7 @@ public class CategoryTasksActivity extends AppCompatActivity {
         builder.show();
     }
 
-    public void startDeleteAllBuilder() {
+    void startDeleteAllBuilder() {
         if (isFirstTabSelected()) {
             builder.setMessage("Deseja excluir todas as tarefas em espera?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
@@ -182,7 +182,7 @@ public class CategoryTasksActivity extends AppCompatActivity {
         builder.show();
     }
 
-    public void startFinishAllBuilder() {
+    void startFinishAllBuilder() {
         builder.setMessage("Deseja concluir todas as tarefas?");
         builder.setPositiveButton("Sim", (dialog, which) -> {
             ArrayList<TaskModel> tasks = adaptOnHoldTasks.getAllTasks();
@@ -195,7 +195,7 @@ public class CategoryTasksActivity extends AppCompatActivity {
         builder.show();
     }
 
-    public void startUndoAllBuilder() {
+    void startUndoAllBuilder() {
         builder.setMessage("Deseja desfazer todas as tarefas?");
         builder.setPositiveButton("Sim", (dialog, which) -> {
             ArrayList<TaskModel> tasks = adaptFinishedTasks.getAllTasks();
@@ -208,7 +208,7 @@ public class CategoryTasksActivity extends AppCompatActivity {
         builder.show();
     }
 
-    public void myOnTabSelected(TabLayout.Tab tab) {
+    void myOnTabSelected(TabLayout.Tab tab) {
         if (myMenu != null) {
             if (tab.getPosition() == 0) {
                 myMenu.getItem(2).setVisible(true);
@@ -220,7 +220,7 @@ public class CategoryTasksActivity extends AppCompatActivity {
         }
     }
 
-    public boolean isFirstTabSelected() {
+    boolean isFirstTabSelected() {
         return tabLayout.getTabAt(0).isSelected();
     }
 

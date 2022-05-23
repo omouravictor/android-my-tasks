@@ -39,20 +39,20 @@ public class MainActivity extends AppCompatActivity {
         init();
     }
 
-    public void init() {
+    void init() {
         myDB = new SQLiteHelper(this);
         startBtnAdd();
         startActivityResult();
         startAdapterAndRecyclerView();
     }
 
-    public void startBtnAdd() {
+    void startBtnAdd() {
         btnAdd = findViewById(R.id.btnAdd);
         createCategoryActIntent = new Intent(this, CreateCategoryActivity.class);
         btnAdd.setOnClickListener(v -> actResult.launch(createCategoryActIntent));
     }
 
-    public void startAdapterAndRecyclerView() {
+    void startAdapterAndRecyclerView() {
         adaptCategory = new CategoryAdapter(this, myDB, actResult);
 
         rvCategory = findViewById(R.id.rvCategory);
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         rvCategory.setAdapter(adaptCategory);
     }
 
-    public void startActivityResult() {
+    void startActivityResult() {
         actResult = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {

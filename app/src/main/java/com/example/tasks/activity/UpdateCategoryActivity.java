@@ -50,7 +50,7 @@ public class UpdateCategoryActivity extends AppCompatActivity {
 
     }
 
-    public void getAndSetIntentData() {
+    void getAndSetIntentData() {
         Intent intent = getIntent();
 
         category = intent.getParcelableExtra("category");
