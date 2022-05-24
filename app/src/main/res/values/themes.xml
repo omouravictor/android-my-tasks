@@ -4,7 +4,7 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/primary</item>
         <!-- Window Background -->
-        <item name="android:windowBackground">@drawable/start_background_window</item>
+        <item name="android:windowBackground">@color/darkWhite</item>
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorOnPrimary">@color/white</item>
