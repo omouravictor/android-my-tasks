@@ -262,7 +262,7 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
             ArrayList<TaskModel> deletedTasks = myDB.deleteSelectedTasks(selectedTasks);
 
             deleteSelectedTasks(deletedTasks);
-            activity.setResult(3, new Intent().putExtra("position", catAdaptPosition));
+            activity.setResult(3, new Intent().putExtra("catAdaptPosition", catAdaptPosition));
 
             if (deletedTasks.size() != selectedTasks.size())
                 Toast.makeText(activity, "Falha ao deletar alguma(s) tarefa(s).", Toast.LENGTH_SHORT).show();
