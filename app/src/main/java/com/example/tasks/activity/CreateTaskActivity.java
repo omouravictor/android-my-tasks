@@ -33,46 +33,69 @@ public class CreateTaskActivity extends AppCompatActivity {
     }
 
     void init() {
+        initView();
+        setMyFunctions();
+
+        btnAdd.setOnClickListener(v -> {
+            if (!myFunctions.isEmpty(this, etTittle, etExpirationTime))
+                createTask();
+        });
+    }
+
+    void initView() {
         dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
-        myFunctions = new MyFunctions();
         etTittle = findViewById(R.id.etTittleAdd);
         etDescription = findViewById(R.id.etDescriptionAdd);
         etExpirationTime = findViewById(R.id.etExpirationTimeAdd);
         btnClear = findViewById(R.id.btnClearAdd);
         btnAdd = findViewById(R.id.btnAdd);
+    }
+
+    void setMyFunctions() {
+        myFunctions = new MyFunctions();
 
         myFunctions.setActionDoneButton(etTittle);
         myFunctions.setActionDoneButton(etDescription);
         myFunctions.setOnClickEtDateListener(this, etExpirationTime);
         myFunctions.clearEditTexts(btnClear, etTittle, etDescription, etExpirationTime);
-
-        SQLiteHelper myDB = new SQLiteHelper(this);
-        Intent intent = new Intent();
-
-        btnAdd.setOnClickListener(v -> {
-            if (!myFunctions.isEmpty(this, etTittle, etExpirationTime))
-                createTask(myDB, intent);
-        });
     }
 
-    void createTask(SQLiteHelper myDB, Intent intent) {
+    void setAttributes(TaskModel task) {
+        LocalDate date = LocalDate.parse(etExpirationTime.getText().toString(), dtf);
+        long categoryId = getIntent().getLongExtra("categoryId", -1);
+
+        task.setTittle(etTittle.getText().toString());
+        task.setExpirationDate(date.toString());
+        task.setDescription(etDescription.getText().toString());
+        task.setCategoryId(categoryId);
+    }
+
+    TaskModel getNewTask() {
+        SQLiteHelper myDB = new SQLiteHelper(this);
+        TaskModel task = new TaskModel();
+        long id;
+
+        setAttributes(task);
+        id = myDB.createTask(task);
+        task.setId(id);
+
+        return task;
+    }
+
+    void finishCreate(TaskModel task) {
+        Intent intent = new Intent();
+
+        intent.putExtra("task", task);
+        setResult(1, intent);
+        finish();
+    }
+
+    void createTask() {
+        btnAdd.setClickable(false);
+
         try {
-            btnAdd.setClickable(false);
-
-            LocalDate date = LocalDate.parse(etExpirationTime.getText().toString(), dtf);
-            long categoryId = getIntent().getLongExtra("categoryId", -1);
-            TaskModel task = new TaskModel(
-                    etTittle.getText().toString(),
-                    etDescription.getText().toString(),
-                    date.toString(),
-                    categoryId);
-            long resultID = myDB.createTask(task);
-
-            task.setId(resultID);
-            intent.putExtra("task", task);
-            setResult(1, intent);
-            finish();
-
+            TaskModel newTask = getNewTask();
+            finishCreate(newTask);
         } catch (Exception e) {
             Toast.makeText(this, "Houve um erro", Toast.LENGTH_SHORT).show();
         } finally {

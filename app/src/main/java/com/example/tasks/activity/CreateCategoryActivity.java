@@ -13,6 +13,10 @@ import com.example.tasks.MyFunctions;
 import com.example.tasks.R;
 import com.example.tasks.data_base.SQLiteHelper;
 import com.example.tasks.model.CategoryModel;
+import com.example.tasks.model.TaskModel;
+
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
 
 public class CreateCategoryActivity extends AppCompatActivity {
 
@@ -29,35 +33,58 @@ public class CreateCategoryActivity extends AppCompatActivity {
     }
 
     void init() {
-        myFunctions = new MyFunctions();
-        etCategory = findViewById(R.id.etCategoryName);
-        btnClear = findViewById(R.id.btnClearCategory);
-        btnCreate = findViewById(R.id.btnCreateCategory);
-
-        myFunctions.setActionDoneButton(etCategory);
-        myFunctions.clearEditTexts(btnClear, etCategory);
-
-        SQLiteHelper myDB = new SQLiteHelper(this);
-        Intent intent = new Intent();
+        initView();
+        setMyFunctions();
 
         btnCreate.setOnClickListener(v -> {
             if (!myFunctions.isEmpty(this, etCategory))
-                createCategory(myDB, intent);
+                createCategory();
         });
     }
 
-    void createCategory(SQLiteHelper myDB, Intent intent) {
+    void initView() {
+        etCategory = findViewById(R.id.etCategoryName);
+        btnClear = findViewById(R.id.btnClearCategory);
+        btnCreate = findViewById(R.id.btnCreateCategory);
+    }
+
+    void setMyFunctions() {
+        myFunctions = new MyFunctions();
+
+        myFunctions.setActionDoneButton(etCategory);
+        myFunctions.clearEditTexts(btnClear, etCategory);
+    }
+
+    void setAttributes(CategoryModel category) {
+        category.setName(etCategory.getText().toString());
+    }
+
+    CategoryModel getNewCategory() {
+        SQLiteHelper myDB = new SQLiteHelper(this);
+        CategoryModel category = new CategoryModel();
+        long id;
+
+        setAttributes(category);
+        id = myDB.createCategory(category);
+        category.setId(id);
+
+        return category;
+    }
+
+    void finishCreate(CategoryModel category) {
+        Intent intent = new Intent();
+
+        intent.putExtra("category", category);
+        setResult(1, intent);
+        finish();
+    }
+
+    void createCategory() {
+        btnCreate.setClickable(false);
+
         try {
-            btnCreate.setClickable(false);
-
-            CategoryModel category = new CategoryModel(etCategory.getText().toString());
-            long resultID = myDB.createCategory(category);
-
-            category.setId(resultID);
-            intent.putExtra("category", category);
-            setResult(1, intent);
-            finish();
-
+            CategoryModel newCategory = getNewCategory();
+            finishCreate(newCategory);
         } catch (SQLiteConstraintException e) {
             Toast.makeText(this, "Essa categoria já existe", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {

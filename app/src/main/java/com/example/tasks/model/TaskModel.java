@@ -15,11 +15,7 @@ public class TaskModel implements Parcelable {
     private String finishedDate;
     private long categoryId;
 
-    public TaskModel(String tittle, String description, String expirationDate, long categoryId) {
-        this.tittle = tittle;
-        this.description = description;
-        this.expirationDate = expirationDate;
-        this.categoryId = categoryId;
+    public TaskModel () {
     }
 
     public TaskModel(

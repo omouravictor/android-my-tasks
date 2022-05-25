@@ -24,26 +24,27 @@ public class UpdateOnHoldTaskActivity extends AppCompatActivity {
     MyFunctions myFunctions;
     EditText etTittle, etExpirationDate, etDescription;
     Button btnClear, btnUpdate;
-    SQLiteHelper myDB;
-    TaskModel task;
-    int taskAdaptPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(R.string.task);
         setContentView(R.layout.activity_update_on_hold_task);
         init();
     }
 
     void init() {
+        Intent intent = getIntent();
+        TaskModel task = intent.getParcelableExtra("task");
+        int taskAdaptPosition = intent.getIntExtra("taskAdaptPosition", -1);
+
         initView();
         setMyFunctions();
-        getIntentDate();
-        setIntentDate();
+        setTaskData(task);
 
         btnUpdate.setOnClickListener((v) -> {
             if (!myFunctions.isEmpty(this, etTittle, etExpirationDate))
-                updateTask(myDB);
+                updateTask(task, taskAdaptPosition);
         });
 
     }
@@ -66,14 +67,7 @@ public class UpdateOnHoldTaskActivity extends AppCompatActivity {
         myFunctions.clearEditTexts(btnClear, etTittle, etDescription, etExpirationDate);
     }
 
-    void getIntentDate() {
-        Intent intent = getIntent();
-
-        task = intent.getParcelableExtra("task");
-        taskAdaptPosition = intent.getIntExtra("taskAdaptPosition", -1);
-    }
-
-    void setIntentDate() {
+    void setTaskData(TaskModel task) {
         LocalDate date = LocalDate.parse(task.getExpirationDate());
 
         etTittle.setText(task.getTittle());
@@ -81,7 +75,7 @@ public class UpdateOnHoldTaskActivity extends AppCompatActivity {
         etDescription.setText(task.getDescription());
     }
 
-    void setNewAttributes() {
+    void setAttributes(TaskModel task) {
         LocalDate expirationDate = LocalDate.parse(etExpirationDate.getText().toString(), dtf);
 
         task.setTittle(etTittle.getText().toString());
@@ -89,7 +83,16 @@ public class UpdateOnHoldTaskActivity extends AppCompatActivity {
         task.setDescription(etDescription.getText().toString());
     }
 
-    void finishUpdate() {
+    TaskModel getUpdatedTask(TaskModel task) {
+        SQLiteHelper myDB = new SQLiteHelper(this);
+
+        setAttributes(task);
+        myDB.updateTask(task);
+
+        return task;
+    }
+
+    void finishUpdate(TaskModel task, int taskAdaptPosition) {
         Intent intent = new Intent();
 
         intent.putExtra("task", task);
@@ -98,20 +101,16 @@ public class UpdateOnHoldTaskActivity extends AppCompatActivity {
         finish();
     }
 
-    void updateTask(SQLiteHelper myDB) {
+    void updateTask(TaskModel task, int taskAdaptPosition) {
         btnUpdate.setClickable(false);
 
         try {
-            myDB = new SQLiteHelper(this);
-
-            setNewAttributes();
-            myDB.updateTask(task);
-            finishUpdate();
+            TaskModel updatedTask = getUpdatedTask(task);
+            finishUpdate(updatedTask, taskAdaptPosition);
         } catch (Exception e) {
             Toast.makeText(this, "Houve um erro", Toast.LENGTH_SHORT).show();
         } finally {
             btnUpdate.setClickable(true);
         }
-
     }
 }

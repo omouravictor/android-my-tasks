@@ -10,12 +10,11 @@ public class CategoryModel implements Parcelable {
     private long id;
     private String name;
 
-    public CategoryModel(long id, String name) {
-        this.id = id;
-        this.name = name;
+    public CategoryModel() {
     }
 
-    public CategoryModel(String name) {
+    public CategoryModel(long id, String name) {
+        this.id = id;
         this.name = name;
     }
 

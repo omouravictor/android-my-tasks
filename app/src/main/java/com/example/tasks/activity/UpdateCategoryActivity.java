@@ -13,14 +13,16 @@ import com.example.tasks.MyFunctions;
 import com.example.tasks.R;
 import com.example.tasks.data_base.SQLiteHelper;
 import com.example.tasks.model.CategoryModel;
+import com.example.tasks.model.TaskModel;
+
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
 
 public class UpdateCategoryActivity extends AppCompatActivity {
 
     MyFunctions myFunctions;
     EditText etCategory;
     Button btnClear, btnUpdate;
-    CategoryModel category;
-    int catAdaptPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,48 +33,66 @@ public class UpdateCategoryActivity extends AppCompatActivity {
     }
 
     void init() {
-        myFunctions = new MyFunctions();
-        etCategory = findViewById(R.id.etUpdateCategoryName);
-        btnClear = findViewById(R.id.btnClearUpdateCategory);
-        btnUpdate = findViewById(R.id.btnUpdateCategory);
+        Intent intent = getIntent();
+        CategoryModel category = intent.getParcelableExtra("category");
+        int catAdaptPosition = intent.getIntExtra("catAdaptPosition", -1);
 
-        myFunctions.setActionDoneButton(etCategory);
-        myFunctions.clearEditTexts(btnClear, etCategory);
-
-        SQLiteHelper myDB = new SQLiteHelper(this);
-        Intent intent = new Intent();
-
-        getAndSetIntentData();
+        initView();
+        setMyFunctions();
+        setCategoryData(category);
 
         btnUpdate.setOnClickListener(v -> {
             if (!myFunctions.isEmpty(this, etCategory))
-                updateCategory(myDB, intent);
+                updateCategory(category, catAdaptPosition);
         });
 
     }
 
-    void getAndSetIntentData() {
-        Intent intent = getIntent();
+    void initView() {
+        etCategory = findViewById(R.id.etUpdateCategoryName);
+        btnClear = findViewById(R.id.btnClearUpdateCategory);
+        btnUpdate = findViewById(R.id.btnUpdateCategory);
+    }
 
-        category = intent.getParcelableExtra("category");
-        catAdaptPosition = intent.getIntExtra("catAdaptPosition", -1);
+    void setMyFunctions() {
+        myFunctions = new MyFunctions();
 
+        myFunctions.setActionDoneButton(etCategory);
+        myFunctions.clearEditTexts(btnClear, etCategory);
+    }
+
+    void setCategoryData(CategoryModel category) {
         etCategory.setText(category.getName());
     }
 
-    void updateCategory(SQLiteHelper myDB, Intent intent) {
+    void setAttributes(CategoryModel category) {
+        category.setName(etCategory.getText().toString());
+    }
+
+    CategoryModel getUpdatedCategory(CategoryModel category) {
+        SQLiteHelper myDB = new SQLiteHelper(this);
+
+        setAttributes(category);
+        myDB.updateCategory(category);
+
+        return category;
+    }
+
+    void finishUpdate(CategoryModel category, int catAdaptPosition) {
+        Intent intent = new Intent();
+
+        intent.putExtra("category", category);
+        intent.putExtra("catAdaptPosition", catAdaptPosition);
+        setResult(2, intent);
+        finish();
+    }
+
+    void updateCategory(CategoryModel category, int catAdaptPosition) {
+        btnUpdate.setClickable(false);
+
         try {
-            btnUpdate.setClickable(false);
-
-            category.setName(etCategory.getText().toString());
-
-            myDB.updateCategory(category);
-
-            intent.putExtra("category", category);
-            intent.putExtra("catAdaptPosition", catAdaptPosition);
-            setResult(2, intent);
-            finish();
-
+            CategoryModel updatedCategory = getUpdatedCategory(category);
+            finishUpdate(updatedCategory, catAdaptPosition);
         } catch (SQLiteConstraintException e) {
             Toast.makeText(this, "Essa categoria já existe", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
