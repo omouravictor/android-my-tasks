@@ -13,10 +13,6 @@ import com.example.tasks.MyFunctions;
 import com.example.tasks.R;
 import com.example.tasks.data_base.SQLiteHelper;
 import com.example.tasks.model.CategoryModel;
-import com.example.tasks.model.TaskModel;
-
-import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
 
 public class CreateCategoryActivity extends AppCompatActivity {
 

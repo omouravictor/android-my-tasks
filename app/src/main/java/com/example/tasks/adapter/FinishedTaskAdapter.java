@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.tasks.MyFunctions;
 import com.example.tasks.R;
 import com.example.tasks.activity.UpdateFinishedTaskActivity;
-import com.example.tasks.activity.UpdateOnHoldTaskActivity;
 import com.example.tasks.data_base.SQLiteHelper;
 import com.example.tasks.model.TaskModel;
 
