@@ -27,6 +27,7 @@ public class CreateTaskActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(R.string.task);
         setContentView(R.layout.activity_create_task);
         init();
     }
@@ -43,13 +44,13 @@ public class CreateTaskActivity extends AppCompatActivity {
         myFunctions.setActionDoneButton(etTittle);
         myFunctions.setActionDoneButton(etDescription);
         myFunctions.setOnClickEtDateListener(this, etExpirationTime);
-        myFunctions.setOnClickTaskBtnClearListener(btnClear, etTittle, etDescription, etExpirationTime);
+        myFunctions.clearEditTexts(btnClear, etTittle, etDescription, etExpirationTime);
 
         SQLiteHelper myDB = new SQLiteHelper(this);
         Intent intent = new Intent();
 
         btnAdd.setOnClickListener(v -> {
-            if (!myFunctions.taskRequiredFieldsEmpty(this, etTittle, etExpirationTime))
+            if (!myFunctions.isEmpty(this, etTittle, etExpirationTime))
                 createTask(myDB, intent);
         });
     }

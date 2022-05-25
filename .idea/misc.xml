@@ -26,6 +26,7 @@
         <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/drawable/ic_white_add.xml" value="0.22592592592592592" />
         <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/drawable/ic_white_check.xml" value="0.22592592592592592" />
         <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/drawable/ic_white_delete.xml" value="0.22592592592592592" />
+        <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/drawable/ic_white_edit.xml" value="0.2890625" />
         <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/drawable/ic_white_select_all.xml" value="0.22592592592592592" />
         <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/drawable/ic_white_undo_task.xml" value="0.22592592592592592" />
         <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/drawable/wer.xml" value="0.22592592592592592" />
@@ -33,11 +34,13 @@
         <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/layout/activity_category.xml" value="0.27291666666666664" />
         <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/layout/activity_category_tasks.xml" value="0.27291666666666664" />
         <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/layout/activity_create_category.xml" value="0.33" />
-        <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/layout/activity_create_task.xml" value="0.27291666666666664" />
+        <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/layout/activity_create_task.xml" value="0.33" />
         <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/layout/activity_update.xml" value="0.25" />
         <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/layout/activity_update_category.xml" value="0.27291666666666664" />
-        <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/layout/activity_update_task.xml" value="0.27291666666666664" />
+        <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/layout/activity_update_finished_task.xml" value="0.25" />
+        <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/layout/activity_update_on_hold_task.xml" value="0.27291666666666664" />
+        <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/layout/activity_update_task.xml" value="0.25" />
         <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/layout/fragment_blank.xml" value="0.27291666666666664" />
         <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/layout/fragment_finished_tasks.xml" value="0.27291666666666664" />
         <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/layout/fragment_tasks_on_hold.xml" value="0.27291666666666664" />
@@ -46,6 +49,7 @@
         <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/layout/my_task_row.xml" value="0.33" />
         <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/menu-v26/my_action_mode_menu.xml" value="0.14270833333333333" />
         <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/menu/my_action_mode_menu.xml" value="0.33" />
+        <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/menu/my_category_menu.xml" value="0.27291666666666664" />
         <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/menu/my_menu.xml" value="0.25" />
         <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.15885416666666666" />
         <entry key="..\:/Users/omouravictor/AndroidStudioProjects/Tasks-app/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.15885416666666666" />

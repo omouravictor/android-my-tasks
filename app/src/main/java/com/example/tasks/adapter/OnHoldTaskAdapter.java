@@ -19,7 +19,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tasks.R;
-import com.example.tasks.activity.UpdateTaskActivity;
+import com.example.tasks.activity.UpdateOnHoldTaskActivity;
 import com.example.tasks.data_base.SQLiteHelper;
 import com.example.tasks.model.TaskModel;
 
@@ -58,7 +58,7 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
         this.myDB = myDB;
         this.allTasks = myDB.getAllOnHoldTasksOfCategory(categoryId);
         currentDate = LocalDate.now();
-        updateActivityIntent = new Intent(activity, UpdateTaskActivity.class);
+        updateActivityIntent = new Intent(activity, UpdateOnHoldTaskActivity.class);
         builder = new AlertDialog.Builder(activity);
         builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
         selectedTasks = new ArrayList<>();

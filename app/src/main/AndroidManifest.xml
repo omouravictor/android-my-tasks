@@ -11,7 +11,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activity.UpdateTaskActivity"
+            android:name=".activity.UpdateFinishedTaskActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activity.UpdateOnHoldTaskActivity"
             android:exported="true" />
         <activity
             android:name=".activity.UpdateCategoryActivity"

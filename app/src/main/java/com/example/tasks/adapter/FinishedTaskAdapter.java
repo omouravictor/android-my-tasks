@@ -20,7 +20,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tasks.MyFunctions;
 import com.example.tasks.R;
-import com.example.tasks.activity.UpdateTaskActivity;
+import com.example.tasks.activity.UpdateFinishedTaskActivity;
+import com.example.tasks.activity.UpdateOnHoldTaskActivity;
 import com.example.tasks.data_base.SQLiteHelper;
 import com.example.tasks.model.TaskModel;
 
@@ -61,7 +62,7 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
         this.allTasks = myDB.getAllFinishedTasksOfCategory(categoryId);
         myFunctions = new MyFunctions();
         currentDate = LocalDate.now();
-        updateActivityIntent = new Intent(activity, UpdateTaskActivity.class);
+        updateActivityIntent = new Intent(activity, UpdateFinishedTaskActivity.class);
         builder = new AlertDialog.Builder(activity);
         builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
         selectedTasks = new ArrayList<>();
@@ -173,7 +174,7 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
 
         holder.itemView.setBackgroundColor(green);
         holder.background = green;
-        holder.tvExpirationTime.setText(activity.getString(R.string.finished_in, dateFormatText));
+        holder.tvExpirationTime.setText(activity.getString(R.string.finished_in_x, dateFormatText));
         holder.btnComplete.setText(R.string.undo);
     }
 

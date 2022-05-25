@@ -88,10 +88,8 @@ public class CategoryTasksActivity extends AppCompatActivity {
                             adaptOnHoldTasks.addTask(task);
                         } else if (resultCode == 2) {
                             int position = result.getData().getIntExtra("taskAdaptPosition", 0);
-                            adaptOnHoldTasks.updateTask(position, task);
-                        } else if (resultCode == 3) {
-                            int position = result.getData().getIntExtra("taskAdaptPosition", 0);
-                            adaptFinishedTasks.updateTask(position, task);
+                            if (task.isFinished()) adaptFinishedTasks.updateTask(position, task);
+                            else adaptOnHoldTasks.updateTask(position, task);
                         }
                     }
                 }

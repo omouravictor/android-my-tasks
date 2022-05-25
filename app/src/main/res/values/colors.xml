@@ -4,10 +4,10 @@
     <color name="darkPrimary">#245D7A</color>
     <color name="white">#FFFFFF</color>
     <color name="darkWhite">#E1E1E1</color>
-    <color name="lightYellow">#FBF6B3</color>
-    <color name="lightRed">#FFDCD9</color>
+    <color name="lightYellow">#FFF891</color>
+    <color name="lightRed">#FFB9B3</color>
     <color name="black">#000000</color>
     <color name="gray">#676767</color>
     <color name="darkGray">#5C5C5C</color>
-    <color name="green">#CEEDCB</color>
+    <color name="green">#AEFFA7</color>
 </resources>

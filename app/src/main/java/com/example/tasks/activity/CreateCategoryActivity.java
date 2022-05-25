@@ -23,6 +23,7 @@ public class CreateCategoryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(R.string.category);
         setContentView(R.layout.activity_create_category);
         init();
     }
@@ -34,13 +35,13 @@ public class CreateCategoryActivity extends AppCompatActivity {
         btnCreate = findViewById(R.id.btnCreateCategory);
 
         myFunctions.setActionDoneButton(etCategory);
-        myFunctions.setOnClickCategoryBtnClearListener(btnClear, etCategory);
+        myFunctions.clearEditTexts(btnClear, etCategory);
 
         SQLiteHelper myDB = new SQLiteHelper(this);
         Intent intent = new Intent();
 
         btnCreate.setOnClickListener(v -> {
-            if (!myFunctions.categoryRequiredFieldsEmpty(this, etCategory))
+            if (!myFunctions.isEmpty(this, etCategory))
                 createCategory(myDB, intent);
         });
     }

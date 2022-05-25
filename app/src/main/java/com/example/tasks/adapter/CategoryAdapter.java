@@ -68,11 +68,14 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     @Override
     public void onBindViewHolder(@NonNull CategoryAdapter.CategoryViewHolder holder, int position) {
         CategoryModel category = allCategories.get(position);
+        Context context = holder.itemView.getContext();
+        long qtdOnHold = myDB.getQtdOnHoldTask(category.getId());
+        long qtdFinished = myDB.getQtdFinishedTask(category.getId());
 
         holder.tvCategoryName.setText(category.getName());
 
-        holder.tvQtdOnHoldTask.setText("Em espera: " + myDB.getQtdOnHoldTask(category.getId()));
-        holder.tvQtdFinishedTask.setText("Concluídas: " + myDB.getQtdFinishedTask(category.getId()));
+        holder.tvQtdOnHoldTask.setText(context.getString(R.string.on_hold_x, qtdOnHold));
+        holder.tvQtdFinishedTask.setText(context.getString(R.string.finished_x, qtdFinished));
 
         holder.imbEditCategory.setOnClickListener(v -> {
             updateActIntent.putExtra("category", category);
@@ -81,7 +84,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         });
 
         holder.imbDeleteCategory.setOnClickListener(v -> {
-            Context context = v.getContext();
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
             builder.setMessage("Deseja exluir '" + category.getName() + "' e todas suas tarefas?");

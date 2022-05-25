@@ -56,21 +56,38 @@ public class MyFunctions {
         });
     }
 
-    public void setOnClickTaskBtnClearListener(
+    public void clearEditTexts(
             @NonNull Button btnClear,
-            EditText etTittle,
-            EditText etDescription,
-            EditText etDate
+            EditText etCategory) {
+        btnClear.setOnClickListener(v -> etCategory.setText(""));
+    }
+
+    public void clearEditTexts(
+            @NonNull Button btnClear,
+            EditText et1,
+            EditText et2,
+            EditText et3
     ) {
         btnClear.setOnClickListener(v -> {
-            etTittle.setText("");
-            etDescription.setText("");
-            etDate.setText("");
+            et1.setText("");
+            et2.setText("");
+            et3.setText("");
         });
     }
 
-    public void setOnClickCategoryBtnClearListener(@NonNull Button btnClear, EditText etCategory) {
-        btnClear.setOnClickListener(v -> etCategory.setText(""));
+    public void clearEditTexts(
+            @NonNull Button btnClear,
+            EditText et1,
+            EditText et2,
+            EditText et3,
+            EditText et4
+    ) {
+        btnClear.setOnClickListener(v -> {
+            et1.setText("");
+            et2.setText("");
+            et3.setText("");
+            et4.setText("");
+        });
     }
 
     public void setActionDoneButton(@NonNull EditText editText) {
@@ -79,15 +96,7 @@ public class MyFunctions {
         editText.setRawInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
     }
 
-    public boolean taskRequiredFieldsEmpty(Context context, EditText et1, EditText et2) {
-        if (et1.getText().toString().isEmpty() || et2.getText().toString().isEmpty()) {
-            Toast.makeText(context, "Preencha os campos requeridos", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-        return false;
-    }
-
-    public boolean categoryRequiredFieldsEmpty(Context context, EditText et1) {
+    public boolean isEmpty(Context context, EditText et1) {
         if (et1.getText().toString().isEmpty()) {
             Toast.makeText(context, "Preencha os campos requeridos", Toast.LENGTH_SHORT).show();
             return true;
@@ -95,4 +104,19 @@ public class MyFunctions {
         return false;
     }
 
+    public boolean isEmpty(Context context, EditText et1, EditText et2) {
+        if (et1.getText().toString().isEmpty() || et2.getText().toString().isEmpty()) {
+            Toast.makeText(context, "Preencha os campos requeridos", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isEmpty(Context context, EditText et1, EditText et2, EditText et3) {
+        if (et1.getText().toString().isEmpty() || et2.getText().toString().isEmpty() || et3.getText().toString().isEmpty()) {
+            Toast.makeText(context, "Preencha os campos requeridos", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return false;
+    }
 }

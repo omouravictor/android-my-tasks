@@ -25,6 +25,7 @@ public class UpdateCategoryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(R.string.category);
         setContentView(R.layout.activity_update_category);
         init();
     }
@@ -36,7 +37,7 @@ public class UpdateCategoryActivity extends AppCompatActivity {
         btnUpdate = findViewById(R.id.btnUpdateCategory);
 
         myFunctions.setActionDoneButton(etCategory);
-        myFunctions.setOnClickCategoryBtnClearListener(btnClear, etCategory);
+        myFunctions.clearEditTexts(btnClear, etCategory);
 
         SQLiteHelper myDB = new SQLiteHelper(this);
         Intent intent = new Intent();
@@ -44,7 +45,7 @@ public class UpdateCategoryActivity extends AppCompatActivity {
         getAndSetIntentData();
 
         btnUpdate.setOnClickListener(v -> {
-            if (!myFunctions.categoryRequiredFieldsEmpty(this, etCategory))
+            if (!myFunctions.isEmpty(this, etCategory))
                 updateCategory(myDB, intent);
         });
 
