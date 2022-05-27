@@ -86,7 +86,7 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
 
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
         TextView tvTaskName, tvExpirationTime;
-        Button btnComplete;
+        Button btnUndo;
         boolean isSelected;
         int background;
 
@@ -94,7 +94,7 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
             super(itemView);
             tvTaskName = itemView.findViewById(R.id.tvTittle);
             tvExpirationTime = itemView.findViewById(R.id.tvExpirationTime);
-            btnComplete = itemView.findViewById(R.id.btnFinish);
+            btnUndo = itemView.findViewById(R.id.btnAction);
         }
     }
 
@@ -174,14 +174,14 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
         holder.itemView.setBackgroundColor(green);
         holder.background = green;
         holder.tvExpirationTime.setText(activity.getString(R.string.finished_in_x, dateFormatText));
-        holder.btnComplete.setText(R.string.undo);
+        holder.btnUndo.setText(R.string.undo);
     }
 
     void prepareFinishedTasks(TaskModel task, TaskViewHolder holder) {
         setFinishedTaskLayout(task, holder);
 
-        holder.btnComplete.setEnabled(true);
-        holder.btnComplete.setOnClickListener(v -> {
+        holder.btnUndo.setEnabled(true);
+        holder.btnUndo.setOnClickListener(v -> {
             builder.setMessage("Desfazer '" + task.getTittle() + "'?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
                 deleteTask(holder.getAdapterPosition());
@@ -228,7 +228,7 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
     void putAllHoldersAsNotSelected() {
         for (TaskViewHolder holder : allHolders) {
             holder.isSelected = false;
-            holder.btnComplete.setEnabled(true);
+            holder.btnUndo.setEnabled(true);
             holder.itemView.setBackgroundColor(holder.background);
         }
     }
@@ -236,7 +236,7 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
     void putAllHoldersAsSelected() {
         for (TaskViewHolder holder : allHolders) {
             holder.isSelected = true;
-            holder.btnComplete.setEnabled(false);
+            holder.btnUndo.setEnabled(false);
             holder.itemView.setBackgroundColor(Color.LTGRAY);
         }
     }
@@ -298,7 +298,7 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
     void putHoldersAsNotSelected(ArrayList<TaskViewHolder> holders) {
         for (TaskViewHolder holder : holders) {
             holder.isSelected = false;
-            holder.btnComplete.setEnabled(true);
+            holder.btnUndo.setEnabled(true);
             holder.itemView.setBackgroundColor(holder.background);
         }
     }
@@ -311,14 +311,14 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
 
     void myOnPrepareActionMode(TaskViewHolder holder, TaskModel task) {
         if (!holder.isSelected) {
-            holder.btnComplete.setEnabled(false);
+            holder.btnUndo.setEnabled(false);
             holder.isSelected = true;
             selectedTasks.add(task);
             selectedHolders.add(holder);
             holder.itemView.setBackgroundColor(Color.LTGRAY);
             myActionMode.setTitle(String.valueOf(selectedTasks.size()));
         } else {
-            holder.btnComplete.setEnabled(true);
+            holder.btnUndo.setEnabled(true);
             holder.isSelected = false;
             selectedTasks.remove(task);
             selectedHolders.remove(holder);

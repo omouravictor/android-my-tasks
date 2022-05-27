@@ -91,7 +91,7 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
             super(itemView);
             tvTaskName = itemView.findViewById(R.id.tvTittle);
             tvExpirationTime = itemView.findViewById(R.id.tvExpirationTime);
-            btnComplete = itemView.findViewById(R.id.btnFinish);
+            btnComplete = itemView.findViewById(R.id.btnAction);
         }
     }
 
@@ -161,6 +161,9 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
 
     void setOnHoldTaskLayout(TaskModel task, TaskViewHolder holder) {
         int days = Days.daysBetween(currentDate, LocalDate.parse(task.getExpirationDate())).getDays();
+
+        holder.btnComplete.setText(R.string.finish);
+
         if (days > 0) {
             int white = activity.getColor(R.color.white);
             holder.itemView.setBackgroundColor(white);

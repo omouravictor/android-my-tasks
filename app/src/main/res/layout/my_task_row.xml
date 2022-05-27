@@ -6,13 +6,14 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="10dp"
     android:background="@color/white"
-    android:baselineAligned="false">
+    android:baselineAligned="false"
+    android:paddingVertical="10dp"
+    android:paddingHorizontal="12dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:padding="12dp">
+        android:layout_weight="1">
 
         <TextView
             android:id="@+id/tvTittle"
@@ -42,20 +43,19 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="0.4">
+        android:layout_weight="0.5">
 
         <Button
-            android:id="@+id/btnFinish"
+            android:id="@+id/btnAction"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/primary"
-            android:text="@string/finish"
+            android:text="Action"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
