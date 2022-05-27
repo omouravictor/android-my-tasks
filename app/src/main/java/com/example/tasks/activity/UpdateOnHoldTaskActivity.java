@@ -38,7 +38,7 @@ public class UpdateOnHoldTaskActivity extends AppCompatActivity {
         int taskAdaptPosition = intent.getIntExtra("taskAdaptPosition", -1);
 
         initView();
-        setMyFunctions();
+        initMyFunctions();
         setTaskData(task);
 
         btnUpdate.setOnClickListener((v) -> {
@@ -57,7 +57,7 @@ public class UpdateOnHoldTaskActivity extends AppCompatActivity {
         btnUpdate = findViewById(R.id.btnUpdate);
     }
 
-    void setMyFunctions() {
+    void initMyFunctions() {
         myFunctions = new MyFunctions();
 
         myFunctions.setActionDoneButton(etTittle);

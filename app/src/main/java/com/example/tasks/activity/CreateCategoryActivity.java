@@ -30,7 +30,7 @@ public class CreateCategoryActivity extends AppCompatActivity {
 
     void init() {
         initView();
-        setMyFunctions();
+        initMyFunctions();
 
         btnCreate.setOnClickListener(v -> {
             if (!myFunctions.isEmpty(this, etCategory))
@@ -44,7 +44,7 @@ public class CreateCategoryActivity extends AppCompatActivity {
         btnCreate = findViewById(R.id.btnCreateCategory);
     }
 
-    void setMyFunctions() {
+    void initMyFunctions() {
         myFunctions = new MyFunctions();
 
         myFunctions.setActionDoneButton(etCategory);

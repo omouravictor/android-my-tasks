@@ -34,7 +34,7 @@ public class UpdateCategoryActivity extends AppCompatActivity {
         int catAdaptPosition = intent.getIntExtra("catAdaptPosition", -1);
 
         initView();
-        setMyFunctions();
+        initMyFunctions();
         setCategoryData(category);
 
         btnUpdate.setOnClickListener(v -> {
@@ -50,7 +50,7 @@ public class UpdateCategoryActivity extends AppCompatActivity {
         btnUpdate = findViewById(R.id.btnUpdateCategory);
     }
 
-    void setMyFunctions() {
+    void initMyFunctions() {
         myFunctions = new MyFunctions();
 
         myFunctions.setActionDoneButton(etCategory);
