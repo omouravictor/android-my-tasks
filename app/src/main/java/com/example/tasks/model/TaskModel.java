@@ -7,25 +7,25 @@ import androidx.annotation.NonNull;
 
 public class TaskModel implements Parcelable {
 
-    private long id;
+    private Integer id;
     private String tittle;
-    private String description;
-    private int status = 0;
     private String expirationDate;
+    private String description;
+    private int status;
     private String finishedDate;
-    private long categoryId;
+    private Integer categoryId;
 
-    public TaskModel () {
+    public TaskModel() {
     }
 
     public TaskModel(
-            long id,
+            Integer id,
             String tittle,
             String description,
             int status,
             String expirationDate,
             String finishedDate,
-            long categoryId
+            Integer categoryId
     ) {
         this.id = id;
         this.tittle = tittle;
@@ -37,13 +37,13 @@ public class TaskModel implements Parcelable {
     }
 
     protected TaskModel(@NonNull Parcel in) {
-        id = in.readLong();
+        id = in.readInt();
         tittle = in.readString();
         description = in.readString();
         status = in.readInt();
         expirationDate = in.readString();
         finishedDate = in.readString();
-        categoryId = in.readLong();
+        categoryId = in.readInt();
     }
 
     public static final Creator<TaskModel> CREATOR = new Creator<TaskModel>() {
@@ -65,13 +65,13 @@ public class TaskModel implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
-        dest.writeLong(id);
+        dest.writeInt(id);
         dest.writeString(tittle);
         dest.writeString(description);
         dest.writeInt(status);
         dest.writeString(expirationDate);
         dest.writeString(finishedDate);
-        dest.writeLong(categoryId);
+        dest.writeInt(categoryId);
     }
 
     public void finish(String finishedDate) {
@@ -88,11 +88,11 @@ public class TaskModel implements Parcelable {
         return status == 1;
     }
 
-    public long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -117,7 +117,10 @@ public class TaskModel implements Parcelable {
     }
 
     public void setStatus(int status) {
-        this.status = status;
+        if (status != 0 && status != 1)
+            this.status = 0;
+        else
+            this.status = status;
     }
 
     public String getExpirationDate() {
@@ -136,11 +139,11 @@ public class TaskModel implements Parcelable {
         this.finishedDate = finishedDate;
     }
 
-    public long getCategoryId() {
+    public Integer getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(long categoryId) {
+    public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
     }
 }

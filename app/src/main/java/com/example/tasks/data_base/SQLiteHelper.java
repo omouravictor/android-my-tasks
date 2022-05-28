@@ -63,8 +63,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public long createCategory(@NonNull CategoryModel category) {
-        long categoryId;
+    public Integer createCategory(@NonNull CategoryModel category) {
+        Integer categoryId;
 
         insertCategoryInDB(category);
         categoryId = getLastID("tb_category");
@@ -78,8 +78,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         );
     }
 
-    public long createTask(@NonNull TaskModel task) {
-        long taskId;
+    public Integer createTask(@NonNull TaskModel task) {
+        Integer taskId;
 
         insertTaskInDB(task);
         taskId = getLastID("tb_task");
@@ -154,13 +154,13 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM tb_category");
     }
 
-    public void deleteOnHoldTasks(long categoryId) {
+    public void deleteOnHoldTasks(Integer categoryId) {
         db.execSQL("DELETE FROM tb_task" +
                 " WHERE status = 0" +
                 " AND category_id = " + categoryId);
     }
 
-    public void deleteFinishedTasks(long categoryId) {
+    public void deleteFinishedTasks(Integer categoryId) {
         db.execSQL("DELETE FROM tb_task" +
                 " WHERE status = 1" +
                 " AND category_id = " + categoryId);
@@ -184,7 +184,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return getTasksFromDB(query);
     }
 
-    public ArrayList<TaskModel> getAllOnHoldTasksOfCategory(long categoryId) {
+    public ArrayList<TaskModel> getAllOnHoldTasksOfCategory(Integer categoryId) {
         String query = "SELECT *" +
                 " FROM tb_task" +
                 " WHERE status = 0 AND category_id = " + categoryId +
@@ -193,7 +193,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return getTasksFromDB(query);
     }
 
-    public ArrayList<TaskModel> getAllFinishedTasksOfCategory(long categoryId) {
+    public ArrayList<TaskModel> getAllFinishedTasksOfCategory(Integer categoryId) {
         String query = "SELECT *" +
                 " FROM tb_task" +
                 " WHERE status = 1 AND category_id = " + categoryId +
@@ -203,7 +203,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 
     @SuppressLint("Recycle")
-    public long getQtdFinishedTask(long categoryId) {
+    public long getQtdFinishedTask(Integer categoryId) {
         String query = "SELECT COUNT(id)" +
                 " FROM tb_task" +
                 " WHERE status = 1 AND category_id = " + categoryId;
@@ -218,7 +218,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 
     @SuppressLint("Recycle")
-    public long getQtdOnHoldTask(long categoryId) {
+    public long getQtdOnHoldTask(Integer categoryId) {
         String query = "SELECT COUNT(id)" +
                 " FROM tb_task" +
                 " WHERE status = 0 AND category_id = " + categoryId;
@@ -246,13 +246,13 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             Cursor cursor = db.rawQuery(query, null);
             while (cursor.moveToNext()) {
                 TaskModel task = new TaskModel(
-                        cursor.getLong(0),
+                        cursor.getInt(0),
                         cursor.getString(1),
                         cursor.getString(2),
                         cursor.getInt(3),
                         cursor.getString(4),
                         cursor.getString(5),
-                        cursor.getLong(6)
+                        cursor.getInt(6)
                 );
                 tasks.add(task);
             }
@@ -268,7 +268,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             Cursor cursor = db.rawQuery(query, null);
             while (cursor.moveToNext()) {
                 CategoryModel category = new CategoryModel(
-                        cursor.getLong(0),
+                        cursor.getInt(0),
                         cursor.getString(1)
                 );
                 categories.add(category);
@@ -278,15 +278,15 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return categories;
     }
 
-    long getLastID(String tbName) {
-        long lastId;
+    Integer getLastID(String tbName) {
+        Integer lastId;
         Cursor cursor = db.rawQuery(
                 "SELECT id FROM " + tbName + " WHERE id = (SELECT MAX(id) FROM " + tbName + ")",
                 null
         );
 
         cursor.moveToFirst();
-        lastId = cursor.getLong(0);
+        lastId = cursor.getInt(0);
         cursor.close();
 
         return lastId;

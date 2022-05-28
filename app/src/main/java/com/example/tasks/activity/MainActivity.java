@@ -40,22 +40,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void init() {
-        myDB = new SQLiteHelper(this);
+        initView();
+        initVariables();
         startBtnAdd();
         startActivityResult();
         startAdapterAndRecyclerView();
     }
 
-    void startBtnAdd() {
+    void initView() {
         btnAdd = findViewById(R.id.btnAdd);
+        rvCategory = findViewById(R.id.rvCategory);
+    }
+
+    void initVariables() {
+        myDB = new SQLiteHelper(this);
         createCategoryActIntent = new Intent(this, CreateCategoryActivity.class);
+    }
+
+    void startBtnAdd() {
         btnAdd.setOnClickListener(v -> actResult.launch(createCategoryActIntent));
     }
 
     void startAdapterAndRecyclerView() {
         adaptCategory = new CategoryAdapter(this, myDB, actResult);
 
-        rvCategory = findViewById(R.id.rvCategory);
         rvCategory.setLayoutManager(new LinearLayoutManager(this));
         rvCategory.setAdapter(adaptCategory);
     }

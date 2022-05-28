@@ -27,8 +27,8 @@ public class UpdateOnHoldTaskActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle(R.string.task);
         setContentView(R.layout.activity_update_on_hold_task);
+        setTitle(R.string.task);
         init();
     }
 

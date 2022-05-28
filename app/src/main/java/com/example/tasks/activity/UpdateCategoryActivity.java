@@ -23,8 +23,8 @@ public class UpdateCategoryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle(R.string.category);
         setContentView(R.layout.activity_update_category);
+        setTitle(R.string.category);
         init();
     }
 

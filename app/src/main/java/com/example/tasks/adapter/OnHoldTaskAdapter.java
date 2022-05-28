@@ -50,7 +50,7 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
             int catAdaptPosition,
             ActivityResultLauncher<Intent> actResult,
             SQLiteHelper myDB,
-            long categoryId
+            Integer categoryId
     ) {
         this.activity = activity;
         this.catAdaptPosition = catAdaptPosition;

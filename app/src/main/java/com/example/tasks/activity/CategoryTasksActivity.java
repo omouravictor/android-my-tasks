@@ -40,6 +40,7 @@ public class CategoryTasksActivity extends AppCompatActivity {
     ActivityResultLauncher<Intent> actResult;
     OnHoldTaskAdapter adaptOnHoldTasks;
     FinishedTaskAdapter adaptFinishedTasks;
+    FloatingActionButton btnAdd;
     SQLiteHelper myDB;
     TabLayout tabLayout;
     ViewPager2 vp2;
@@ -48,20 +49,15 @@ public class CategoryTasksActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        category = getIntent().getParcelableExtra("category");
-        catAdaptPosition = getIntent().getIntExtra("catAdaptPosition", -1);
-
-        setTitle(category.getName());
-
-        getSupportActionBar().setElevation(0);
         setContentView(R.layout.activity_category_tasks);
+        getSupportActionBar().setElevation(0);
         init();
+        setTitle(category.getName());
     }
 
     void init() {
-        myDB = new SQLiteHelper(this);
-        builder = new AlertDialog.Builder(this);
+        initView();
+        initVariables();
         startBtnAdd();
         startActivityResult();
         startAdaptersAndFragments();
@@ -69,8 +65,20 @@ public class CategoryTasksActivity extends AppCompatActivity {
         startViewPager();
     }
 
+    void initView() {
+        tabLayout = findViewById(R.id.tabLayout);
+        vp2 = findViewById(R.id.viewPager2);
+        btnAdd = findViewById(R.id.btnAdd);
+    }
+
+    void initVariables() {
+        category = getIntent().getParcelableExtra("category");
+        catAdaptPosition = getIntent().getIntExtra("catAdaptPosition", -1);
+        myDB = new SQLiteHelper(this);
+        builder = new AlertDialog.Builder(this);
+    }
+
     void startBtnAdd() {
-        FloatingActionButton btnAdd = findViewById(R.id.btnAdd);
         Intent createTaskActivity = new Intent(this, CreateTaskActivity.class);
 
         createTaskActivity.putExtra("categoryId", category.getId());
@@ -108,8 +116,6 @@ public class CategoryTasksActivity extends AppCompatActivity {
     }
 
     void startTabLayout() {
-        tabLayout = findViewById(R.id.tabLayout);
-
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -128,7 +134,6 @@ public class CategoryTasksActivity extends AppCompatActivity {
 
     void startViewPager() {
         ViewPagerAdapter vpAdapter = new ViewPagerAdapter(this);
-        vp2 = findViewById(R.id.viewPager2);
 
         vpAdapter.addFragment(fragOnHoldTasks, "Em espera");
         vpAdapter.addFragment(fragFinishedTasks, "Concluídas");

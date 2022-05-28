@@ -52,7 +52,7 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
             int catAdaptPosition,
             ActivityResultLauncher<Intent> actResult,
             SQLiteHelper myDB,
-            long categoryId
+            Integer categoryId
     ) {
         this.activity = activity;
         this.catAdaptPosition = catAdaptPosition;

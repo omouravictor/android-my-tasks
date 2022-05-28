@@ -27,8 +27,8 @@ public class UpdateFinishedTaskActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle(R.string.task);
         setContentView(R.layout.activity_update_finished_task);
+        setTitle(R.string.task);
         init();
     }
 

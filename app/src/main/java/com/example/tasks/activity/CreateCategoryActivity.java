@@ -23,8 +23,8 @@ public class CreateCategoryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle(R.string.category);
         setContentView(R.layout.activity_create_category);
+        setTitle(R.string.category);
         init();
     }
 
@@ -58,7 +58,7 @@ public class CreateCategoryActivity extends AppCompatActivity {
     CategoryModel getNewCategory() {
         SQLiteHelper myDB = new SQLiteHelper(this);
         CategoryModel category = new CategoryModel();
-        long id;
+        Integer id;
 
         setAttributes(category);
         id = myDB.createCategory(category);
