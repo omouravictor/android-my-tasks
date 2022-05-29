@@ -11,6 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".activity.RequirementsActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.UpdateFinishedTaskActivity"
             android:exported="true" />
         <activity

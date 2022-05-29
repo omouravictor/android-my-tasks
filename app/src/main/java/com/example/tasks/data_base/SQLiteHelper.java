@@ -54,12 +54,24 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                         + " ON DELETE CASCADE"
                         + ")"
         );
+
+        db.execSQL(
+                "CREATE TABLE tb_requirement ("
+                        + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                        + "required_task_id INTEGER REFERENCES tb_task(id),"
+                        + "requirement_task_id INTEGER REFERENCES tb_task(id),"
+
+                        + " FOREIGN KEY (required_task_id) REFERENCES tb_task(id) ON DELETE CASCADE,"
+                        + " FOREIGN KEY (requirement_task_id) REFERENCES tb_task(id) ON DELETE CASCADE"
+                        + ")"
+        );
     }
 
     @Override
     public void onUpgrade(@NonNull SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS tb_task");
         db.execSQL("DROP TABLE IF EXISTS tb_category");
+        db.execSQL("DROP TABLE IF EXISTS tb_requirement");
         onCreate(db);
     }
 
@@ -96,6 +108,27 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         );
     }
 
+    public Integer createRequirement(@NonNull TaskModel task) {
+        Integer requirementID;
+
+        insertRequirementInDB(task);
+        requirementID = getLastID("tb_requirement");
+
+        return requirementID;
+    }
+
+    void insertRequirementInDB(TaskModel task) {
+        ArrayList<Integer> requirementsID = task.getRequirementsID();
+
+        for (Integer id : requirementsID) {
+            db.execSQL(
+                    "INSERT INTO tb_requirement (required_task_id, requirement_task_id)" +
+                            " VALUES(" + id + "," + task.getId() + ")"
+            );
+        }
+
+    }
+
     public void updateCategory(CategoryModel category) {
         db.execSQL(
                 "UPDATE tb_category " +
@@ -123,6 +156,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                             "description = '" + task.getDescription() + "'," +
                             "status = " + task.getStatus() + "," +
                             "expiration_date = '" + task.getExpirationDate() + "'," +
+                            "finished_date = NULL," +
                             "category_id = " + task.getCategoryId() +
                             " WHERE id = " + task.getId()
             );
@@ -279,7 +313,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 
     Integer getLastID(String tbName) {
-        Integer lastId;
+        int lastId;
         Cursor cursor = db.rawQuery(
                 "SELECT id FROM " + tbName + " WHERE id = (SELECT MAX(id) FROM " + tbName + ")",
                 null

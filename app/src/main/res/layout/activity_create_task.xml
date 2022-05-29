@@ -7,7 +7,7 @@
     tools:context=".activity.CreateTaskActivity">
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/layTittleAdd"
+        android:id="@+id/layTittle"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,7 +22,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etTittleAdd"
+            android:id="@+id/etTittle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textMultiLine"
@@ -30,7 +30,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/laySlaDateAdd"
+        android:id="@+id/laySlaDate"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -39,10 +39,10 @@
         android:hint="@string/expires_in"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/layTittleAdd">
+        app:layout_constraintTop_toBottomOf="@+id/layTittle">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etExpirationTimeAdd"
+            android:id="@+id/etExpirationTime"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:cursorVisible="false"
@@ -50,7 +50,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/layDescriptionAdd"
+        android:id="@+id/layDescription"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -61,10 +61,10 @@
         app:counterMaxLength="200"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/laySlaDateAdd">
+        app:layout_constraintTop_toBottomOf="@+id/laySlaDate">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etDescriptionAdd"
+            android:id="@+id/etDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textMultiLine"
@@ -78,10 +78,10 @@
         android:layout_marginTop="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/layDescriptionAdd">
+        app:layout_constraintTop_toBottomOf="@+id/layDescription">
 
         <Button
-            android:id="@+id/btnRequirementsAdd"
+            android:id="@+id/btnRequirements"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/ic_white_add"
@@ -94,14 +94,25 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tvQtdRequirementsAdd"
+            android:id="@+id/tvQtdRequirements"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="5dp"
-            android:text="@string/x_tasks_required"
+            android:text="0"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnRequirementsAdd" />
+            app:layout_constraintTop_toBottomOf="@+id/btnRequirements" />
+
+        <TextView
+            android:id="@+id/tvText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:textSize="16sp"
+            android:text="@string/requirement_s"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tvQtdRequirements" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -110,12 +121,12 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="25dp"
         android:layout_marginBottom="25dp"
+        android:baselineAligned="false"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:baselineAligned="false">
+        app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -126,7 +137,7 @@
             android:orientation="vertical">
 
             <Button
-                android:id="@+id/btnClearAdd"
+                android:id="@+id/btnClear"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="@string/clear"
@@ -142,7 +153,7 @@
             android:orientation="vertical">
 
             <Button
-                android:id="@+id/btnAdd"
+                android:id="@+id/btnCreate"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="@string/create"

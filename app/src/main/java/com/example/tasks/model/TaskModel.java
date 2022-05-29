@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
+
 public class TaskModel implements Parcelable {
 
     private Integer id;
@@ -14,6 +16,7 @@ public class TaskModel implements Parcelable {
     private int status;
     private String finishedDate;
     private Integer categoryId;
+    private ArrayList<Integer> requirementsID;
 
     public TaskModel() {
     }
@@ -88,6 +91,10 @@ public class TaskModel implements Parcelable {
         return status == 1;
     }
 
+    public boolean hasRequirements() {
+        return !requirementsID.isEmpty();
+    }
+
     public Integer getId() {
         return id;
     }
@@ -145,5 +152,13 @@ public class TaskModel implements Parcelable {
 
     public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public void setRequirementsID(ArrayList<Integer> requirementsID) {
+        this.requirementsID = requirementsID;
+    }
+
+    public ArrayList<Integer> getRequirementsID() {
+        return requirementsID;
     }
 }
