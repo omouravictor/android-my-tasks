@@ -25,8 +25,8 @@ import java.util.ArrayList;
 
 public class CreateTaskActivity extends AppCompatActivity {
 
-    ArrayList<Integer> requirementsID;
-    EditText etTittle, etDescription, etExpirationTime;
+    ArrayList<Integer> requiredIDs;
+    EditText etTittle, etDescription, etExpirationDate;
     TextView tvQtdRequirements;
     Button btnRequirements, btnClear, btnCreate;
     ActivityResultLauncher<Intent> actResult;
@@ -52,23 +52,24 @@ public class CreateTaskActivity extends AppCompatActivity {
 
         btnRequirements.setOnClickListener(v -> {
             taskRequirementsIntent.putExtra("categoryID", categoryID);
-            taskRequirementsIntent.putExtra("requirements", requirementsID);
+            taskRequirementsIntent.putExtra("requirements", requiredIDs);
             actResult.launch(taskRequirementsIntent);
         });
 
         btnCreate.setOnClickListener(v -> {
-            if (!myFunctions.isEmpty(this, etTittle, etExpirationTime)) {
+            btnCreate.setClickable(false);
+            if (!myFunctions.isEmpty(this, etTittle, etExpirationDate)) {
                 try {
                     SQLiteHelper myDB = new SQLiteHelper(this);
                     TaskModel newTask = createTask(myDB, categoryID);
-                    Integer requirementID = null;
                     if (newTask.hasRequirements())
-                        requirementID = createRequirement(myDB, newTask);
-                    finishCreate(newTask, requirementID);
+                        myDB.createRequirement(newTask);
+                    finishCreate(newTask);
                 } catch (Exception e) {
                     Toast.makeText(this, "Houve um erro", Toast.LENGTH_SHORT).show();
                 }
             }
+            btnCreate.setClickable(true);
         });
     }
 
@@ -76,7 +77,7 @@ public class CreateTaskActivity extends AppCompatActivity {
         dtf = DateTimeFormat.forPattern("dd/MM/yyyy");
         etTittle = findViewById(R.id.etTittle);
         etDescription = findViewById(R.id.etDescription);
-        etExpirationTime = findViewById(R.id.etExpirationTime);
+        etExpirationDate = findViewById(R.id.etExpirationDate);
         tvQtdRequirements = findViewById(R.id.tvQtdRequirements);
         btnRequirements = findViewById(R.id.btnRequirements);
         btnClear = findViewById(R.id.btnClear);
@@ -84,7 +85,7 @@ public class CreateTaskActivity extends AppCompatActivity {
     }
 
     void initVariables() {
-        requirementsID = new ArrayList<>();
+        requiredIDs = new ArrayList<>();
         taskRequirementsIntent = new Intent(this, RequirementsActivity.class);
     }
 
@@ -94,8 +95,8 @@ public class CreateTaskActivity extends AppCompatActivity {
                 result -> {
                     int resultCode = result.getResultCode();
                     if (resultCode != Activity.RESULT_CANCELED) {
-                        requirementsID = result.getData().getIntegerArrayListExtra("requirements");
-                        tvQtdRequirements.setText(String.valueOf(requirementsID.size()));
+                        requiredIDs = result.getData().getIntegerArrayListExtra("requirements");
+                        tvQtdRequirements.setText(String.valueOf(requiredIDs.size()));
                     }
                 }
         );
@@ -106,19 +107,19 @@ public class CreateTaskActivity extends AppCompatActivity {
 
         myFunctions.setActionDoneButton(etTittle);
         myFunctions.setActionDoneButton(etDescription);
-        myFunctions.setOnClickEtDateListener(this, etExpirationTime);
-        myFunctions.clearEditTexts(btnClear, etTittle, etDescription, etExpirationTime);
+        myFunctions.setOnClickEtDateListener(this, etExpirationDate);
+        myFunctions.clearEditTexts(btnClear, etTittle, etDescription, etExpirationDate);
     }
 
     void setAttributes(TaskModel task, Integer categoryID) {
-        LocalDate date = LocalDate.parse(etExpirationTime.getText().toString(), dtf);
+        LocalDate date = LocalDate.parse(etExpirationDate.getText().toString(), dtf);
 
         task.setTittle(etTittle.getText().toString());
         task.setExpirationDate(date.toString());
         task.setDescription(etDescription.getText().toString());
         task.setStatus(0);
         task.setCategoryId(categoryID);
-        task.setRequirementsID(requirementsID);
+        task.setRequiredIDs(requiredIDs);
     }
 
     TaskModel createTask(SQLiteHelper myDB, Integer categoryID) {
@@ -132,19 +133,10 @@ public class CreateTaskActivity extends AppCompatActivity {
         return task;
     }
 
-    Integer createRequirement(SQLiteHelper myDB, TaskModel newTask) {
-        Integer id;
-
-        id = myDB.createRequirement(newTask);
-
-        return id;
-    }
-
-    void finishCreate(TaskModel task, Integer requirementID) {
+    void finishCreate(TaskModel task) {
         Intent intent = new Intent();
 
         intent.putExtra("task", task);
-        intent.putExtra("requirementID", requirementID);
         setResult(1, intent);
         finish();
     }

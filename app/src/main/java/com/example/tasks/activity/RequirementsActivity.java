@@ -48,10 +48,12 @@ public class RequirementsActivity extends AppCompatActivity {
 
     void initAdapterAndRecyclerView() {
         SQLiteHelper myDB = new SQLiteHelper(this);
-        ArrayList<Integer> requirementsID = getIntent().getIntegerArrayListExtra("requirements");
-        Integer categoryID = getIntent().getIntExtra("categoryID", -1);
+        Intent intent = getIntent();
+        ArrayList<Integer> requirementsID = intent.getIntegerArrayListExtra("requirements");
+        Integer categoryID = intent.getIntExtra("categoryID", -1);
+        Integer taskID = intent.getIntExtra("taskID", -1);
 
-        requirementsAdapter = new RequirementsAdapter(myDB, requirementsID, categoryID);
+        requirementsAdapter = new RequirementsAdapter(myDB, requirementsID, categoryID, taskID);
 
         rvTasksOnHold.setLayoutManager(new LinearLayoutManager(this));
         rvTasksOnHold.setAdapter(requirementsAdapter);

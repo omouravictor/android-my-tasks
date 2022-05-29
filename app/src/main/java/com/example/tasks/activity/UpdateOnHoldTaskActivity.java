@@ -1,11 +1,15 @@
 package com.example.tasks.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.tasks.MyFunctions;
@@ -17,12 +21,18 @@ import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.util.ArrayList;
+
 public class UpdateOnHoldTaskActivity extends AppCompatActivity {
 
-    DateTimeFormatter dtf;
+    ArrayList<Integer> requiredIDs;
+    EditText etTittle, etDescription, etExpirationDate;
+    TextView tvQtdRequirements;
+    Button btnRequirements, btnClear, btnUpdate;
+    ActivityResultLauncher<Intent> actResult;
+    Intent taskRequirementsIntent;
     MyFunctions myFunctions;
-    EditText etTittle, etExpirationDate, etDescription;
-    Button btnClear, btnUpdate;
+    DateTimeFormatter dtf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,14 +46,39 @@ public class UpdateOnHoldTaskActivity extends AppCompatActivity {
         Intent intent = getIntent();
         TaskModel task = intent.getParcelableExtra("task");
         int taskAdaptPosition = intent.getIntExtra("taskAdaptPosition", -1);
+        SQLiteHelper myDB = new SQLiteHelper(this);
 
         initView();
+        initRequiredIDs(myDB, task);
+        initVariables();
+        initActResult();
         initMyFunctions();
         setTaskData(task);
 
+        btnRequirements.setOnClickListener(v -> {
+            taskRequirementsIntent.putExtra("requirements", requiredIDs);
+            taskRequirementsIntent.putExtra("categoryID", task.getCategoryId());
+            taskRequirementsIntent.putExtra("taskID", task.getId());
+            actResult.launch(taskRequirementsIntent);
+        });
+
         btnUpdate.setOnClickListener((v) -> {
-            if (!myFunctions.isEmpty(this, etTittle, etExpirationDate))
-                updateTask(task, taskAdaptPosition);
+            btnUpdate.setClickable(false);
+            if (!myFunctions.isEmpty(this, etTittle, etExpirationDate)) {
+                try {
+                    TaskModel updatedTask = updateTask(myDB, task);
+                    if (updatedTask.hasRequirements()) {
+                        myDB.deleteRequirementsOfTask(updatedTask);
+                        myDB.createRequirement(updatedTask);
+                    } else {
+                        myDB.deleteRequirementsOfTask(updatedTask);
+                    }
+                    finishUpdate(updatedTask, taskAdaptPosition);
+                } catch (Exception e) {
+                    Toast.makeText(this, "Houve um erro", Toast.LENGTH_SHORT).show();
+                }
+            }
+            btnUpdate.setClickable(true);
         });
 
     }
@@ -53,8 +88,31 @@ public class UpdateOnHoldTaskActivity extends AppCompatActivity {
         etTittle = findViewById(R.id.etTittle);
         etExpirationDate = findViewById(R.id.etExpirationDate);
         etDescription = findViewById(R.id.etDescription);
+        tvQtdRequirements = findViewById(R.id.tvQtdRequirements);
+        btnRequirements = findViewById(R.id.btnRequirements);
         btnClear = findViewById(R.id.btnClear);
         btnUpdate = findViewById(R.id.btnUpdate);
+    }
+
+    void initRequiredIDs(SQLiteHelper myDB, TaskModel task) {
+        requiredIDs = myDB.getAllRequiredIDs(task.getId());
+    }
+
+    void initVariables() {
+        taskRequirementsIntent = new Intent(this, RequirementsActivity.class);
+    }
+
+    void initActResult() {
+        actResult = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    int resultCode = result.getResultCode();
+                    if (resultCode != Activity.RESULT_CANCELED) {
+                        requiredIDs = result.getData().getIntegerArrayListExtra("requirements");
+                        tvQtdRequirements.setText(String.valueOf(requiredIDs.size()));
+                    }
+                }
+        );
     }
 
     void initMyFunctions() {
@@ -72,6 +130,7 @@ public class UpdateOnHoldTaskActivity extends AppCompatActivity {
         etTittle.setText(task.getTittle());
         etExpirationDate.setText(date.toString(dtf));
         etDescription.setText(task.getDescription());
+        tvQtdRequirements.setText(String.valueOf(requiredIDs.size()));
     }
 
     void setAttributes(TaskModel task) {
@@ -80,10 +139,10 @@ public class UpdateOnHoldTaskActivity extends AppCompatActivity {
         task.setTittle(etTittle.getText().toString());
         task.setExpirationDate(expirationDate.toString());
         task.setDescription(etDescription.getText().toString());
+        task.setRequiredIDs(requiredIDs);
     }
 
-    TaskModel getUpdatedTask(TaskModel task) {
-        SQLiteHelper myDB = new SQLiteHelper(this);
+    TaskModel updateTask(SQLiteHelper myDB, TaskModel task) {
 
         setAttributes(task);
         myDB.updateTask(task);
@@ -98,18 +157,5 @@ public class UpdateOnHoldTaskActivity extends AppCompatActivity {
         intent.putExtra("taskAdaptPosition", taskAdaptPosition);
         setResult(2, intent);
         finish();
-    }
-
-    void updateTask(TaskModel task, int taskAdaptPosition) {
-        btnUpdate.setClickable(false);
-
-        try {
-            TaskModel updatedTask = getUpdatedTask(task);
-            finishUpdate(updatedTask, taskAdaptPosition);
-        } catch (Exception e) {
-            Toast.makeText(this, "Houve um erro", Toast.LENGTH_SHORT).show();
-        } finally {
-            btnUpdate.setClickable(true);
-        }
     }
 }

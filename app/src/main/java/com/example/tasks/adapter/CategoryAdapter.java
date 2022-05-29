@@ -69,8 +69,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     public void onBindViewHolder(@NonNull CategoryAdapter.CategoryViewHolder holder, int position) {
         CategoryModel category = allCategories.get(position);
         Context context = holder.itemView.getContext();
-        long qtdOnHold = myDB.getQtdOnHoldTask(category.getId());
-        long qtdFinished = myDB.getQtdFinishedTask(category.getId());
+        int qtdOnHold = myDB.getQtdOnHoldTask(category.getId());
+        int qtdFinished = myDB.getQtdFinishedTask(category.getId());
 
         holder.tvCategoryName.setText(category.getName());
 

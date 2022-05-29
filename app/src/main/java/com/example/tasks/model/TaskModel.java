@@ -16,7 +16,7 @@ public class TaskModel implements Parcelable {
     private int status;
     private String finishedDate;
     private Integer categoryId;
-    private ArrayList<Integer> requirementsID;
+    private ArrayList<Integer> requiredIDs = new ArrayList<>();
 
     public TaskModel() {
     }
@@ -92,7 +92,11 @@ public class TaskModel implements Parcelable {
     }
 
     public boolean hasRequirements() {
-        return !requirementsID.isEmpty();
+        return !requiredIDs.isEmpty();
+    }
+
+    public int getQtdOfRequirements() {
+        return requiredIDs.size();
     }
 
     public Integer getId() {
@@ -154,11 +158,11 @@ public class TaskModel implements Parcelable {
         this.categoryId = categoryId;
     }
 
-    public void setRequirementsID(ArrayList<Integer> requirementsID) {
-        this.requirementsID = requirementsID;
+    public void setRequiredIDs(ArrayList<Integer> requiredIDs) {
+        this.requiredIDs = requiredIDs;
     }
 
-    public ArrayList<Integer> getRequirementsID() {
-        return requirementsID;
+    public ArrayList<Integer> getRequiredIDs() {
+        return requiredIDs;
     }
 }

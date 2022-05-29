@@ -22,11 +22,16 @@ import java.util.ArrayList;
 public class RequirementsAdapter extends RecyclerView.Adapter<RequirementsAdapter.RequirementsViewHolder> {
 
     private final ArrayList<TaskModel> allTasks;
-    private final ArrayList<Integer> requirementsID;
+    private final ArrayList<Integer> requiredIDs;
 
-    public RequirementsAdapter(SQLiteHelper myDB, ArrayList<Integer> requirementsID, Integer categoryID) {
-        allTasks = myDB.getAllOnHoldTasksOfCategory(categoryID);
-        this.requirementsID = requirementsID;
+    public RequirementsAdapter(
+            SQLiteHelper myDB,
+            ArrayList<Integer> requiredIDs,
+            Integer categoryID,
+            Integer taskID
+    ) {
+        allTasks = myDB.getRequirementTasks(categoryID, taskID);
+        this.requiredIDs = requiredIDs;
         sortAllTasksWithRequirementsFirst();
     }
 
@@ -55,17 +60,17 @@ public class RequirementsAdapter extends RecyclerView.Adapter<RequirementsAdapte
     public void onBindViewHolder(@NonNull RequirementsViewHolder holder, int position) {
         TaskModel task = allTasks.get(position);
 
-        if (position < requirementsID.size()) holder.checkBox.setChecked(true);
+        if (position < requiredIDs.size()) holder.checkBox.setChecked(true);
 
         holder.tvTaskName.setText(task.getTittle());
 
         holder.itemView.setOnClickListener(v -> {
             CheckBox checkBox = holder.checkBox;
             if (checkBox.isChecked()) {
-                requirementsID.remove(task.getId());
+                requiredIDs.remove(task.getId());
                 checkBox.setChecked(false);
             } else {
-                requirementsID.add(task.getId());
+                requiredIDs.add(task.getId());
                 checkBox.setChecked(true);
             }
         });
@@ -104,8 +109,8 @@ public class RequirementsAdapter extends RecyclerView.Adapter<RequirementsAdapte
 
     public void sortAllTasksWithRequirementsFirst() {
         int insertPosition = 0;
-        for (int i = 0; i < requirementsID.size(); i++) {
-            Integer requirementID = requirementsID.get(i);
+        for (int i = 0; i < requiredIDs.size(); i++) {
+            Integer requirementID = requiredIDs.get(i);
             for (int j = 0; j < allTasks.size(); j++) {
                 TaskModel task = allTasks.get(j);
                 if (requirementID.equals(task.getId())) {
@@ -120,7 +125,7 @@ public class RequirementsAdapter extends RecyclerView.Adapter<RequirementsAdapte
     }
 
     public ArrayList<Integer> getRequirements() {
-        return requirementsID;
+        return requiredIDs;
     }
 
 }

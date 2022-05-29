@@ -57,10 +57,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
         db.execSQL(
                 "CREATE TABLE tb_requirement ("
-                        + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                         + "required_task_id INTEGER REFERENCES tb_task(id),"
                         + "requirement_task_id INTEGER REFERENCES tb_task(id),"
 
+                        + " CONSTRAINT PK_requirement PRIMARY KEY (required_task_id,requirement_task_id),"
                         + " FOREIGN KEY (required_task_id) REFERENCES tb_task(id) ON DELETE CASCADE,"
                         + " FOREIGN KEY (requirement_task_id) REFERENCES tb_task(id) ON DELETE CASCADE"
                         + ")"
@@ -108,17 +108,12 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         );
     }
 
-    public Integer createRequirement(@NonNull TaskModel task) {
-        Integer requirementID;
-
+    public void createRequirement(@NonNull TaskModel task) {
         insertRequirementInDB(task);
-        requirementID = getLastID("tb_requirement");
-
-        return requirementID;
     }
 
     void insertRequirementInDB(TaskModel task) {
-        ArrayList<Integer> requirementsID = task.getRequirementsID();
+        ArrayList<Integer> requirementsID = task.getRequiredIDs();
 
         for (Integer id : requirementsID) {
             db.execSQL(
@@ -200,6 +195,13 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 " AND category_id = " + categoryId);
     }
 
+    public void deleteRequirementsOfTask(TaskModel task) {
+        db.execSQL(
+                "DELETE FROM tb_requirement" +
+                        " WHERE requirement_task_id = " + task.getId()
+        );
+    }
+
     public ArrayList<TaskModel> getAllTasksOnHold() {
         String query = "SELECT *" +
                 " FROM tb_task" +
@@ -218,49 +220,58 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return getTasksFromDB(query);
     }
 
-    public ArrayList<TaskModel> getAllOnHoldTasksOfCategory(Integer categoryId) {
+    public ArrayList<TaskModel> getAllOnHoldTasksOfCategory(Integer categoryID) {
         String query = "SELECT *" +
                 " FROM tb_task" +
-                " WHERE status = 0 AND category_id = " + categoryId +
+                " WHERE status = 0 AND category_id = " + categoryID +
                 " ORDER BY expiration_date ASC";
 
         return getTasksFromDB(query);
     }
 
-    public ArrayList<TaskModel> getAllFinishedTasksOfCategory(Integer categoryId) {
+    public ArrayList<TaskModel> getRequirementTasks(Integer categoryID, Integer taskID) {
         String query = "SELECT *" +
                 " FROM tb_task" +
-                " WHERE status = 1 AND category_id = " + categoryId +
+                " WHERE status = 0 AND category_id = " + categoryID + " AND id != " + taskID +
+                " ORDER BY expiration_date ASC";
+
+        return getTasksFromDB(query);
+    }
+
+    public ArrayList<TaskModel> getAllFinishedTasksOfCategory(Integer categoryID) {
+        String query = "SELECT *" +
+                " FROM tb_task" +
+                " WHERE status = 1 AND category_id = " + categoryID +
                 " ORDER BY finished_date ASC";
 
         return getTasksFromDB(query);
     }
 
     @SuppressLint("Recycle")
-    public long getQtdFinishedTask(Integer categoryId) {
+    public int getQtdFinishedTask(Integer categoryID) {
         String query = "SELECT COUNT(id)" +
                 " FROM tb_task" +
-                " WHERE status = 1 AND category_id = " + categoryId;
+                " WHERE status = 1 AND category_id = " + categoryID;
         Cursor cursor = db.rawQuery(query, null);
-        long qtd;
+        int qtd;
 
         cursor.moveToFirst();
-        qtd = cursor.getLong(0);
+        qtd = cursor.getInt(0);
         cursor.close();
 
         return qtd;
     }
 
     @SuppressLint("Recycle")
-    public long getQtdOnHoldTask(Integer categoryId) {
+    public int getQtdOnHoldTask(Integer categoryID) {
         String query = "SELECT COUNT(id)" +
                 " FROM tb_task" +
-                " WHERE status = 0 AND category_id = " + categoryId;
+                " WHERE status = 0 AND category_id = " + categoryID;
         Cursor cursor = db.rawQuery(query, null);
-        long qtd;
+        int qtd;
 
         cursor.moveToFirst();
-        qtd = cursor.getLong(0);
+        qtd = cursor.getInt(0);
         cursor.close();
 
         return qtd;
@@ -275,7 +286,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 
     ArrayList<TaskModel> getTasksFromDB(String query) {
-        ArrayList<TaskModel> tasks = new ArrayList<>();
+        ArrayList<TaskModel> allTasksQuery = new ArrayList<>();
         if (db != null) {
             Cursor cursor = db.rawQuery(query, null);
             while (cursor.moveToNext()) {
@@ -288,15 +299,37 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                         cursor.getString(5),
                         cursor.getInt(6)
                 );
-                tasks.add(task);
+                allTasksQuery.add(task);
             }
             cursor.close();
         }
-        return tasks;
+        return allTasksQuery;
+    }
+
+    public ArrayList<Integer> getAllRequiredIDs(Integer taskID) {
+        String query = "SELECT required_task_id" +
+                " FROM tb_requirement" +
+                " WHERE requirement_task_id = " + taskID;
+
+        return getRequiredIDsFromDB(query);
+    }
+
+    public ArrayList<Integer> getRequiredIDsFromDB(String query) {
+        ArrayList<Integer> requiredIDs = new ArrayList<>();
+
+        if (db != null) {
+            Cursor cursor = db.rawQuery(query, null);
+            while (cursor.moveToNext()) {
+                Integer requiredTaskID = cursor.getInt(0);
+                requiredIDs.add(requiredTaskID);
+            }
+            cursor.close();
+        }
+        return requiredIDs;
     }
 
     ArrayList<CategoryModel> getCategoriesFromDB(String query) {
-        ArrayList<CategoryModel> categories = new ArrayList<>();
+        ArrayList<CategoryModel> allCategoriesQuery = new ArrayList<>();
 
         if (db != null) {
             Cursor cursor = db.rawQuery(query, null);
@@ -305,11 +338,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                         cursor.getInt(0),
                         cursor.getString(1)
                 );
-                categories.add(category);
+                allCategoriesQuery.add(category);
             }
             cursor.close();
         }
-        return categories;
+        return allCategoriesQuery;
     }
 
     Integer getLastID(String tbName) {
