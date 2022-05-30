@@ -19,12 +19,12 @@ public class MyFunctions {
     public MyFunctions() {
     }
 
-    public void hideKeyboard(@NonNull Context context, @NonNull View view) {
+    public static void hideKeyboard(@NonNull Context context, @NonNull View view) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    public String getDateText(int day, int month, int year) {
+    public static String getDateText(int day, int month, int year) {
         String dateText = "";
 
         if (day < 10) dateText += "0" + day + "/";
@@ -36,7 +36,7 @@ public class MyFunctions {
         return dateText;
     }
 
-    public void setOnClickEtDateListener(Context context, @NonNull EditText etDate) {
+    public static void setOnClickEtDateListener(Context context, @NonNull EditText etDate) {
         LocalDate currentDate = LocalDate.now();
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(
@@ -56,13 +56,13 @@ public class MyFunctions {
         });
     }
 
-    public void clearEditTexts(
+    public static void clearEditTexts(
             @NonNull Button btnClear,
             EditText etCategory) {
         btnClear.setOnClickListener(v -> etCategory.setText(""));
     }
 
-    public void clearEditTexts(
+    public static void clearEditTexts(
             @NonNull Button btnClear,
             EditText et1,
             EditText et2,
@@ -75,7 +75,7 @@ public class MyFunctions {
         });
     }
 
-    public void clearEditTexts(
+    public static void clearEditTexts(
             @NonNull Button btnClear,
             EditText et1,
             EditText et2,
@@ -90,13 +90,13 @@ public class MyFunctions {
         });
     }
 
-    public void setActionDoneButton(@NonNull EditText editText) {
+    public static void setActionDoneButton(@NonNull EditText editText) {
         // Enables textMultiLine EditText with ActionDone button (without Enter button)
         editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
         editText.setRawInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
     }
 
-    public boolean isEmpty(Context context, EditText et1) {
+    public static boolean isEmpty(Context context, EditText et1) {
         if (et1.getText().toString().isEmpty()) {
             Toast.makeText(context, "Preencha os campos requeridos", Toast.LENGTH_SHORT).show();
             return true;
@@ -104,7 +104,7 @@ public class MyFunctions {
         return false;
     }
 
-    public boolean isEmpty(Context context, EditText et1, EditText et2) {
+    public static boolean isEmpty(Context context, EditText et1, EditText et2) {
         if (et1.getText().toString().isEmpty() || et2.getText().toString().isEmpty()) {
             Toast.makeText(context, "Preencha os campos requeridos", Toast.LENGTH_SHORT).show();
             return true;
@@ -112,7 +112,7 @@ public class MyFunctions {
         return false;
     }
 
-    public boolean isEmpty(Context context, EditText et1, EditText et2, EditText et3) {
+    public static boolean isEmpty(Context context, EditText et1, EditText et2, EditText et3) {
         if (et1.getText().toString().isEmpty() || et2.getText().toString().isEmpty() || et3.getText().toString().isEmpty()) {
             Toast.makeText(context, "Preencha os campos requeridos", Toast.LENGTH_SHORT).show();
             return true;

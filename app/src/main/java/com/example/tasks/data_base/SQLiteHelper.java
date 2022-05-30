@@ -13,6 +13,7 @@ import com.example.tasks.model.CategoryModel;
 import com.example.tasks.model.TaskModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
 
@@ -113,7 +114,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 
     void insertRequirementInDB(TaskModel task) {
-        ArrayList<Integer> requirementsID = task.getRequiredIDs();
+        List<Integer> requirementsID = task.getRequiredIDs();
 
         for (Integer id : requirementsID) {
             db.execSQL(
@@ -158,8 +159,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         }
     }
 
-    public ArrayList<TaskModel> deleteSelectedTasks(ArrayList<TaskModel> selectedTasks) {
-        ArrayList<TaskModel> deletedTasks = new ArrayList<>();
+    public List<TaskModel> deleteSelectedTasks(List<TaskModel> selectedTasks) {
+        List<TaskModel> deletedTasks = new ArrayList<>();
 
         for (TaskModel task : selectedTasks) {
             try {
@@ -202,7 +203,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         );
     }
 
-    public ArrayList<TaskModel> getAllTasksOnHold() {
+    public List<TaskModel> getAllTasksOnHold() {
         String query = "SELECT *" +
                 " FROM tb_task" +
                 " WHERE status = 0" +
@@ -211,7 +212,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return getTasksFromDB(query);
     }
 
-    public ArrayList<TaskModel> getAllFinishedTasks() {
+    public List<TaskModel> getAllFinishedTasks() {
         String query = "SELECT *" +
                 " FROM tb_task" +
                 " WHERE status = 1" +
@@ -220,7 +221,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return getTasksFromDB(query);
     }
 
-    public ArrayList<TaskModel> getAllOnHoldTasksOfCategory(Integer categoryID) {
+    public List<TaskModel> getAllOnHoldTasksOfCategory(Integer categoryID) {
         String query = "SELECT *" +
                 " FROM tb_task" +
                 " WHERE status = 0 AND category_id = " + categoryID +
@@ -229,16 +230,53 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return getTasksFromDB(query);
     }
 
-    public ArrayList<TaskModel> getRequirementTasks(Integer categoryID, Integer taskID) {
+    public List<TaskModel> getPossibleRequirementsOnHoldTask(TaskModel task) {
+        String taskIDClause = "";
+
+        for (Integer id : task.getRequiredIDs())
+            taskIDClause += " AND id != " + id;
+
         String query = "SELECT *" +
                 " FROM tb_task" +
-                " WHERE status = 0 AND category_id = " + categoryID + " AND id != " + taskID +
+                " WHERE category_id = " + task.getCategoryId() + taskIDClause +
+                " AND id != " + task.getId() +
                 " ORDER BY expiration_date ASC";
 
         return getTasksFromDB(query);
     }
 
-    public ArrayList<TaskModel> getAllFinishedTasksOfCategory(Integer categoryID) {
+    public List<TaskModel> getPossibleRequirementsFinishedTask(TaskModel task) {
+        String taskIDClause = "";
+
+        for (Integer id : task.getRequiredIDs())
+            taskIDClause += " AND id != " + id;
+
+        String query = "SELECT *" +
+                " FROM tb_task" +
+                " WHERE status = 1 AND category_id = " + task.getCategoryId() + taskIDClause +
+                " AND id != " + task.getId() +
+                " ORDER BY expiration_date ASC";
+
+        return getTasksFromDB(query);
+    }
+
+    public List<TaskModel> getAllRequiredTasks(TaskModel task) {
+        List<Integer> requiredIDs = task.getRequiredIDs();
+        String requirementClause = " AND id = " + task.getRequiredIDs().get(0);
+
+        for (int i = 1; i < task.getRequiredIDs().size(); i++)
+            requirementClause += " OR id = " + requiredIDs.get(i);
+
+        String query = "SELECT *" +
+                " FROM tb_task" +
+                " WHERE category_id = " + task.getCategoryId() + requirementClause +
+                " AND id != " + task.getId() +
+                " ORDER BY expiration_date ASC";
+
+        return getTasksFromDB(query);
+    }
+
+    public List<TaskModel> getAllFinishedTasksOfCategory(Integer categoryID) {
         String query = "SELECT *" +
                 " FROM tb_task" +
                 " WHERE status = 1 AND category_id = " + categoryID +
@@ -277,7 +315,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return qtd;
     }
 
-    public ArrayList<CategoryModel> getAllCategories() {
+    public List<CategoryModel> getAllCategories() {
         String query = "SELECT *" +
                 " FROM tb_category" +
                 " ORDER BY name ASC";
@@ -285,8 +323,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return getCategoriesFromDB(query);
     }
 
-    ArrayList<TaskModel> getTasksFromDB(String query) {
-        ArrayList<TaskModel> allTasksQuery = new ArrayList<>();
+    List<TaskModel> getTasksFromDB(String query) {
+        List<TaskModel> allTasksQuery = new ArrayList<>();
         if (db != null) {
             Cursor cursor = db.rawQuery(query, null);
             while (cursor.moveToNext()) {
@@ -306,7 +344,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return allTasksQuery;
     }
 
-    public ArrayList<Integer> getAllRequiredIDs(Integer taskID) {
+    public List<Integer> getAllRequiredIDs(Integer taskID) {
         String query = "SELECT required_task_id" +
                 " FROM tb_requirement" +
                 " WHERE requirement_task_id = " + taskID;
@@ -314,8 +352,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return getRequiredIDsFromDB(query);
     }
 
-    public ArrayList<Integer> getRequiredIDsFromDB(String query) {
-        ArrayList<Integer> requiredIDs = new ArrayList<>();
+    public List<Integer> getRequiredIDsFromDB(String query) {
+        List<Integer> requiredIDs = new ArrayList<>();
 
         if (db != null) {
             Cursor cursor = db.rawQuery(query, null);
@@ -328,8 +366,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return requiredIDs;
     }
 
-    ArrayList<CategoryModel> getCategoriesFromDB(String query) {
-        ArrayList<CategoryModel> allCategoriesQuery = new ArrayList<>();
+    List<CategoryModel> getCategoriesFromDB(String query) {
+        List<CategoryModel> allCategoriesQuery = new ArrayList<>();
 
         if (db != null) {
             Cursor cursor = db.rawQuery(query, null);

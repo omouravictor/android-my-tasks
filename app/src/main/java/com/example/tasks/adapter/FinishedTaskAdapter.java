@@ -29,23 +29,23 @@ import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapter.TaskViewHolder> {
     private OnHoldTaskAdapter adaptOnHoldTasks;
     private ActionMode myActionMode;
-    private final MyFunctions myFunctions;
     private final int catAdaptPosition;
     private final Activity activity;
     private final ActivityResultLauncher<Intent> actResult;
     private final SQLiteHelper myDB;
-    private final ArrayList<TaskModel> allTasks;
+    private final List<TaskModel> allTasks;
     private final LocalDate currentDate;
     private final Intent updateActivityIntent;
     private final AlertDialog.Builder builder;
     private boolean isActionMode;
-    private final ArrayList<TaskModel> selectedTasks;
-    private final ArrayList<TaskViewHolder> selectedHolders;
-    private final ArrayList<TaskViewHolder> allHolders;
+    private final List<TaskModel> selectedTasks;
+    private final List<TaskViewHolder> selectedHolders;
+    private final List<TaskViewHolder> allHolders;
 
     public FinishedTaskAdapter(
             Activity activity,
@@ -59,7 +59,6 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
         this.actResult = actResult;
         this.myDB = myDB;
         this.allTasks = myDB.getAllFinishedTasksOfCategory(categoryId);
-        myFunctions = new MyFunctions();
         currentDate = LocalDate.now();
         updateActivityIntent = new Intent(activity, UpdateFinishedTaskActivity.class);
         builder = new AlertDialog.Builder(activity);
@@ -73,11 +72,11 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
         this.adaptOnHoldTasks = adaptOnHoldTasks;
     }
 
-    public ArrayList<TaskModel> getAllTasks() {
+    public List<TaskModel> getAllTasks() {
         return allTasks;
     }
 
-    public void putTasksAsFinished(ArrayList<TaskModel> tasksArray) {
+    public void putTasksAsFinished(List<TaskModel> tasksArray) {
         for (TaskModel task : tasksArray) {
             task.finish(currentDate.toString());
             myDB.updateTask(task);
@@ -165,7 +164,7 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
     void setFinishedTaskLayout(TaskModel task, TaskViewHolder holder) {
         int green = activity.getColor(R.color.green);
         LocalDate finishedDate = LocalDate.parse(task.getFinishedDate());
-        String dateFormatText = myFunctions.getDateText(
+        String dateFormatText = MyFunctions.getDateText(
                 finishedDate.getDayOfMonth(),
                 finishedDate.getMonthOfYear(),
                 finishedDate.getYear()
@@ -218,7 +217,7 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
         myDB.updateTask(task);
     }
 
-    void putTasksAsOnHold(ArrayList<TaskModel> tasksArray) {
+    void putTasksAsOnHold(List<TaskModel> tasksArray) {
         for (TaskModel task : tasksArray) {
             task.undo();
             myDB.updateTask(task);
@@ -259,7 +258,7 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
     void menuItemDelete() {
         builder.setMessage("Exluir " + selectedTasks.size() + " tarefa(s) selecionada(s)?");
         builder.setPositiveButton("Sim", (dialog, which) -> {
-            ArrayList<TaskModel> deletedTasks = myDB.deleteSelectedTasks(selectedTasks);
+            List<TaskModel> deletedTasks = myDB.deleteSelectedTasks(selectedTasks);
 
             deleteSelectedTasks(deletedTasks);
             activity.setResult(3, new Intent().putExtra("catAdaptPosition", catAdaptPosition));
@@ -295,7 +294,7 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
             menuItemSelectAll();
     }
 
-    void putHoldersAsNotSelected(ArrayList<TaskViewHolder> holders) {
+    void putHoldersAsNotSelected(List<TaskViewHolder> holders) {
         for (TaskViewHolder holder : holders) {
             holder.isSelected = false;
             holder.btnUndo.setEnabled(true);
@@ -339,7 +338,7 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
         activity.setResult(3, new Intent().putExtra("catAdaptPosition", catAdaptPosition));
     }
 
-    public void addAllTasks(ArrayList<TaskModel> tasks) {
+    public void addAllTasks(List<TaskModel> tasks) {
         int positionStart = getItemCount();
         allTasks.addAll(tasks);
         notifyItemRangeInserted(positionStart, tasks.size());
@@ -357,7 +356,7 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
         notifyItemRemoved(position);
     }
 
-    void deleteSelectedTasks(ArrayList<TaskModel> tasks) {
+    void deleteSelectedTasks(List<TaskModel> tasks) {
         for (TaskModel task : tasks) {
             int index = allTasks.indexOf(task);
             deleteTask(index);

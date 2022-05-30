@@ -11,8 +11,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.tasks.R;
 import com.example.tasks.adapter.RequirementsAdapter;
 import com.example.tasks.data_base.SQLiteHelper;
+import com.example.tasks.model.TaskModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RequirementsActivity extends AppCompatActivity {
 
@@ -34,8 +36,8 @@ public class RequirementsActivity extends AppCompatActivity {
 
         saveLayout.setOnClickListener(v -> {
             Intent intent = new Intent();
-            ArrayList<Integer> requirementsID = requirementsAdapter.getRequirements();
-            intent.putExtra("requirements", requirementsID);
+            List<Integer> requirementsID = requirementsAdapter.getRequirements();
+            intent.putExtra("requirements", (ArrayList<Integer>) requirementsID);
             setResult(1, intent);
             finish();
         });
@@ -48,12 +50,9 @@ public class RequirementsActivity extends AppCompatActivity {
 
     void initAdapterAndRecyclerView() {
         SQLiteHelper myDB = new SQLiteHelper(this);
-        Intent intent = getIntent();
-        ArrayList<Integer> requirementsID = intent.getIntegerArrayListExtra("requirements");
-        Integer categoryID = intent.getIntExtra("categoryID", -1);
-        Integer taskID = intent.getIntExtra("taskID", -1);
+        TaskModel task = getIntent().getParcelableExtra("task");
 
-        requirementsAdapter = new RequirementsAdapter(myDB, requirementsID, categoryID, taskID);
+        requirementsAdapter = new RequirementsAdapter(myDB, task);
 
         rvTasksOnHold.setLayoutManager(new LinearLayoutManager(this));
         rvTasksOnHold.setAdapter(requirementsAdapter);

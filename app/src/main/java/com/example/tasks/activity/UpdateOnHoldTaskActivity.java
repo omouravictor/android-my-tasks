@@ -21,17 +21,16 @@ import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class UpdateOnHoldTaskActivity extends AppCompatActivity {
 
-    ArrayList<Integer> requiredIDs;
+    List<Integer> requiredIDs;
     EditText etTittle, etDescription, etExpirationDate;
     TextView tvQtdRequirements;
     Button btnRequirements, btnClear, btnUpdate;
     ActivityResultLauncher<Intent> actResult;
     Intent taskRequirementsIntent;
-    MyFunctions myFunctions;
     DateTimeFormatter dtf;
 
     @Override
@@ -56,15 +55,14 @@ public class UpdateOnHoldTaskActivity extends AppCompatActivity {
         setTaskData(task);
 
         btnRequirements.setOnClickListener(v -> {
-            taskRequirementsIntent.putExtra("requirements", requiredIDs);
-            taskRequirementsIntent.putExtra("categoryID", task.getCategoryId());
-            taskRequirementsIntent.putExtra("taskID", task.getId());
+            task.setRequiredIDs(requiredIDs);
+            taskRequirementsIntent.putExtra("task", task);
             actResult.launch(taskRequirementsIntent);
         });
 
         btnUpdate.setOnClickListener((v) -> {
             btnUpdate.setClickable(false);
-            if (!myFunctions.isEmpty(this, etTittle, etExpirationDate)) {
+            if (!MyFunctions.isEmpty(this, etTittle, etExpirationDate)) {
                 try {
                     TaskModel updatedTask = updateTask(myDB, task);
                     if (updatedTask.hasRequirements()) {
@@ -116,12 +114,10 @@ public class UpdateOnHoldTaskActivity extends AppCompatActivity {
     }
 
     void initMyFunctions() {
-        myFunctions = new MyFunctions();
-
-        myFunctions.setActionDoneButton(etTittle);
-        myFunctions.setActionDoneButton(etDescription);
-        myFunctions.setOnClickEtDateListener(this, etExpirationDate);
-        myFunctions.clearEditTexts(btnClear, etTittle, etDescription, etExpirationDate);
+        MyFunctions.setActionDoneButton(etTittle);
+        MyFunctions.setActionDoneButton(etDescription);
+        MyFunctions.setOnClickEtDateListener(this, etExpirationDate);
+        MyFunctions.clearEditTexts(btnClear, etTittle, etDescription, etExpirationDate);
     }
 
     void setTaskData(TaskModel task) {

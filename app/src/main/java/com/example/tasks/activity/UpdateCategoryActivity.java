@@ -16,7 +16,6 @@ import com.example.tasks.model.CategoryModel;
 
 public class UpdateCategoryActivity extends AppCompatActivity {
 
-    MyFunctions myFunctions;
     EditText etCategory;
     Button btnClear, btnUpdate;
 
@@ -38,7 +37,7 @@ public class UpdateCategoryActivity extends AppCompatActivity {
         setCategoryData(category);
 
         btnUpdate.setOnClickListener(v -> {
-            if (!myFunctions.isEmpty(this, etCategory))
+            if (!MyFunctions.isEmpty(this, etCategory))
                 updateCategory(category, catAdaptPosition);
         });
 
@@ -51,10 +50,8 @@ public class UpdateCategoryActivity extends AppCompatActivity {
     }
 
     void initMyFunctions() {
-        myFunctions = new MyFunctions();
-
-        myFunctions.setActionDoneButton(etCategory);
-        myFunctions.clearEditTexts(btnClear, etCategory);
+        MyFunctions.setActionDoneButton(etCategory);
+        MyFunctions.clearEditTexts(btnClear, etCategory);
     }
 
     void setCategoryData(CategoryModel category) {

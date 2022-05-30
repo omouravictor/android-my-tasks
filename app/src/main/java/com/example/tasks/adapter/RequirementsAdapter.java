@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.tasks.MyFunctions;
 import com.example.tasks.R;
 import com.example.tasks.data_base.SQLiteHelper;
 import com.example.tasks.model.TaskModel;
@@ -17,22 +18,28 @@ import com.example.tasks.model.TaskModel;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class RequirementsAdapter extends RecyclerView.Adapter<RequirementsAdapter.RequirementsViewHolder> {
 
-    private final ArrayList<TaskModel> allTasks;
-    private final ArrayList<Integer> requiredIDs;
+    private final List<TaskModel> allTasks;
+    private final List<Integer> requiredIDs;
 
     public RequirementsAdapter(
             SQLiteHelper myDB,
-            ArrayList<Integer> requiredIDs,
-            Integer categoryID,
-            Integer taskID
+            TaskModel task
     ) {
-        allTasks = myDB.getRequirementTasks(categoryID, taskID);
-        this.requiredIDs = requiredIDs;
-        sortAllTasksWithRequirementsFirst();
+        if (task.isFinished())
+            allTasks = myDB.getPossibleRequirementsFinishedTask(task);
+        else
+            allTasks = myDB.getPossibleRequirementsOnHoldTask(task);
+
+        requiredIDs = task.getRequiredIDs();
+
+        if (task.hasRequirements()) {
+            List<TaskModel> requiredTasks = myDB.getAllRequiredTasks(task);
+            allTasks.addAll(0, requiredTasks);
+        }
     }
 
     public static class RequirementsViewHolder extends RecyclerView.ViewHolder {
@@ -60,7 +67,9 @@ public class RequirementsAdapter extends RecyclerView.Adapter<RequirementsAdapte
     public void onBindViewHolder(@NonNull RequirementsViewHolder holder, int position) {
         TaskModel task = allTasks.get(position);
 
-        if (position < requiredIDs.size()) holder.checkBox.setChecked(true);
+        // Neste trecho allTasks já está com os requisitos ocupando as primeiras posições
+        if (position < requiredIDs.size())
+            holder.checkBox.setChecked(true);
 
         holder.tvTaskName.setText(task.getTittle());
 
@@ -84,9 +93,17 @@ public class RequirementsAdapter extends RecyclerView.Adapter<RequirementsAdapte
     }
 
     void setRequirementLayout(TaskModel task, RequirementsViewHolder holder) {
-        LocalDate currentDate = LocalDate.now();
         Context context = holder.itemView.getContext();
 
+        if (task.isFinished())
+            setFinishedTaskLayout(context, task, holder);
+        else
+            setOnHoldTaskLayout(context, task, holder);
+
+    }
+
+    void setOnHoldTaskLayout(Context context, TaskModel task, RequirementsViewHolder holder) {
+        LocalDate currentDate = LocalDate.now();
         int days = Days.daysBetween(currentDate, LocalDate.parse(task.getExpirationDate())).getDays();
 
         if (days > 0) {
@@ -107,24 +124,21 @@ public class RequirementsAdapter extends RecyclerView.Adapter<RequirementsAdapte
         }
     }
 
-    public void sortAllTasksWithRequirementsFirst() {
-        int insertPosition = 0;
-        for (int i = 0; i < requiredIDs.size(); i++) {
-            Integer requirementID = requiredIDs.get(i);
-            for (int j = 0; j < allTasks.size(); j++) {
-                TaskModel task = allTasks.get(j);
-                if (requirementID.equals(task.getId())) {
-                    TaskModel temp = allTasks.get(insertPosition);
-                    allTasks.set(insertPosition, task);
-                    allTasks.set(j, temp);
-                    insertPosition++;
-                    break;
-                }
-            }
-        }
+    void setFinishedTaskLayout(Context context, TaskModel task, RequirementsViewHolder holder) {
+        int green = context.getColor(R.color.green);
+        LocalDate finishedDate = LocalDate.parse(task.getFinishedDate());
+        String dateFormatText = MyFunctions.getDateText(
+                finishedDate.getDayOfMonth(),
+                finishedDate.getMonthOfYear(),
+                finishedDate.getYear()
+        );
+
+        holder.itemView.setBackgroundColor(green);
+        holder.background = green;
+        holder.tvExpirationTime.setText(context.getString(R.string.finished_in_x, dateFormatText));
     }
 
-    public ArrayList<Integer> getRequirements() {
+    public List<Integer> getRequirements() {
         return requiredIDs;
     }
 

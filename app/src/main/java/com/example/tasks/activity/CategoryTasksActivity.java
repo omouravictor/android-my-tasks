@@ -28,7 +28,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class CategoryTasksActivity extends AppCompatActivity {
 
@@ -188,7 +188,7 @@ public class CategoryTasksActivity extends AppCompatActivity {
     void startFinishAllBuilder() {
         builder.setMessage("Deseja concluir todas as tarefas?");
         builder.setPositiveButton("Sim", (dialog, which) -> {
-            ArrayList<TaskModel> tasks = adaptOnHoldTasks.getAllTasks();
+            List<TaskModel> tasks = adaptOnHoldTasks.getAllTasks();
             adaptFinishedTasks.putTasksAsFinished(tasks);
             adaptFinishedTasks.addAllTasks(tasks);
             adaptOnHoldTasks.deleteAllTasks();
@@ -201,7 +201,7 @@ public class CategoryTasksActivity extends AppCompatActivity {
     void startUndoAllBuilder() {
         builder.setMessage("Deseja desfazer todas as tarefas?");
         builder.setPositiveButton("Sim", (dialog, which) -> {
-            ArrayList<TaskModel> tasks = adaptFinishedTasks.getAllTasks();
+            List<TaskModel> tasks = adaptFinishedTasks.getAllTasks();
             adaptOnHoldTasks.putTasksAsOnHold(tasks);
             adaptOnHoldTasks.addAllTasks(tasks);
             adaptFinishedTasks.deleteAllTasks();

@@ -16,7 +16,6 @@ import com.example.tasks.model.CategoryModel;
 
 public class CreateCategoryActivity extends AppCompatActivity {
 
-    MyFunctions myFunctions;
     EditText etCategory;
     Button btnClear, btnCreate;
 
@@ -33,7 +32,7 @@ public class CreateCategoryActivity extends AppCompatActivity {
         initMyFunctions();
 
         btnCreate.setOnClickListener(v -> {
-            if (!myFunctions.isEmpty(this, etCategory))
+            if (!MyFunctions.isEmpty(this, etCategory))
                 createCategory();
         });
     }
@@ -45,10 +44,8 @@ public class CreateCategoryActivity extends AppCompatActivity {
     }
 
     void initMyFunctions() {
-        myFunctions = new MyFunctions();
-
-        myFunctions.setActionDoneButton(etCategory);
-        myFunctions.clearEditTexts(btnClear, etCategory);
+        MyFunctions.setActionDoneButton(etCategory);
+        MyFunctions.clearEditTexts(btnClear, etCategory);
     }
 
     void setAttributes(CategoryModel category) {

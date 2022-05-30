@@ -28,6 +28,7 @@ import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.TaskViewHolder> {
     private FinishedTaskAdapter adaptFinishedTasks;
@@ -36,14 +37,14 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
     private final Activity activity;
     private final ActivityResultLauncher<Intent> actResult;
     private final SQLiteHelper myDB;
-    private final ArrayList<TaskModel> allTasks;
+    private final List<TaskModel> allTasks;
     private final LocalDate currentDate;
     private final Intent updateActivityIntent;
     private final AlertDialog.Builder builder;
     private boolean isActionMode;
-    private final ArrayList<TaskModel> selectedTasks;
-    private final ArrayList<TaskViewHolder> selectedHolders;
-    private final ArrayList<TaskViewHolder> allHolders;
+    private final List<TaskModel> selectedTasks;
+    private final List<TaskViewHolder> selectedHolders;
+    private final List<TaskViewHolder> allHolders;
 
     public OnHoldTaskAdapter(
             Activity activity,
@@ -70,11 +71,11 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
         this.adaptFinishedTasks = adaptFinishedTasks;
     }
 
-    public ArrayList<TaskModel> getAllTasks() {
+    public List<TaskModel> getAllTasks() {
         return allTasks;
     }
 
-    public void putTasksAsOnHold(ArrayList<TaskModel> tasksArray) {
+    public void putTasksAsOnHold(List<TaskModel> tasksArray) {
         for (TaskModel task : tasksArray) {
             task.undo();
             myDB.updateTask(task);
@@ -222,7 +223,7 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
         myDB.updateTask(task);
     }
 
-    void putTasksAsFinished(ArrayList<TaskModel> tasksArray) {
+    void putTasksAsFinished(List<TaskModel> tasksArray) {
         for (TaskModel task : tasksArray) {
             task.finish(currentDate.toString());
             myDB.updateTask(task);
@@ -263,7 +264,7 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
     void menuItemDelete() {
         builder.setMessage("Exluir " + selectedTasks.size() + " tarefa(s) selecionada(s)?");
         builder.setPositiveButton("Sim", (dialog, which) -> {
-            ArrayList<TaskModel> deletedTasks = myDB.deleteSelectedTasks(selectedTasks);
+            List<TaskModel> deletedTasks = myDB.deleteSelectedTasks(selectedTasks);
 
             deleteSelectedTasks(deletedTasks);
             activity.setResult(3, new Intent().putExtra("catAdaptPosition", catAdaptPosition));
@@ -299,7 +300,7 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
             menuItemSelectAll();
     }
 
-    void putHoldersAsNotSelected(ArrayList<TaskViewHolder> holders) {
+    void putHoldersAsNotSelected(List<TaskViewHolder> holders) {
         for (TaskViewHolder holder : holders) {
             holder.isSelected = false;
             holder.btnComplete.setEnabled(true);
@@ -343,7 +344,7 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
         activity.setResult(3, new Intent().putExtra("catAdaptPosition", catAdaptPosition));
     }
 
-    public void addAllTasks(ArrayList<TaskModel> tasks) {
+    public void addAllTasks(List<TaskModel> tasks) {
         int positionStart = getItemCount();
         allTasks.addAll(tasks);
         notifyItemRangeInserted(positionStart, tasks.size());
@@ -361,7 +362,7 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
         notifyItemRemoved(position);
     }
 
-    void deleteSelectedTasks(ArrayList<TaskModel> tasks) {
+    void deleteSelectedTasks(List<TaskModel> tasks) {
         for (TaskModel task : tasks) {
             int index = allTasks.indexOf(task);
             deleteTask(index);

@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TaskModel implements Parcelable {
 
@@ -16,9 +17,10 @@ public class TaskModel implements Parcelable {
     private int status;
     private String finishedDate;
     private Integer categoryId;
-    private ArrayList<Integer> requiredIDs = new ArrayList<>();
+    private List<Integer> requiredIDs = new ArrayList<>();
 
-    public TaskModel() {
+    public TaskModel(Integer categoryId) {
+        this.categoryId = categoryId;
     }
 
     public TaskModel(
@@ -47,6 +49,7 @@ public class TaskModel implements Parcelable {
         expirationDate = in.readString();
         finishedDate = in.readString();
         categoryId = in.readInt();
+        requiredIDs = in.readArrayList(Integer.TYPE.getClassLoader());
     }
 
     public static final Creator<TaskModel> CREATOR = new Creator<TaskModel>() {
@@ -68,13 +71,16 @@ public class TaskModel implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
-        dest.writeInt(id);
+        if (id != null) dest.writeInt(id);
+        else dest.writeInt(-1);
+
         dest.writeString(tittle);
         dest.writeString(description);
         dest.writeInt(status);
         dest.writeString(expirationDate);
         dest.writeString(finishedDate);
         dest.writeInt(categoryId);
+        dest.writeList(requiredIDs);
     }
 
     public void finish(String finishedDate) {
@@ -93,10 +99,6 @@ public class TaskModel implements Parcelable {
 
     public boolean hasRequirements() {
         return !requiredIDs.isEmpty();
-    }
-
-    public int getQtdOfRequirements() {
-        return requiredIDs.size();
     }
 
     public Integer getId() {
@@ -158,11 +160,11 @@ public class TaskModel implements Parcelable {
         this.categoryId = categoryId;
     }
 
-    public void setRequiredIDs(ArrayList<Integer> requiredIDs) {
+    public void setRequiredIDs(List<Integer> requiredIDs) {
         this.requiredIDs = requiredIDs;
     }
 
-    public ArrayList<Integer> getRequiredIDs() {
+    public List<Integer> getRequiredIDs() {
         return requiredIDs;
     }
 }

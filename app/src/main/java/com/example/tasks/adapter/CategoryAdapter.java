@@ -20,14 +20,14 @@ import com.example.tasks.activity.UpdateCategoryActivity;
 import com.example.tasks.data_base.SQLiteHelper;
 import com.example.tasks.model.CategoryModel;
 
-import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
 
     private final SQLiteHelper myDB;
     private final ActivityResultLauncher<Intent> actResult;
-    private final ArrayList<CategoryModel> allCategories;
+    private final List<CategoryModel> allCategories;
     private final Intent categoryTasksActIntent;
     private final Intent updateActIntent;
 

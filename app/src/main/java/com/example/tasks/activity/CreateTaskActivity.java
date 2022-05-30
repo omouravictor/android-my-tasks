@@ -22,16 +22,16 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CreateTaskActivity extends AppCompatActivity {
 
-    ArrayList<Integer> requiredIDs;
+    List<Integer> requiredIDs;
     EditText etTittle, etDescription, etExpirationDate;
     TextView tvQtdRequirements;
     Button btnRequirements, btnClear, btnCreate;
     ActivityResultLauncher<Intent> actResult;
     Intent taskRequirementsIntent;
-    MyFunctions myFunctions;
     DateTimeFormatter dtf;
 
     @Override
@@ -43,7 +43,10 @@ public class CreateTaskActivity extends AppCompatActivity {
     }
 
     void init() {
-        Integer categoryID = getIntent().getIntExtra("categoryId", -1);
+        Intent intent = getIntent();
+        Integer categoryID = intent.getIntExtra("categoryId", -1);
+
+        TaskModel newTask = new TaskModel(categoryID);
 
         initView();
         initVariables();
@@ -51,17 +54,17 @@ public class CreateTaskActivity extends AppCompatActivity {
         initMyFunctions();
 
         btnRequirements.setOnClickListener(v -> {
-            taskRequirementsIntent.putExtra("categoryID", categoryID);
-            taskRequirementsIntent.putExtra("requirements", requiredIDs);
+            newTask.setRequiredIDs(requiredIDs);
+            taskRequirementsIntent.putExtra("task", newTask);
             actResult.launch(taskRequirementsIntent);
         });
 
         btnCreate.setOnClickListener(v -> {
             btnCreate.setClickable(false);
-            if (!myFunctions.isEmpty(this, etTittle, etExpirationDate)) {
+            if (!MyFunctions.isEmpty(this, etTittle, etExpirationDate)) {
                 try {
                     SQLiteHelper myDB = new SQLiteHelper(this);
-                    TaskModel newTask = createTask(myDB, categoryID);
+                    fillNewTask(myDB, newTask);
                     if (newTask.hasRequirements())
                         myDB.createRequirement(newTask);
                     finishCreate(newTask);
@@ -103,34 +106,28 @@ public class CreateTaskActivity extends AppCompatActivity {
     }
 
     void initMyFunctions() {
-        myFunctions = new MyFunctions();
-
-        myFunctions.setActionDoneButton(etTittle);
-        myFunctions.setActionDoneButton(etDescription);
-        myFunctions.setOnClickEtDateListener(this, etExpirationDate);
-        myFunctions.clearEditTexts(btnClear, etTittle, etDescription, etExpirationDate);
+        MyFunctions.setActionDoneButton(etTittle);
+        MyFunctions.setActionDoneButton(etDescription);
+        MyFunctions.setOnClickEtDateListener(this, etExpirationDate);
+        MyFunctions.clearEditTexts(btnClear, etTittle, etDescription, etExpirationDate);
     }
 
-    void setAttributes(TaskModel task, Integer categoryID) {
+    void setAttributes(TaskModel task) {
         LocalDate date = LocalDate.parse(etExpirationDate.getText().toString(), dtf);
 
         task.setTittle(etTittle.getText().toString());
         task.setExpirationDate(date.toString());
         task.setDescription(etDescription.getText().toString());
         task.setStatus(0);
-        task.setCategoryId(categoryID);
         task.setRequiredIDs(requiredIDs);
     }
 
-    TaskModel createTask(SQLiteHelper myDB, Integer categoryID) {
-        TaskModel task = new TaskModel();
+    void fillNewTask(SQLiteHelper myDB, TaskModel newTask) {
         Integer id;
 
-        setAttributes(task, categoryID);
-        id = myDB.createTask(task);
-        task.setId(id);
-
-        return task;
+        setAttributes(newTask);
+        id = myDB.createTask(newTask);
+        newTask.setId(id);
     }
 
     void finishCreate(TaskModel task) {
