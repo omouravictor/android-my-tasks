@@ -4,6 +4,7 @@
     <string name="tittle">Título *</string>
     <string name="name">Nome</string>
     <string name="category">Categoria</string>
+    <string name="categories">Categorias</string>
     <string name="create">Criar</string>
     <string name="finish">Concluir</string>
     <string name="undo">Desfazer</string>

@@ -203,24 +203,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         );
     }
 
-    public List<TaskModel> getAllTasksOnHold() {
-        String query = "SELECT *" +
-                " FROM tb_task" +
-                " WHERE status = 0" +
-                " ORDER BY expiration_date ASC";
-
-        return getTasksFromDB(query);
-    }
-
-    public List<TaskModel> getAllFinishedTasks() {
-        String query = "SELECT *" +
-                " FROM tb_task" +
-                " WHERE status = 1" +
-                " ORDER BY finished_date DESC";
-
-        return getTasksFromDB(query);
-    }
-
     public List<TaskModel> getAllOnHoldTasksOfCategory(Integer categoryID) {
         String query = "SELECT *" +
                 " FROM tb_task" +
@@ -230,47 +212,93 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return getTasksFromDB(query);
     }
 
-    public List<TaskModel> getPossibleRequirementsOnHoldTask(TaskModel task) {
-        String taskIDClause = "";
-
-        for (Integer id : task.getRequiredIDs())
-            taskIDClause += " AND id != " + id;
-
+    public List<TaskModel> getAllTasksExceptTaskRequirements(TaskModel task) {
+        // Pega as tarefas que NÃO são requisitos de "task"
         String query = "SELECT *" +
                 " FROM tb_task" +
-                " WHERE category_id = " + task.getCategoryId() + taskIDClause +
+                " WHERE category_id = " + task.getCategoryId() +
                 " AND id != " + task.getId() +
-                " ORDER BY expiration_date ASC";
-
-        return getTasksFromDB(query);
-    }
-
-    public List<TaskModel> getPossibleRequirementsFinishedTask(TaskModel task) {
-        String taskIDClause = "";
-
-        for (Integer id : task.getRequiredIDs())
-            taskIDClause += " AND id != " + id;
-
-        String query = "SELECT *" +
-                " FROM tb_task" +
-                " WHERE status = 1 AND category_id = " + task.getCategoryId() + taskIDClause +
-                " AND id != " + task.getId() +
+                " AND id NOT IN" +
+                " (SELECT required_task_id FROM tb_requirement" +
+                " WHERE requirement_task_id = " + task.getId() + ")" +
                 " ORDER BY expiration_date ASC";
 
         return getTasksFromDB(query);
     }
 
     public List<TaskModel> getAllRequiredTasks(TaskModel task) {
-        List<Integer> requiredIDs = task.getRequiredIDs();
-        String requirementClause = " AND id = " + task.getRequiredIDs().get(0);
+        // Pega as tarefas que são requisitos de "task"
+        String query = "SELECT *" +
+                " FROM tb_task " +
+                " WHERE category_id = " + task.getCategoryId() +
+                " AND id IN" +
+                " (SELECT required_task_id FROM tb_requirement" +
+                " WHERE requirement_task_id = " + task.getId() + ")" +
+                " ORDER BY expiration_date ASC";
 
-        for (int i = 1; i < task.getRequiredIDs().size(); i++)
-            requirementClause += " OR id = " + requiredIDs.get(i);
+        return getTasksFromDB(query);
+    }
+
+    public List<TaskModel> getTasksByIdList(List<Integer> idList) {
+        List<TaskModel> tasks = new ArrayList<>();
+        TaskModel task;
+        String query;
+
+        for (Integer id : idList) {
+            query = "SELECT *" +
+                    " FROM tb_task " +
+                    " WHERE id = " + id +
+                    " ORDER BY expiration_date ASC";
+            task = getTaskFromDB(query);
+            tasks.add(task);
+        }
+
+        return tasks;
+    }
+
+    TaskModel getTaskFromDB(String query) {
+        if (db != null) {
+            Cursor cursor = db.rawQuery(query, null);
+            while (cursor.moveToNext()) {
+                TaskModel task = new TaskModel(
+                        cursor.getInt(0),
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getInt(3),
+                        cursor.getString(4),
+                        cursor.getString(5),
+                        cursor.getInt(6)
+                );
+                return task;
+            }
+            cursor.close();
+        }
+        return null;
+    }
+
+    public List<TaskModel> getPossibleRequirementsForFinishedTask(TaskModel task) {
+        String IDClause = " AND id != " + task.getId();
+
+        for (Integer id : task.getRequiredIDs())
+            IDClause += " AND id != " + id;
 
         String query = "SELECT *" +
                 " FROM tb_task" +
-                " WHERE category_id = " + task.getCategoryId() + requirementClause +
-                " AND id != " + task.getId() +
+                " WHERE status = 1 AND category_id = " + task.getCategoryId() + IDClause +
+                " ORDER BY finished_date DESC";
+
+        return getTasksFromDB(query);
+    }
+
+    public List<TaskModel> getPossibleRequirementsForOnHoldTask(TaskModel task) {
+        String IDClause = " AND id != " + task.getId();
+
+        for (Integer id : task.getRequiredIDs())
+            IDClause += " AND id != " + id;
+
+        String query = "SELECT *" +
+                " FROM tb_task" +
+                " WHERE category_id = " + task.getCategoryId() + IDClause +
                 " ORDER BY expiration_date ASC";
 
         return getTasksFromDB(query);
@@ -280,7 +308,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         String query = "SELECT *" +
                 " FROM tb_task" +
                 " WHERE status = 1 AND category_id = " + categoryID +
-                " ORDER BY finished_date ASC";
+                " ORDER BY finished_date DESC";
 
         return getTasksFromDB(query);
     }
@@ -352,7 +380,43 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return getRequiredIDsFromDB(query);
     }
 
-    public List<Integer> getRequiredIDsFromDB(String query) {
+    public boolean canBeFinished(TaskModel task) {
+        // Conta quantas tarefas são requisito de "task" e NÃO foram concluídas
+        String query = "SELECT COUNT(id) " +
+                "FROM tb_task " +
+                "WHERE status = 0 AND id IN " +
+                "(SELECT required_task_id " +
+                "FROM tb_requirement " +
+                "WHERE requirement_task_id = " + task.getId() + ")";
+        Cursor cursor = db.rawQuery(query, null);
+        int qtd;
+
+        cursor.moveToFirst();
+        qtd = cursor.getInt(0);
+        cursor.close();
+
+        return qtd == 0;
+    }
+
+    public boolean canBeUndo(TaskModel task) {
+        // Conta quantas tarefas que precisam de "task" como requisito e ESTÃO concluídas
+        String query = "SELECT COUNT(id) " +
+                "FROM tb_task " +
+                "WHERE status = 1 AND id IN " +
+                "(SELECT requirement_task_id " +
+                "FROM tb_requirement " +
+                "WHERE required_task_id = " + task.getId() + ")";
+        Cursor cursor = db.rawQuery(query, null);
+        int qtd;
+
+        cursor.moveToFirst();
+        qtd = cursor.getInt(0);
+        cursor.close();
+
+        return qtd == 0;
+    }
+
+    List<Integer> getRequiredIDsFromDB(String query) {
         List<Integer> requiredIDs = new ArrayList<>();
 
         if (db != null) {

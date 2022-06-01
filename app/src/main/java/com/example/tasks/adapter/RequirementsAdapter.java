@@ -18,28 +18,30 @@ import com.example.tasks.model.TaskModel;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RequirementsAdapter extends RecyclerView.Adapter<RequirementsAdapter.RequirementsViewHolder> {
 
-    private final List<TaskModel> allTasks;
+    private final List<TaskModel> allTasks = new ArrayList<>();
     private final List<Integer> requiredIDs;
 
     public RequirementsAdapter(
             SQLiteHelper myDB,
             TaskModel task
     ) {
-        if (task.isFinished())
-            allTasks = myDB.getPossibleRequirementsFinishedTask(task);
-        else
-            allTasks = myDB.getPossibleRequirementsOnHoldTask(task);
-
         requiredIDs = task.getRequiredIDs();
 
-        if (task.hasRequirements()) {
-            List<TaskModel> requiredTasks = myDB.getAllRequiredTasks(task);
-            allTasks.addAll(0, requiredTasks);
+        if (!requiredIDs.isEmpty()) {
+            List<TaskModel> requiredTasks = myDB.getTasksByIdList(requiredIDs);
+            allTasks.addAll(requiredTasks);
         }
+
+        if (task.isFinished()) {
+            allTasks.addAll(allTasks.size(), myDB.getPossibleRequirementsForFinishedTask(task));
+        } else
+            allTasks.addAll(allTasks.size(), myDB.getPossibleRequirementsForOnHoldTask(task));
+
     }
 
     public static class RequirementsViewHolder extends RecyclerView.ViewHolder {

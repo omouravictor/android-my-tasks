@@ -1,6 +1,7 @@
 package com.example.tasks.adapter;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.view.ActionMode;
@@ -21,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.tasks.R;
 import com.example.tasks.activity.UpdateOnHoldTaskActivity;
 import com.example.tasks.data_base.SQLiteHelper;
+import com.example.tasks.model.CategoryModel;
 import com.example.tasks.model.TaskModel;
 
 import org.joda.time.Days;
@@ -40,28 +42,27 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
     private final List<TaskModel> allTasks;
     private final LocalDate currentDate;
     private final Intent updateActivityIntent;
-    private final AlertDialog.Builder builder;
     private boolean isActionMode;
     private final List<TaskModel> selectedTasks;
     private final List<TaskViewHolder> selectedHolders;
     private final List<TaskViewHolder> allHolders;
+    private final CategoryModel category;
 
     public OnHoldTaskAdapter(
             Activity activity,
             int catAdaptPosition,
             ActivityResultLauncher<Intent> actResult,
             SQLiteHelper myDB,
-            Integer categoryId
+            CategoryModel category
     ) {
         this.activity = activity;
         this.catAdaptPosition = catAdaptPosition;
         this.actResult = actResult;
         this.myDB = myDB;
-        this.allTasks = myDB.getAllOnHoldTasksOfCategory(categoryId);
+        this.category = category;
+        this.allTasks = myDB.getAllOnHoldTasksOfCategory(category.getId());
         currentDate = LocalDate.now();
         updateActivityIntent = new Intent(activity, UpdateOnHoldTaskActivity.class);
-        builder = new AlertDialog.Builder(activity);
-        builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
         selectedTasks = new ArrayList<>();
         selectedHolders = new ArrayList<>();
         allHolders = new ArrayList<>();
@@ -115,6 +116,7 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
         holder.itemView.setOnClickListener(v -> {
             if (!isActionMode) {
                 updateActivityIntent.putExtra("task", task);
+                updateActivityIntent.putExtra("categoryName", category.getName());
                 updateActivityIntent.putExtra("taskAdaptPosition", holder.getAdapterPosition());
                 actResult.launch(updateActivityIntent);
             } else
@@ -187,14 +189,16 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
         setOnHoldTaskLayout(task, holder);
 
         holder.btnComplete.setOnClickListener(v -> {
-            builder.setMessage("Concluir '" + task.getTittle() + "'?");
-            builder.setPositiveButton("Sim", (dialog, which) -> {
+            if (myDB.canBeFinished(task)) {
                 deleteTask(holder.getAdapterPosition());
                 putTasksAsFinished(task);
                 adaptFinishedTasks.addTask(task);
-                dialog.dismiss();
-            });
-            builder.show();
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                builder.setMessage("Tarefa possui requisitos não concluídos.");
+                builder.setNegativeButton("Ok", (dialog, which) -> dialog.dismiss());
+                builder.show();
+            }
         });
     }
 
@@ -248,6 +252,7 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
 
     void menuItemFinish() {
         if (!selectedTasks.isEmpty()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             builder.setMessage("Concluir " + selectedTasks.size() + " tarefa(s) selecionada(s)?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
                 deleteSelectedTasks(selectedTasks);
@@ -257,11 +262,13 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
                 myActionMode.finish();
                 dialog.dismiss();
             });
+            builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
             builder.show();
         }
     }
 
     void menuItemDelete() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage("Exluir " + selectedTasks.size() + " tarefa(s) selecionada(s)?");
         builder.setPositiveButton("Sim", (dialog, which) -> {
             List<TaskModel> deletedTasks = myDB.deleteSelectedTasks(selectedTasks);
@@ -276,6 +283,7 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
             myActionMode.finish();
             dialog.dismiss();
         });
+        builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
         builder.show();
     }
 
