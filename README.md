@@ -30,3 +30,5 @@ It's free!
 ## Installer
 
 If you want to test the App in the Production mode, the installer is on below:
+
+[Android .apk installer](https://drive.google.com/file/d/1J8ANAOrsjc7JeYs9ZEdRcCGZzIrQjZbB/view?usp=sharing)
