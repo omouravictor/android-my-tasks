@@ -79,10 +79,13 @@ public class CategoryTasksActivity extends AppCompatActivity {
     }
 
     void startBtnAdd() {
-        Intent createTaskActivity = new Intent(this, CreateTaskActivity.class);
+        Intent createTaskIntent = new Intent(this, CreateTaskActivity.class);
 
-        createTaskActivity.putExtra("categoryId", category.getId());
-        btnAdd.setOnClickListener(v -> actResult.launch(createTaskActivity));
+        btnAdd.setOnClickListener(v -> {
+            createTaskIntent.putExtra("categoryId", category.getId());
+            createTaskIntent.putExtra("categoryName", category.getName());
+            actResult.launch(createTaskIntent);
+        });
     }
 
     void startActivityResult() {
@@ -105,8 +108,8 @@ public class CategoryTasksActivity extends AppCompatActivity {
     }
 
     void startAdaptersAndFragments() {
-        adaptOnHoldTasks = new OnHoldTaskAdapter(this, catAdaptPosition, actResult, myDB, category.getId());
-        adaptFinishedTasks = new FinishedTaskAdapter(this, catAdaptPosition, actResult, myDB, category.getId());
+        adaptOnHoldTasks = new OnHoldTaskAdapter(this, catAdaptPosition, actResult, myDB, category);
+        adaptFinishedTasks = new FinishedTaskAdapter(this, catAdaptPosition, actResult, myDB, category);
 
         adaptOnHoldTasks.setFinishedTasksAdapter(adaptFinishedTasks);
         adaptFinishedTasks.setOnHoldTaskAdapter(adaptOnHoldTasks);

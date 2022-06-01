@@ -37,7 +37,7 @@ public class UpdateFinishedTaskActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_finished_task);
-        setTitle(R.string.task);
+        setTitle(getIntent().getStringExtra("categoryName"));
         init();
     }
 
@@ -56,6 +56,7 @@ public class UpdateFinishedTaskActivity extends AppCompatActivity {
 
         btnRequirements.setOnClickListener(v -> {
             task.setRequiredIDs(requiredIDs);
+            taskRequirementsIntent.putExtra("taskTittle", task.getTittle());
             taskRequirementsIntent.putExtra("task", task);
             actResult.launch(taskRequirementsIntent);
         });

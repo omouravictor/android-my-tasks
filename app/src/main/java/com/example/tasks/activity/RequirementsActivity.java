@@ -26,7 +26,10 @@ public class RequirementsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_requirements);
-        setTitle(R.string.requirements);
+        if (getIntent().hasExtra("taskTittle"))
+            setTitle("Requisitos: " + getIntent().getStringExtra("taskTittle"));
+        else
+            setTitle(R.string.requirements);
         init();
     }
 
