@@ -189,13 +189,13 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
         setOnHoldTaskLayout(task, holder);
 
         holder.btnComplete.setOnClickListener(v -> {
-            if (myDB.canBeFinished(task)) {
+            if (myDB.canBeFinished(task.getId())) {
                 deleteTask(holder.getAdapterPosition());
                 putTasksAsFinished(task);
                 adaptFinishedTasks.addTask(task);
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                builder.setMessage("Tarefa possui requisitos não concluídos.");
+                builder.setMessage("Tarefa possui requisitos não concluídos :(");
                 builder.setNegativeButton("Ok", (dialog, which) -> dialog.dismiss());
                 builder.show();
             }
@@ -251,19 +251,21 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
     }
 
     void menuItemFinish() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+
+        builder.setNegativeButton("Ok", (dialog, which) -> dialog.dismiss());
+        builder.setMessage("Pelo menos uma Tarefa selecionada possui requisitos não concluídos :(");
+
         if (!selectedTasks.isEmpty()) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-            builder.setMessage("Concluir " + selectedTasks.size() + " tarefa(s) selecionada(s)?");
-            builder.setPositiveButton("Sim", (dialog, which) -> {
+            if (myDB.canBeFinished(selectedTasks)) {
                 deleteSelectedTasks(selectedTasks);
                 putTasksAsFinished(selectedTasks);
                 adaptFinishedTasks.addAllTasks(selectedTasks);
                 putHoldersAsNotSelected(selectedHolders);
                 myActionMode.finish();
-                dialog.dismiss();
-            });
-            builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
-            builder.show();
+            } else {
+                builder.show();
+            }
         }
     }
 

@@ -9,7 +9,7 @@
         android:title="@string/finish"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/backToOnHold"
+        android:id="@+id/undo"
         android:icon="@drawable/ic_white_undo_task"
         android:orderInCategory="1"
         android:title="@string/undo"

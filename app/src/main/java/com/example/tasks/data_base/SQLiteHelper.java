@@ -256,26 +256,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return tasks;
     }
 
-    TaskModel getTaskFromDB(String query) {
-        if (db != null) {
-            Cursor cursor = db.rawQuery(query, null);
-            while (cursor.moveToNext()) {
-                TaskModel task = new TaskModel(
-                        cursor.getInt(0),
-                        cursor.getString(1),
-                        cursor.getString(2),
-                        cursor.getInt(3),
-                        cursor.getString(4),
-                        cursor.getString(5),
-                        cursor.getInt(6)
-                );
-                return task;
-            }
-            cursor.close();
-        }
-        return null;
-    }
-
     public List<TaskModel> getPossibleRequirementsForFinishedTask(TaskModel task) {
         String IDClause = " AND id != " + task.getId();
 
@@ -351,6 +331,77 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return getCategoriesFromDB(query);
     }
 
+    public List<Integer> getAllRequiredIDs(Integer taskID) {
+        String query = "SELECT required_task_id" +
+                " FROM tb_requirement" +
+                " WHERE requirement_task_id = " + taskID;
+
+        return getRequiredIDsFromDB(query);
+    }
+
+    public boolean canBeFinished(Integer taskID) {
+        String query = getCanBeFinishedQuery(taskID);
+        Cursor cursor = db.rawQuery(query, null);
+        int qtd;
+
+        cursor.moveToFirst();
+        qtd = cursor.getInt(0);
+        cursor.close();
+
+        return qtd == 0;
+    }
+
+    public boolean canBeFinished(List<TaskModel> array) {
+
+        for (TaskModel task : array) {
+            if (!canBeFinished(task.getId()))
+                return false;
+        }
+
+        return true;
+    }
+
+    public boolean canBeUndo(Integer taskID) {
+        String query = getCanBeUndoQuery(taskID);
+        Cursor cursor = db.rawQuery(query, null);
+        int qtd;
+
+        cursor.moveToFirst();
+        qtd = cursor.getInt(0);
+        cursor.close();
+
+        return qtd == 0;
+    }
+
+    public boolean canBeUndo(List<TaskModel> array) {
+
+        for (TaskModel task : array) {
+            if (!canBeUndo(task.getId()))
+                return false;
+        }
+
+        return true;
+    }
+
+    TaskModel getTaskFromDB(String query) {
+        if (db != null) {
+            Cursor cursor = db.rawQuery(query, null);
+            while (cursor.moveToNext()) {
+                return new TaskModel(
+                        cursor.getInt(0),
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getInt(3),
+                        cursor.getString(4),
+                        cursor.getString(5),
+                        cursor.getInt(6)
+                );
+            }
+            cursor.close();
+        }
+        return null;
+    }
+
     List<TaskModel> getTasksFromDB(String query) {
         List<TaskModel> allTasksQuery = new ArrayList<>();
         if (db != null) {
@@ -370,50 +421,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             cursor.close();
         }
         return allTasksQuery;
-    }
-
-    public List<Integer> getAllRequiredIDs(Integer taskID) {
-        String query = "SELECT required_task_id" +
-                " FROM tb_requirement" +
-                " WHERE requirement_task_id = " + taskID;
-
-        return getRequiredIDsFromDB(query);
-    }
-
-    public boolean canBeFinished(TaskModel task) {
-        // Conta quantas tarefas são requisito de "task" e NÃO foram concluídas
-        String query = "SELECT COUNT(id) " +
-                "FROM tb_task " +
-                "WHERE status = 0 AND id IN " +
-                "(SELECT required_task_id " +
-                "FROM tb_requirement " +
-                "WHERE requirement_task_id = " + task.getId() + ")";
-        Cursor cursor = db.rawQuery(query, null);
-        int qtd;
-
-        cursor.moveToFirst();
-        qtd = cursor.getInt(0);
-        cursor.close();
-
-        return qtd == 0;
-    }
-
-    public boolean canBeUndo(TaskModel task) {
-        // Conta quantas tarefas que precisam de "task" como requisito e ESTÃO concluídas
-        String query = "SELECT COUNT(id) " +
-                "FROM tb_task " +
-                "WHERE status = 1 AND id IN " +
-                "(SELECT requirement_task_id " +
-                "FROM tb_requirement " +
-                "WHERE required_task_id = " + task.getId() + ")";
-        Cursor cursor = db.rawQuery(query, null);
-        int qtd;
-
-        cursor.moveToFirst();
-        qtd = cursor.getInt(0);
-        cursor.close();
-
-        return qtd == 0;
     }
 
     List<Integer> getRequiredIDsFromDB(String query) {
@@ -459,5 +466,25 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         cursor.close();
 
         return lastId;
+    }
+
+    String getCanBeFinishedQuery(Integer taskID) {
+        // Conta quantas tarefas são requisito de "task" e NÃO foram concluídas
+        return "SELECT COUNT(id) " +
+                "FROM tb_task " +
+                "WHERE status = 0 AND id IN " +
+                "(SELECT required_task_id " +
+                "FROM tb_requirement " +
+                "WHERE requirement_task_id = " + taskID + ")";
+    }
+
+    String getCanBeUndoQuery(Integer taskID) {
+        // Conta quantas tarefas que precisam de "task" como requisito e ESTÃO concluídas
+        return "SELECT COUNT(id) " +
+                "FROM tb_task " +
+                "WHERE status = 1 AND id IN " +
+                "(SELECT requirement_task_id " +
+                "FROM tb_requirement " +
+                "WHERE required_task_id = " + taskID + ")";
     }
 }

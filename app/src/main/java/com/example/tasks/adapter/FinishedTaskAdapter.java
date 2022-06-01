@@ -181,14 +181,14 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
         setFinishedTaskLayout(task, holder);
 
         holder.btnUndo.setOnClickListener(v -> {
-            if (myDB.canBeUndo(task)) {
+            if (myDB.canBeUndo(task.getId())) {
                 deleteTask(holder.getAdapterPosition());
                 putTasksAsOnHold(task);
                 adaptOnHoldTasks.addTask(task);
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                 builder.setMessage("Essa tarefa não pode ser desfeita pois é requisito de outra " +
-                        "tarefa que já está concluida.");
+                        "tarefa que já está concluida :(");
                 builder.setNegativeButton("Ok", (dialog, which) -> dialog.dismiss());
                 builder.show();
             }
@@ -243,20 +243,22 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
         }
     }
 
-    void menuItemBackToOnHold() {
+    void menuItemUndo() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+
+        builder.setNegativeButton("Ok", (dialog, which) -> dialog.dismiss());
+        builder.setMessage("Pelo menos uma tarefa selecionada é requisito de outra tarefa que já está concluida :(");
+
         if (!selectedTasks.isEmpty()) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-            builder.setMessage("Desfazer " + selectedTasks.size() + " tarefa(s) selecionada(s)?");
-            builder.setPositiveButton("Sim", (dialog, which) -> {
+            if (myDB.canBeUndo(selectedTasks)) {
                 deleteSelectedTasks(selectedTasks);
                 putTasksAsOnHold(selectedTasks);
                 adaptOnHoldTasks.addAllTasks(selectedTasks);
                 putHoldersAsNotSelected(selectedHolders);
                 myActionMode.finish();
-                dialog.dismiss();
-            });
-            builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
-            builder.show();
+            } else {
+                builder.show();
+            }
         }
     }
 
@@ -293,8 +295,8 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
     }
 
     void myOnActionItemClicked(MenuItem item) {
-        if (item.getItemId() == R.id.backToOnHold)
-            menuItemBackToOnHold();
+        if (item.getItemId() == R.id.undo)
+            menuItemUndo();
         else if (item.getItemId() == R.id.delete)
             menuItemDelete();
         else if (item.getItemId() == R.id.selectAll)
