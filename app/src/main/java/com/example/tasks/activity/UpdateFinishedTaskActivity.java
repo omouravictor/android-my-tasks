@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,7 +29,8 @@ public class UpdateFinishedTaskActivity extends AppCompatActivity {
     List<Integer> requiredIDs;
     EditText etTittle, etDescription, etExpirationDate, etFinishedDate;
     TextView tvQtdRequirements;
-    Button btnRequirements, btnClear, btnUpdate;
+    Button btnRequirements;
+    LinearLayout layUpdate, layClear;
     ActivityResultLauncher<Intent> actResult;
     Intent taskRequirementsIntent;
     DateTimeFormatter dtf;
@@ -61,8 +63,8 @@ public class UpdateFinishedTaskActivity extends AppCompatActivity {
             actResult.launch(taskRequirementsIntent);
         });
 
-        btnUpdate.setOnClickListener((v) -> {
-            btnUpdate.setClickable(false);
+        layUpdate.setOnClickListener((v) -> {
+            layUpdate.setClickable(false);
             if (!MyFunctions.isEmpty(this, etTittle, etExpirationDate, etFinishedDate)) {
                 try {
                     TaskModel updatedTask = updateTask(myDB, task);
@@ -77,7 +79,7 @@ public class UpdateFinishedTaskActivity extends AppCompatActivity {
                     Toast.makeText(this, "Houve um erro", Toast.LENGTH_SHORT).show();
                 }
             }
-            btnUpdate.setClickable(true);
+            layUpdate.setClickable(true);
         });
 
     }
@@ -90,8 +92,8 @@ public class UpdateFinishedTaskActivity extends AppCompatActivity {
         etDescription = findViewById(R.id.etDescription);
         tvQtdRequirements = findViewById(R.id.tvQtdRequirements);
         btnRequirements = findViewById(R.id.btnRequirements);
-        btnClear = findViewById(R.id.btnClear);
-        btnUpdate = findViewById(R.id.btnUpdate);
+        layClear = findViewById(R.id.layClear);
+        layUpdate = findViewById(R.id.layUpdate);
     }
 
     void initRequiredIDs(SQLiteHelper myDB, TaskModel task) {
@@ -120,7 +122,7 @@ public class UpdateFinishedTaskActivity extends AppCompatActivity {
         MyFunctions.setActionDoneButton(etDescription);
         MyFunctions.setOnClickEtDateListener(this, etExpirationDate);
         MyFunctions.setOnClickEtDateListener(this, etFinishedDate);
-        MyFunctions.clearEditTexts(btnClear, etTittle, etDescription, etExpirationDate, etFinishedDate);
+        MyFunctions.clearEditTexts(layClear, etTittle, etDescription, etExpirationDate, etFinishedDate);
     }
 
     void setTaskData(TaskModel task) {

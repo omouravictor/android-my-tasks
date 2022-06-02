@@ -3,8 +3,8 @@ package com.example.tasks.activity;
 import android.content.Intent;
 import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,7 +17,7 @@ import com.example.tasks.model.CategoryModel;
 public class UpdateCategoryActivity extends AppCompatActivity {
 
     EditText etCategory;
-    Button btnClear, btnUpdate;
+    LinearLayout layClear, layUpdate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +36,7 @@ public class UpdateCategoryActivity extends AppCompatActivity {
         initMyFunctions();
         setCategoryData(category);
 
-        btnUpdate.setOnClickListener(v -> {
+        layUpdate.setOnClickListener(v -> {
             if (!MyFunctions.isEmpty(this, etCategory))
                 updateCategory(category, catAdaptPosition);
         });
@@ -44,14 +44,14 @@ public class UpdateCategoryActivity extends AppCompatActivity {
     }
 
     void initView() {
-        etCategory = findViewById(R.id.etUpdateCategoryName);
-        btnClear = findViewById(R.id.btnClearUpdateCategory);
-        btnUpdate = findViewById(R.id.btnUpdateCategory);
+        etCategory = findViewById(R.id.etCategoryName);
+        layClear = findViewById(R.id.layClear);
+        layUpdate = findViewById(R.id.layUpdate);
     }
 
     void initMyFunctions() {
         MyFunctions.setActionDoneButton(etCategory);
-        MyFunctions.clearEditTexts(btnClear, etCategory);
+        MyFunctions.clearEditTexts(layClear, etCategory);
     }
 
     void setCategoryData(CategoryModel category) {
@@ -81,7 +81,7 @@ public class UpdateCategoryActivity extends AppCompatActivity {
     }
 
     void updateCategory(CategoryModel category, int catAdaptPosition) {
-        btnUpdate.setClickable(false);
+        layUpdate.setClickable(false);
 
         try {
             CategoryModel updatedCategory = getUpdatedCategory(category);
@@ -91,7 +91,7 @@ public class UpdateCategoryActivity extends AppCompatActivity {
         } catch (Exception e) {
             Toast.makeText(this, "Houve um erro", Toast.LENGTH_SHORT).show();
         } finally {
-            btnUpdate.setClickable(true);
+            layUpdate.setClickable(true);
         }
     }
 

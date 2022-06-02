@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,7 +29,8 @@ public class UpdateOnHoldTaskActivity extends AppCompatActivity {
     List<Integer> requiredIDs;
     EditText etTittle, etDescription, etExpirationDate;
     TextView tvQtdRequirements;
-    Button btnRequirements, btnClear, btnUpdate;
+    Button btnRequirements;
+    LinearLayout layUpdate, layClear;
     ActivityResultLauncher<Intent> actResult;
     Intent taskRequirementsIntent;
     DateTimeFormatter dtf;
@@ -61,8 +63,8 @@ public class UpdateOnHoldTaskActivity extends AppCompatActivity {
             actResult.launch(taskRequirementsIntent);
         });
 
-        btnUpdate.setOnClickListener((v) -> {
-            btnUpdate.setClickable(false);
+        layUpdate.setOnClickListener((v) -> {
+            layUpdate.setClickable(false);
             if (!MyFunctions.isEmpty(this, etTittle, etExpirationDate)) {
                 try {
                     TaskModel updatedTask = updateTask(myDB, task);
@@ -77,7 +79,7 @@ public class UpdateOnHoldTaskActivity extends AppCompatActivity {
                     Toast.makeText(this, "Houve um erro", Toast.LENGTH_SHORT).show();
                 }
             }
-            btnUpdate.setClickable(true);
+            layUpdate.setClickable(true);
         });
 
     }
@@ -89,8 +91,8 @@ public class UpdateOnHoldTaskActivity extends AppCompatActivity {
         etDescription = findViewById(R.id.etDescription);
         tvQtdRequirements = findViewById(R.id.tvQtdRequirements);
         btnRequirements = findViewById(R.id.btnRequirements);
-        btnClear = findViewById(R.id.btnClear);
-        btnUpdate = findViewById(R.id.btnUpdate);
+        layClear = findViewById(R.id.layClear);
+        layUpdate = findViewById(R.id.layUpdate);
     }
 
     void initRequiredIDs(SQLiteHelper myDB, TaskModel task) {
@@ -118,7 +120,7 @@ public class UpdateOnHoldTaskActivity extends AppCompatActivity {
         MyFunctions.setActionDoneButton(etTittle);
         MyFunctions.setActionDoneButton(etDescription);
         MyFunctions.setOnClickEtDateListener(this, etExpirationDate);
-        MyFunctions.clearEditTexts(btnClear, etTittle, etDescription, etExpirationDate);
+        MyFunctions.clearEditTexts(layClear, etTittle, etDescription, etExpirationDate);
     }
 
     void setTaskData(TaskModel task) {

@@ -3,8 +3,8 @@ package com.example.tasks.activity;
 import android.content.Intent;
 import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,7 +17,7 @@ import com.example.tasks.model.CategoryModel;
 public class CreateCategoryActivity extends AppCompatActivity {
 
     EditText etCategory;
-    Button btnClear, btnCreate;
+    LinearLayout layClear, layCreate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +31,7 @@ public class CreateCategoryActivity extends AppCompatActivity {
         initView();
         initMyFunctions();
 
-        btnCreate.setOnClickListener(v -> {
+        layCreate.setOnClickListener(v -> {
             if (!MyFunctions.isEmpty(this, etCategory))
                 createCategory();
         });
@@ -39,13 +39,13 @@ public class CreateCategoryActivity extends AppCompatActivity {
 
     void initView() {
         etCategory = findViewById(R.id.etCategoryName);
-        btnClear = findViewById(R.id.btnClearCategory);
-        btnCreate = findViewById(R.id.btnCreateCategory);
+        layClear = findViewById(R.id.layClear);
+        layCreate = findViewById(R.id.layCreate);
     }
 
     void initMyFunctions() {
         MyFunctions.setActionDoneButton(etCategory);
-        MyFunctions.clearEditTexts(btnClear, etCategory);
+        MyFunctions.clearEditTexts(layClear, etCategory);
     }
 
     void setAttributes(CategoryModel category) {
@@ -73,7 +73,7 @@ public class CreateCategoryActivity extends AppCompatActivity {
     }
 
     void createCategory() {
-        btnCreate.setClickable(false);
+        layCreate.setClickable(false);
 
         try {
             CategoryModel newCategory = getNewCategory();
@@ -83,7 +83,7 @@ public class CreateCategoryActivity extends AppCompatActivity {
         } catch (Exception e) {
             Toast.makeText(this, "Houve um erro", Toast.LENGTH_SHORT).show();
         } finally {
-            btnCreate.setClickable(true);
+            layCreate.setClickable(true);
         }
     }
 

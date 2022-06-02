@@ -8,6 +8,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -57,18 +58,18 @@ public class MyFunctions {
     }
 
     public static void clearEditTexts(
-            @NonNull Button btnClear,
+            @NonNull LinearLayout layClear,
             EditText etCategory) {
-        btnClear.setOnClickListener(v -> etCategory.setText(""));
+        layClear.setOnClickListener(v -> etCategory.setText(""));
     }
 
     public static void clearEditTexts(
-            @NonNull Button btnClear,
+            @NonNull LinearLayout layClear,
             EditText et1,
             EditText et2,
             EditText et3
     ) {
-        btnClear.setOnClickListener(v -> {
+        layClear.setOnClickListener(v -> {
             et1.setText("");
             et2.setText("");
             et3.setText("");
@@ -76,13 +77,13 @@ public class MyFunctions {
     }
 
     public static void clearEditTexts(
-            @NonNull Button btnClear,
+            @NonNull LinearLayout layClear,
             EditText et1,
             EditText et2,
             EditText et3,
             EditText et4
     ) {
-        btnClear.setOnClickListener(v -> {
+        layClear.setOnClickListener(v -> {
             et1.setText("");
             et2.setText("");
             et3.setText("");

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +30,8 @@ public class CreateTaskActivity extends AppCompatActivity {
     List<Integer> requiredIDs;
     EditText etTittle, etDescription, etExpirationDate;
     TextView tvQtdRequirements;
-    Button btnRequirements, btnClear, btnCreate;
+    Button btnRequirements;
+    LinearLayout layClear, layCreate;
     ActivityResultLauncher<Intent> actResult;
     Intent taskRequirementsIntent;
     DateTimeFormatter dtf;
@@ -59,8 +61,8 @@ public class CreateTaskActivity extends AppCompatActivity {
             actResult.launch(taskRequirementsIntent);
         });
 
-        btnCreate.setOnClickListener(v -> {
-            btnCreate.setClickable(false);
+        layCreate.setOnClickListener(v -> {
+            layCreate.setClickable(false);
             if (!MyFunctions.isEmpty(this, etTittle, etExpirationDate)) {
                 try {
                     SQLiteHelper myDB = new SQLiteHelper(this);
@@ -72,7 +74,7 @@ public class CreateTaskActivity extends AppCompatActivity {
                     Toast.makeText(this, "Houve um erro", Toast.LENGTH_SHORT).show();
                 }
             }
-            btnCreate.setClickable(true);
+            layCreate.setClickable(true);
         });
     }
 
@@ -83,8 +85,8 @@ public class CreateTaskActivity extends AppCompatActivity {
         etExpirationDate = findViewById(R.id.etExpirationDate);
         tvQtdRequirements = findViewById(R.id.tvQtdRequirements);
         btnRequirements = findViewById(R.id.btnRequirements);
-        btnClear = findViewById(R.id.btnClear);
-        btnCreate = findViewById(R.id.btnCreate);
+        layClear = findViewById(R.id.layClear);
+        layCreate = findViewById(R.id.layCreate);
     }
 
     void initVariables() {
@@ -109,7 +111,7 @@ public class CreateTaskActivity extends AppCompatActivity {
         MyFunctions.setActionDoneButton(etTittle);
         MyFunctions.setActionDoneButton(etDescription);
         MyFunctions.setOnClickEtDateListener(this, etExpirationDate);
-        MyFunctions.clearEditTexts(btnClear, etTittle, etDescription, etExpirationDate);
+        MyFunctions.clearEditTexts(layClear, etTittle, etDescription, etExpirationDate);
     }
 
     void setAttributes(TaskModel task) {
