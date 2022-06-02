@@ -17,7 +17,7 @@ import com.example.tasks.model.CategoryModel;
 public class CreateCategoryActivity extends AppCompatActivity {
 
     EditText etCategory;
-    LinearLayout layClear, layCreate;
+    LinearLayout layCreate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,13 +39,11 @@ public class CreateCategoryActivity extends AppCompatActivity {
 
     void initView() {
         etCategory = findViewById(R.id.etCategoryName);
-        layClear = findViewById(R.id.layClear);
         layCreate = findViewById(R.id.layCreate);
     }
 
     void initMyFunctions() {
         MyFunctions.setActionDoneButton(etCategory);
-        MyFunctions.clearEditTexts(layClear, etCategory);
     }
 
     void setAttributes(CategoryModel category) {

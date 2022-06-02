@@ -30,7 +30,7 @@ public class UpdateFinishedTaskActivity extends AppCompatActivity {
     EditText etTittle, etDescription, etExpirationDate, etFinishedDate;
     TextView tvQtdRequirements;
     Button btnRequirements;
-    LinearLayout layUpdate, layClear;
+    LinearLayout layUpdate;
     ActivityResultLauncher<Intent> actResult;
     Intent taskRequirementsIntent;
     DateTimeFormatter dtf;
@@ -92,7 +92,6 @@ public class UpdateFinishedTaskActivity extends AppCompatActivity {
         etDescription = findViewById(R.id.etDescription);
         tvQtdRequirements = findViewById(R.id.tvQtdRequirements);
         btnRequirements = findViewById(R.id.btnRequirements);
-        layClear = findViewById(R.id.layClear);
         layUpdate = findViewById(R.id.layUpdate);
     }
 
@@ -122,7 +121,6 @@ public class UpdateFinishedTaskActivity extends AppCompatActivity {
         MyFunctions.setActionDoneButton(etDescription);
         MyFunctions.setOnClickEtDateListener(this, etExpirationDate);
         MyFunctions.setOnClickEtDateListener(this, etFinishedDate);
-        MyFunctions.clearEditTexts(layClear, etTittle, etDescription, etExpirationDate, etFinishedDate);
     }
 
     void setTaskData(TaskModel task) {

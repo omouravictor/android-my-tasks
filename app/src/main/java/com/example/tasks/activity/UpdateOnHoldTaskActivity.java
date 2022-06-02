@@ -30,7 +30,7 @@ public class UpdateOnHoldTaskActivity extends AppCompatActivity {
     EditText etTittle, etDescription, etExpirationDate;
     TextView tvQtdRequirements;
     Button btnRequirements;
-    LinearLayout layUpdate, layClear;
+    LinearLayout layUpdate;
     ActivityResultLauncher<Intent> actResult;
     Intent taskRequirementsIntent;
     DateTimeFormatter dtf;
@@ -91,7 +91,6 @@ public class UpdateOnHoldTaskActivity extends AppCompatActivity {
         etDescription = findViewById(R.id.etDescription);
         tvQtdRequirements = findViewById(R.id.tvQtdRequirements);
         btnRequirements = findViewById(R.id.btnRequirements);
-        layClear = findViewById(R.id.layClear);
         layUpdate = findViewById(R.id.layUpdate);
     }
 
@@ -120,7 +119,6 @@ public class UpdateOnHoldTaskActivity extends AppCompatActivity {
         MyFunctions.setActionDoneButton(etTittle);
         MyFunctions.setActionDoneButton(etDescription);
         MyFunctions.setOnClickEtDateListener(this, etExpirationDate);
-        MyFunctions.clearEditTexts(layClear, etTittle, etDescription, etExpirationDate);
     }
 
     void setTaskData(TaskModel task) {

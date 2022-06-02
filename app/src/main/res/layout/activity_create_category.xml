@@ -73,36 +73,18 @@
                     app:layout_constraintStart_toStartOf="parent">
 
                     <LinearLayout
-                        android:id="@+id/layClear"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="#959595"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/tvClear"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Limpar"
-                            android:textColor="@color/white"
-                            android:textSize="20sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
                         android:id="@+id/layCreate"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:background="@color/primary"
-                        android:gravity="center"
-                        android:orientation="vertical">
+                        android:gravity="center">
 
                         <TextView
                             android:id="@+id/tvSave"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textStyle="bold"
                             android:text="@string/create"
                             android:textColor="@color/white"
                             android:textSize="20sp" />

@@ -31,7 +31,7 @@ public class CreateTaskActivity extends AppCompatActivity {
     EditText etTittle, etDescription, etExpirationDate;
     TextView tvQtdRequirements;
     Button btnRequirements;
-    LinearLayout layClear, layCreate;
+    LinearLayout layCreate;
     ActivityResultLauncher<Intent> actResult;
     Intent taskRequirementsIntent;
     DateTimeFormatter dtf;
@@ -85,7 +85,6 @@ public class CreateTaskActivity extends AppCompatActivity {
         etExpirationDate = findViewById(R.id.etExpirationDate);
         tvQtdRequirements = findViewById(R.id.tvQtdRequirements);
         btnRequirements = findViewById(R.id.btnRequirements);
-        layClear = findViewById(R.id.layClear);
         layCreate = findViewById(R.id.layCreate);
     }
 
@@ -111,7 +110,6 @@ public class CreateTaskActivity extends AppCompatActivity {
         MyFunctions.setActionDoneButton(etTittle);
         MyFunctions.setActionDoneButton(etDescription);
         MyFunctions.setOnClickEtDateListener(this, etExpirationDate);
-        MyFunctions.clearEditTexts(layClear, etTittle, etDescription, etExpirationDate);
     }
 
     void setAttributes(TaskModel task) {
