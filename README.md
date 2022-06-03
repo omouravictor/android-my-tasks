@@ -9,7 +9,8 @@
 
 Some application screens:
 
-<img src="./assets/app-screens.png" />
+<img src="./assets/app-screens-1.png" />
+<img src="./assets/app-screens-2.png" />
 
 ## About this Project
 
