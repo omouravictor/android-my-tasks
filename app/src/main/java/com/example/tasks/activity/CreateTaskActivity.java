@@ -58,6 +58,7 @@ public class CreateTaskActivity extends AppCompatActivity {
 
         btnRequirements.setOnClickListener(v -> {
             newTask.setRequiredIDs(requiredIDs);
+            newTask.setTittle(etTittle.getText().toString());
             taskRequirementsIntent.putExtra("task", newTask);
             actResult.launch(taskRequirementsIntent);
         });

@@ -60,7 +60,6 @@ public class UpdateFinishedTaskActivity extends AppCompatActivity {
 
         btnRequirements.setOnClickListener(v -> {
             task.setRequiredIDs(requiredIDs);
-            taskRequirementsIntent.putExtra("taskTittle", task.getTittle());
             taskRequirementsIntent.putExtra("task", task);
             actResult.launch(taskRequirementsIntent);
         });

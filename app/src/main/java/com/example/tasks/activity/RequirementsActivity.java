@@ -25,6 +25,7 @@ public class RequirementsActivity extends AppCompatActivity {
     RequirementsAdapter requirementsAdapter;
     RecyclerView rvTasksOnHold;
     LinearLayout saveLayout;
+    TaskModel task;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +33,9 @@ public class RequirementsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_requirements);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Intent intent = getIntent();
+        task = getIntent().getParcelableExtra("task");
 
-        if (intent.hasExtra("taskTittle")) setTitle(intent.getStringExtra("taskTittle"));
-        else setTitle(R.string.requirements);
-
+        setTitle(task.getTittle());
         init();
     }
 
@@ -60,7 +59,6 @@ public class RequirementsActivity extends AppCompatActivity {
 
     void initAdapterAndRecyclerView() {
         SQLiteHelper myDB = new SQLiteHelper(this);
-        TaskModel task = getIntent().getParcelableExtra("task");
 
         requirementsAdapter = new RequirementsAdapter(myDB, task);
 
