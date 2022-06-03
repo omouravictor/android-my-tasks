@@ -40,7 +40,7 @@
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/save"
+                android:text="@string/add_requirements"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold" />
