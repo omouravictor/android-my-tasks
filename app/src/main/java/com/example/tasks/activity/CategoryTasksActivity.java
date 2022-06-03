@@ -237,7 +237,7 @@ public class CategoryTasksActivity extends AppCompatActivity {
         myMenu = menu;
 
         m.setOptionalIconsVisible(true);
-        getMenuInflater().inflate(R.menu.my_menu, menu);
+        getMenuInflater().inflate(R.menu.my_task_menu, menu);
         menu.getItem(3).setVisible(false);
 
         return super.onCreateOptionsMenu(menu);

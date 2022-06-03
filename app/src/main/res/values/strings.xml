@@ -29,5 +29,6 @@
     <string name="description">Descrição</string>
     <string name="requirements">Requisitos</string>
     <string name="requirement_s">Requisito(s)</string>
-    <string name="save">Salvar</string>
+    <string name="add_requirements">SALVAR REQUISITOS</string>
+    <string name="search">search</string>
 </resources>
