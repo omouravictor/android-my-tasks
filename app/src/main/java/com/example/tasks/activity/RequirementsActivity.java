@@ -1,9 +1,13 @@
 package com.example.tasks.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,10 +30,13 @@ public class RequirementsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_requirements);
-        if (getIntent().hasExtra("taskTittle"))
-            setTitle("Requisitos: " + getIntent().getStringExtra("taskTittle"));
-        else
-            setTitle(R.string.requirements);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        Intent intent = getIntent();
+
+        if (intent.hasExtra("taskTittle")) setTitle(intent.getStringExtra("taskTittle"));
+        else setTitle(R.string.requirements);
+
         init();
     }
 
@@ -59,5 +66,26 @@ public class RequirementsActivity extends AppCompatActivity {
 
         rvTasksOnHold.setLayoutManager(new LinearLayoutManager(this));
         rvTasksOnHold.setAdapter(requirementsAdapter);
+    }
+
+    @SuppressLint("RestrictedApi")
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.my_requirement_menu, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home)
+            finish();
+        else if (id == R.id.search) {
+        }
+
+        return true;
     }
 }

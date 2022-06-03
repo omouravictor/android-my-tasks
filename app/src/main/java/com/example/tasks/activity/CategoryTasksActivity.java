@@ -51,8 +51,9 @@ public class CategoryTasksActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category_tasks);
         getSupportActionBar().setElevation(0);
-        init();
+        category = getIntent().getParcelableExtra("category");
         setTitle(category.getName());
+        init();
     }
 
     void init() {
@@ -72,7 +73,6 @@ public class CategoryTasksActivity extends AppCompatActivity {
     }
 
     void initVariables() {
-        category = getIntent().getParcelableExtra("category");
         catAdaptPosition = getIntent().getIntExtra("catAdaptPosition", -1);
         myDB = new SQLiteHelper(this);
         builder = new AlertDialog.Builder(this);
@@ -82,8 +82,7 @@ public class CategoryTasksActivity extends AppCompatActivity {
         Intent createTaskIntent = new Intent(this, CreateTaskActivity.class);
 
         btnAdd.setOnClickListener(v -> {
-            createTaskIntent.putExtra("categoryId", category.getId());
-            createTaskIntent.putExtra("categoryName", category.getName());
+            createTaskIntent.putExtra("category", category);
             actResult.launch(createTaskIntent);
         });
     }

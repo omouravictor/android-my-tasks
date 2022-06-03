@@ -3,6 +3,7 @@ package com.example.tasks.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -11,11 +12,13 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.tasks.MyFunctions;
 import com.example.tasks.R;
 import com.example.tasks.data_base.SQLiteHelper;
+import com.example.tasks.model.CategoryModel;
 import com.example.tasks.model.TaskModel;
 
 import org.joda.time.LocalDate;
@@ -40,14 +43,12 @@ public class CreateTaskActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_task);
-        setTitle(getIntent().getStringExtra("categoryName"));
-        init();
+        CategoryModel category = getIntent().getParcelableExtra("category");
+        setTitle(category.getName());
+        init(category.getId());
     }
 
-    void init() {
-        Intent intent = getIntent();
-        Integer categoryID = intent.getIntExtra("categoryId", -1);
-
+    void init(Integer categoryID) {
         TaskModel newTask = new TaskModel(categoryID);
 
         initView();
@@ -138,4 +139,13 @@ public class CreateTaskActivity extends AppCompatActivity {
         finish();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home)
+            finish();
+
+        return true;
+    }
 }

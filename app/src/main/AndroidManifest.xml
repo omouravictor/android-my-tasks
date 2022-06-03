@@ -12,26 +12,32 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".activity.RequirementsActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".activity.UpdateFinishedTaskActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:parentActivityName=".activity.CategoryTasksActivity" />
         <activity
             android:name=".activity.UpdateOnHoldTaskActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:parentActivityName=".activity.CategoryTasksActivity" />
         <activity
             android:name=".activity.UpdateCategoryActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:parentActivityName=".activity.MainActivity" />
         <activity
             android:name=".activity.CreateTaskActivity"
             android:exported="true"
+            android:parentActivityName=".activity.CategoryTasksActivity"
             android:windowSoftInputMode="stateVisible" />
         <activity
             android:name=".activity.CreateCategoryActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:parentActivityName=".activity.MainActivity" />
         <activity
             android:name=".activity.CategoryTasksActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:parentActivityName=".activity.MainActivity" />
         <activity
             android:name=".activity.MainActivity"
             android:exported="true">

@@ -3,6 +3,7 @@ package com.example.tasks.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.tasks.MyFunctions;
@@ -160,5 +162,15 @@ public class UpdateFinishedTaskActivity extends AppCompatActivity {
         intent.putExtra("taskAdaptPosition", taskAdaptPosition);
         setResult(2, intent);
         finish();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home)
+            finish();
+
+        return true;
     }
 }
