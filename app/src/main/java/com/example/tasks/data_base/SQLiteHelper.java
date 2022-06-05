@@ -17,9 +17,9 @@ import java.util.List;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
 
-    private final SQLiteDatabase db = this.getReadableDatabase();
     private static final String DATABASE_NAME = "MyTask.db";
     private static final int DATABASE_VERSION = 1;
+    private final SQLiteDatabase db = this.getReadableDatabase();
 
     public SQLiteHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);

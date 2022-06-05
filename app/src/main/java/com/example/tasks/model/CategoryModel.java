@@ -7,6 +7,17 @@ import androidx.annotation.NonNull;
 
 public class CategoryModel implements Parcelable {
 
+    public static final Creator<CategoryModel> CREATOR = new Creator<CategoryModel>() {
+        @Override
+        public CategoryModel createFromParcel(Parcel in) {
+            return new CategoryModel(in);
+        }
+
+        @Override
+        public CategoryModel[] newArray(int size) {
+            return new CategoryModel[size];
+        }
+    };
     private Integer id;
     private String name;
 
@@ -22,18 +33,6 @@ public class CategoryModel implements Parcelable {
         id = in.readInt();
         name = in.readString();
     }
-
-    public static final Creator<CategoryModel> CREATOR = new Creator<CategoryModel>() {
-        @Override
-        public CategoryModel createFromParcel(Parcel in) {
-            return new CategoryModel(in);
-        }
-
-        @Override
-        public CategoryModel[] newArray(int size) {
-            return new CategoryModel[size];
-        }
-    };
 
     @Override
     public int describeContents() {

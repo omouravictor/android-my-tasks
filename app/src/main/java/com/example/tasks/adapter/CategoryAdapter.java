@@ -43,20 +43,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         updateActIntent = new Intent(context, UpdateCategoryActivity.class);
     }
 
-    public static class CategoryViewHolder extends RecyclerView.ViewHolder {
-        TextView tvCategoryName, tvQtdOnHoldTask, tvQtdFinishedTask;
-        ImageButton imbEditCategory, imbDeleteCategory;
-
-        public CategoryViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvCategoryName = itemView.findViewById(R.id.tvCategoryName);
-            tvQtdOnHoldTask = itemView.findViewById(R.id.tvQtdOnHoldTask);
-            tvQtdFinishedTask = itemView.findViewById(R.id.tvQtdFinishedTask);
-            imbEditCategory = itemView.findViewById(R.id.imbEditCategory);
-            imbDeleteCategory = itemView.findViewById(R.id.imbDeleteCategory);
-        }
-    }
-
     @NonNull
     @Override
     public CategoryAdapter.CategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -141,5 +127,19 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     public void sortCategoryByName() {
         allCategories.sort(Comparator.comparing(CategoryModel::getName));
         notifyItemRangeChanged(0, getItemCount());
+    }
+
+    public static class CategoryViewHolder extends RecyclerView.ViewHolder {
+        TextView tvCategoryName, tvQtdOnHoldTask, tvQtdFinishedTask;
+        ImageButton imbEditCategory, imbDeleteCategory;
+
+        public CategoryViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvCategoryName = itemView.findViewById(R.id.tvCategoryName);
+            tvQtdOnHoldTask = itemView.findViewById(R.id.tvQtdOnHoldTask);
+            tvQtdFinishedTask = itemView.findViewById(R.id.tvQtdFinishedTask);
+            imbEditCategory = itemView.findViewById(R.id.imbEditCategory);
+            imbDeleteCategory = itemView.findViewById(R.id.imbDeleteCategory);
+        }
     }
 }

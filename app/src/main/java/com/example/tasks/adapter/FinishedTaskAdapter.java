@@ -33,8 +33,6 @@ import java.util.Comparator;
 import java.util.List;
 
 public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapter.TaskViewHolder> {
-    private OnHoldTaskAdapter adaptOnHoldTasks;
-    private ActionMode myActionMode;
     private final int catAdaptPosition;
     private final Activity activity;
     private final ActivityResultLauncher<Intent> actResult;
@@ -42,11 +40,13 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
     private final List<TaskModel> allTasks;
     private final LocalDate currentDate;
     private final Intent updateActivityIntent;
-    private boolean isActionMode;
     private final List<TaskModel> selectedTasks;
     private final List<TaskViewHolder> selectedHolders;
     private final List<TaskViewHolder> allHolders;
     private final CategoryModel category;
+    private OnHoldTaskAdapter adaptOnHoldTasks;
+    private ActionMode myActionMode;
+    private boolean isActionMode;
 
     public FinishedTaskAdapter(
             Activity activity,
@@ -80,20 +80,6 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
         for (TaskModel task : tasksArray) {
             task.finish(currentDate.toString());
             myDB.updateTask(task);
-        }
-    }
-
-    public static class TaskViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTaskName, tvExpirationTime;
-        Button btnUndo;
-        boolean isSelected;
-        int background;
-
-        public TaskViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvTaskName = itemView.findViewById(R.id.tvTittle);
-            tvExpirationTime = itemView.findViewById(R.id.tvExpirationTime);
-            btnUndo = itemView.findViewById(R.id.btnAction);
         }
     }
 
@@ -376,5 +362,19 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
         allTasks.clear();
         allHolders.clear();
         notifyDataSetChanged();
+    }
+
+    public static class TaskViewHolder extends RecyclerView.ViewHolder {
+        TextView tvTaskName, tvExpirationTime;
+        Button btnUndo;
+        boolean isSelected;
+        int background;
+
+        public TaskViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvTaskName = itemView.findViewById(R.id.tvTittle);
+            tvExpirationTime = itemView.findViewById(R.id.tvExpirationTime);
+            btnUndo = itemView.findViewById(R.id.btnAction);
+        }
     }
 }

@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,9 +23,11 @@ import org.joda.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RequirementsAdapter extends RecyclerView.Adapter<RequirementsAdapter.RequirementsViewHolder> {
+public class RequirementsAdapter extends RecyclerView.Adapter<RequirementsAdapter.RequirementsViewHolder>
+        implements Filterable {
 
-    private final List<TaskModel> allTasks = new ArrayList<>();
+    private final List<TaskModel> tasksList;
+    private final List<TaskModel> tasksListFull;
     private final List<Integer> requiredIDs;
 
     public RequirementsAdapter(
@@ -31,30 +35,19 @@ public class RequirementsAdapter extends RecyclerView.Adapter<RequirementsAdapte
             TaskModel task
     ) {
         requiredIDs = task.getRequiredIDs();
+        tasksList = new ArrayList<>();
 
         if (!requiredIDs.isEmpty()) {
             List<TaskModel> requiredTasks = myDB.getTasksByIdList(requiredIDs);
-            allTasks.addAll(requiredTasks);
+            tasksList.addAll(requiredTasks);
         }
 
-        if (task.isFinished()) {
-            allTasks.addAll(allTasks.size(), myDB.getPossibleRequirementsForFinishedTask(task));
-        } else
-            allTasks.addAll(allTasks.size(), myDB.getPossibleRequirementsForOnHoldTask(task));
+        if (task.isFinished())
+            tasksList.addAll(tasksList.size(), myDB.getPossibleRequirementsForFinishedTask(task));
+        else
+            tasksList.addAll(tasksList.size(), myDB.getPossibleRequirementsForOnHoldTask(task));
 
-    }
-
-    public static class RequirementsViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTaskName, tvExpirationTime;
-        CheckBox checkBox;
-        int background;
-
-        public RequirementsViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvTaskName = itemView.findViewById(R.id.tvTittle);
-            tvExpirationTime = itemView.findViewById(R.id.tvExpirationTime);
-            checkBox = itemView.findViewById(R.id.checkBox);
-        }
+        tasksListFull = new ArrayList<>(tasksList);
     }
 
     @NonNull
@@ -67,9 +60,9 @@ public class RequirementsAdapter extends RecyclerView.Adapter<RequirementsAdapte
 
     @Override
     public void onBindViewHolder(@NonNull RequirementsViewHolder holder, int position) {
-        TaskModel task = allTasks.get(position);
+        TaskModel task = tasksList.get(position);
 
-        // Neste trecho allTasks já está com os requisitos ocupando as primeiras posições
+        // Neste trecho tasksList já está com os requisitos ocupando as primeiras posições
         if (position < requiredIDs.size())
             holder.checkBox.setChecked(true);
 
@@ -91,7 +84,40 @@ public class RequirementsAdapter extends RecyclerView.Adapter<RequirementsAdapte
 
     @Override
     public int getItemCount() {
-        return allTasks.size();
+        return tasksList.size();
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                FilterResults results = new FilterResults();
+                List<TaskModel> filteredList = new ArrayList<>();
+
+                if (constraint == null || constraint.length() == 0) {
+                    filteredList.addAll(tasksListFull);
+                } else {
+                    String filter = constraint.toString().toLowerCase().trim();
+
+                    for (TaskModel task : tasksListFull) {
+                        if (task.getTittle().toLowerCase().contains(filter))
+                            filteredList.add(task);
+                    }
+                }
+
+                results.values = filteredList;
+
+                return results;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                tasksList.clear();
+                tasksList.addAll((List<TaskModel>) results.values);
+                notifyDataSetChanged();
+            }
+        };
     }
 
     void setRequirementLayout(TaskModel task, RequirementsViewHolder holder) {
@@ -142,6 +168,19 @@ public class RequirementsAdapter extends RecyclerView.Adapter<RequirementsAdapte
 
     public List<Integer> getRequirements() {
         return requiredIDs;
+    }
+
+    public static class RequirementsViewHolder extends RecyclerView.ViewHolder {
+        TextView tvTaskName, tvExpirationTime;
+        CheckBox checkBox;
+        int background;
+
+        public RequirementsViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvTaskName = itemView.findViewById(R.id.tvTittle);
+            tvExpirationTime = itemView.findViewById(R.id.tvExpirationTime);
+            checkBox = itemView.findViewById(R.id.checkBox);
+        }
     }
 
 }

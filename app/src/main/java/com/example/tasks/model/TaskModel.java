@@ -10,6 +10,17 @@ import java.util.List;
 
 public class TaskModel implements Parcelable {
 
+    public static final Creator<TaskModel> CREATOR = new Creator<TaskModel>() {
+        @Override
+        public TaskModel createFromParcel(Parcel in) {
+            return new TaskModel(in);
+        }
+
+        @Override
+        public TaskModel[] newArray(int size) {
+            return new TaskModel[size];
+        }
+    };
     private Integer id;
     private String tittle;
     private String expirationDate;
@@ -51,18 +62,6 @@ public class TaskModel implements Parcelable {
         categoryId = in.readInt();
         requiredIDs = in.readArrayList(Integer.TYPE.getClassLoader());
     }
-
-    public static final Creator<TaskModel> CREATOR = new Creator<TaskModel>() {
-        @Override
-        public TaskModel createFromParcel(Parcel in) {
-            return new TaskModel(in);
-        }
-
-        @Override
-        public TaskModel[] newArray(int size) {
-            return new TaskModel[size];
-        }
-    };
 
     @Override
     public int describeContents() {
@@ -160,11 +159,11 @@ public class TaskModel implements Parcelable {
         this.categoryId = categoryId;
     }
 
-    public void setRequiredIDs(List<Integer> requiredIDs) {
-        this.requiredIDs = requiredIDs;
-    }
-
     public List<Integer> getRequiredIDs() {
         return requiredIDs;
+    }
+
+    public void setRequiredIDs(List<Integer> requiredIDs) {
+        this.requiredIDs = requiredIDs;
     }
 }

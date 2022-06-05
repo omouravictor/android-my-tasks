@@ -32,8 +32,6 @@ import java.util.Comparator;
 import java.util.List;
 
 public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.TaskViewHolder> {
-    private FinishedTaskAdapter adaptFinishedTasks;
-    private ActionMode myActionMode;
     private final int catAdaptPosition;
     private final Activity activity;
     private final ActivityResultLauncher<Intent> actResult;
@@ -41,11 +39,13 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
     private final List<TaskModel> allTasks;
     private final LocalDate currentDate;
     private final Intent updateActivityIntent;
-    private boolean isActionMode;
     private final List<TaskModel> selectedTasks;
     private final List<TaskViewHolder> selectedHolders;
     private final List<TaskViewHolder> allHolders;
     private final CategoryModel category;
+    private FinishedTaskAdapter adaptFinishedTasks;
+    private ActionMode myActionMode;
+    private boolean isActionMode;
 
     public OnHoldTaskAdapter(
             Activity activity,
@@ -79,20 +79,6 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
         for (TaskModel task : tasksArray) {
             task.undo();
             myDB.updateTask(task);
-        }
-    }
-
-    public static class TaskViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTaskName, tvExpirationTime;
-        Button btnComplete;
-        boolean isSelected;
-        int background;
-
-        public TaskViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvTaskName = itemView.findViewById(R.id.tvTittle);
-            tvExpirationTime = itemView.findViewById(R.id.tvExpirationTime);
-            btnComplete = itemView.findViewById(R.id.btnAction);
         }
     }
 
@@ -382,5 +368,19 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
         allTasks.clear();
         allHolders.clear();
         notifyDataSetChanged();
+    }
+
+    public static class TaskViewHolder extends RecyclerView.ViewHolder {
+        TextView tvTaskName, tvExpirationTime;
+        Button btnComplete;
+        boolean isSelected;
+        int background;
+
+        public TaskViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvTaskName = itemView.findViewById(R.id.tvTittle);
+            tvExpirationTime = itemView.findViewById(R.id.tvExpirationTime);
+            btnComplete = itemView.findViewById(R.id.btnAction);
+        }
     }
 }
