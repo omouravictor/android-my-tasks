@@ -26,8 +26,8 @@ import java.util.List;
 public class RequirementsAdapter extends RecyclerView.Adapter<RequirementsAdapter.RequirementsViewHolder>
         implements Filterable {
 
-    private final List<TaskModel> tasksList;
     private final List<TaskModel> tasksListFull;
+    private final List<TaskModel> tasksList;
     private final List<Integer> requiredIDs;
 
     public RequirementsAdapter(
@@ -37,10 +37,8 @@ public class RequirementsAdapter extends RecyclerView.Adapter<RequirementsAdapte
         requiredIDs = task.getRequiredIDs();
         tasksList = new ArrayList<>();
 
-        if (!requiredIDs.isEmpty()) {
-            List<TaskModel> requiredTasks = myDB.getTasksByIdList(requiredIDs);
-            tasksList.addAll(requiredTasks);
-        }
+        if (!requiredIDs.isEmpty())
+            tasksList.addAll(myDB.getTasksByIdList(requiredIDs));
 
         if (task.isFinished())
             tasksList.addAll(tasksList.size(), myDB.getPossibleRequirementsForFinishedTask(task));
@@ -62,11 +60,9 @@ public class RequirementsAdapter extends RecyclerView.Adapter<RequirementsAdapte
     public void onBindViewHolder(@NonNull RequirementsViewHolder holder, int position) {
         TaskModel task = tasksList.get(position);
 
-        // Neste trecho tasksList já está com os requisitos ocupando as primeiras posições
-        if (position < requiredIDs.size())
-            holder.checkBox.setChecked(true);
-
         holder.tvTaskName.setText(task.getTittle());
+
+        holder.checkBox.setChecked(requiredIDs.contains(task.getId()));
 
         holder.itemView.setOnClickListener(v -> {
             CheckBox checkBox = holder.checkBox;
@@ -76,6 +72,14 @@ public class RequirementsAdapter extends RecyclerView.Adapter<RequirementsAdapte
             } else {
                 requiredIDs.add(task.getId());
                 checkBox.setChecked(true);
+                if (tasksList.size() != tasksListFull.size()) {
+                    int indexOld = requiredIDs.size();
+                    TaskModel oldTask = tasksListFull.get(indexOld);
+                    int indexCurrent = tasksListFull.indexOf(task);
+
+                    tasksListFull.set(indexOld, task);
+                    tasksListFull.set(indexCurrent, oldTask);
+                }
             }
         });
 
