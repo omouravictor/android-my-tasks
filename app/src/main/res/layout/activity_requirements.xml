@@ -29,15 +29,14 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/saveLayout"
+            android:id="@+id/laySave"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:background="@color/primary"
+            android:background="@drawable/ripple_effect"
             android:gravity="center">
 
             <TextView
-                android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/add_requirements"

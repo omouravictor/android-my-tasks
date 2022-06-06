@@ -26,7 +26,7 @@ public class RequirementsActivity extends AppCompatActivity {
 
     RequirementsAdapter requirementsAdapter;
     RecyclerView rvTasksOnHold;
-    LinearLayout saveLayout;
+    LinearLayout laySave;
     TaskModel task;
 
     @Override
@@ -45,7 +45,7 @@ public class RequirementsActivity extends AppCompatActivity {
         initView();
         initAdapterAndRecyclerView();
 
-        saveLayout.setOnClickListener(v -> {
+        laySave.setOnClickListener(v -> {
             Intent intent = new Intent();
             List<Integer> requirementsID = requirementsAdapter.getRequirements();
             intent.putExtra("requirements", (ArrayList<Integer>) requirementsID);
@@ -56,7 +56,7 @@ public class RequirementsActivity extends AppCompatActivity {
 
     void initView() {
         rvTasksOnHold = findViewById(R.id.rvTasksOnHold);
-        saveLayout = findViewById(R.id.saveLayout);
+        laySave = findViewById(R.id.laySave);
     }
 
     void initAdapterAndRecyclerView() {
