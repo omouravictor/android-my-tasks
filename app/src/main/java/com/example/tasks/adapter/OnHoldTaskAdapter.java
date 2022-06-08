@@ -30,9 +30,12 @@ import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.TaskViewHolder> {
+    private final Map<Integer, TaskModel> map;
     private final int catAdaptPosition;
     private final Activity activity;
     private final ActivityResultLauncher<Intent> actResult;
@@ -61,11 +64,18 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
         this.myDB = myDB;
         this.category = category;
         this.allTasks = myDB.getAllOnHoldTasksOfCategory(category.getId());
+        map = new HashMap<>();
         currentDate = LocalDate.now();
         updateActivityIntent = new Intent(activity, UpdateOnHoldTaskActivity.class);
         selectedTasks = new ArrayList<>();
         selectedHolders = new ArrayList<>();
         allHolders = new ArrayList<>();
+        mapTasksByID(allTasks);
+    }
+
+    void mapTasksByID(List<TaskModel> tasks) {
+        for (TaskModel task : tasks)
+            map.put(task.getId(), task);
     }
 
     public void setFinishedTasksAdapter(FinishedTaskAdapter adaptFinishedTasks) {
@@ -184,7 +194,7 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
 
         holder.btnComplete.setOnClickListener(v -> {
             if (myDB.taskCanBeFinished(task.getId())) {
-                deleteRow(holder.getAdapterPosition());
+                deleteRow(holder.getAdapterPosition(), task);
                 putTasksAsFinished(task);
                 adaptFinishedTasks.addRow(task);
             } else {
@@ -271,9 +281,9 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
 
             for (TaskModel task : selectedTasks) {
                 try {
-                    List<Integer> requirementsIDs = myDB.getAllRequirementsIDs(task.getId());
+                    List<Integer> requirementTaskIDs = myDB.getAllRequirementsIDs(task.getId());
                     myDB.deleteTaskInDB(task.getId());
-                    refreshRequirementRowS(requirementsIDs);
+                    refreshRequirementTaskRowS(requirementTaskIDs);
                     deletedTasks.add(task);
                 } catch (Exception e) {
                     System.out.println("Failed on delete task with id = " + task.getId());
@@ -355,6 +365,7 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
 
     public void addRow(TaskModel task) {
         allTasks.add(task);
+        map.put(task.getId(), task);
         notifyItemInserted(getItemCount());
         activity.setResult(3, new Intent().putExtra("catAdaptPosition", catAdaptPosition));
     }
@@ -362,17 +373,20 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
     public void addRowS(List<TaskModel> tasks) {
         int positionStart = getItemCount();
         allTasks.addAll(tasks);
+        mapTasksByID(tasks);
         notifyItemRangeInserted(positionStart, tasks.size());
         activity.setResult(3, new Intent().putExtra("catAdaptPosition", catAdaptPosition));
     }
 
     public void updateRow(int position, TaskModel task) {
         allTasks.set(position, task);
+        map.put(task.getId(), task);
         notifyItemChanged(position);
     }
 
-    void deleteRow(int position) {
+    void deleteRow(int position, TaskModel task) {
         allTasks.remove(position);
+        map.remove(task.getId());
         allHolders.remove(position);
         notifyItemRemoved(position);
     }
@@ -380,25 +394,31 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
     void deleteRowS(List<TaskModel> tasks) {
         for (TaskModel task : tasks) {
             int index = allTasks.indexOf(task);
-            deleteRow(index);
+            deleteRow(index, task);
         }
     }
 
     public void deleteAllRowS() {
         allTasks.clear();
+        map.clear();
         allHolders.clear();
         notifyDataSetChanged();
     }
 
-    void refreshRequirementRowS(List<Integer> requirementsIDs) {
-        for (int i = 0; i < requirementsIDs.size(); i++) {
-            for (int j = 0; j < allTasks.size(); j++) {
-                if (requirementsIDs.get(i).equals(allTasks.get(j).getId())) {
-                    notifyItemChanged(j);
-                    break;
-                }
-            }
+    void refreshRequirementTaskRow(Integer requirementTaskID) {
+        TaskModel requirement = map.get(requirementTaskID);
+        int index = allTasks.indexOf(requirement);
+        notifyItemChanged(index);
+    }
+
+    void refreshRequirementTaskRowS(List<Integer> requirementTaskIDs) {
+
+        for (Integer id : requirementTaskIDs) {
+            TaskModel requirement = map.get(id);
+            int index = allTasks.indexOf(requirement);
+            notifyItemChanged(index);
         }
+
     }
 
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
