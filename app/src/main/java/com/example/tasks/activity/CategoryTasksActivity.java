@@ -95,11 +95,11 @@ public class CategoryTasksActivity extends AppCompatActivity {
                     if (resultCode != Activity.RESULT_CANCELED) {
                         TaskModel task = result.getData().getParcelableExtra("task");
                         if (resultCode == 1) {
-                            adaptOnHoldTasks.addTask(task);
+                            adaptOnHoldTasks.addRow(task);
                         } else if (resultCode == 2) {
                             int position = result.getData().getIntExtra("taskAdaptPosition", 0);
-                            if (task.isFinished()) adaptFinishedTasks.updateTask(position, task);
-                            else adaptOnHoldTasks.updateTask(position, task);
+                            if (task.isFinished()) adaptFinishedTasks.updateRow(position, task);
+                            else adaptOnHoldTasks.updateRow(position, task);
                         }
                     }
                 }
@@ -170,7 +170,7 @@ public class CategoryTasksActivity extends AppCompatActivity {
             builder.setMessage("Deseja excluir todas as tarefas em espera?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
                 myDB.deleteOnHoldTasks(category.getId());
-                adaptOnHoldTasks.deleteAllTasks();
+                adaptOnHoldTasks.deleteAllRowS();
                 setResult(3, new Intent().putExtra("catAdaptPosition", catAdaptPosition));
                 dialog.dismiss();
             });
@@ -178,7 +178,7 @@ public class CategoryTasksActivity extends AppCompatActivity {
             builder.setMessage("Deseja excluir todas as tarefas concluídas?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
                 myDB.deleteFinishedTasks(category.getId());
-                adaptFinishedTasks.deleteAllTasks();
+                adaptFinishedTasks.deleteAllRowS();
                 setResult(3, new Intent().putExtra("catAdaptPosition", catAdaptPosition));
                 dialog.dismiss();
             });
@@ -192,8 +192,8 @@ public class CategoryTasksActivity extends AppCompatActivity {
         builder.setPositiveButton("Sim", (dialog, which) -> {
             List<TaskModel> tasks = adaptOnHoldTasks.getAllTasks();
             adaptFinishedTasks.putTasksAsFinished(tasks);
-            adaptFinishedTasks.addAllTasks(tasks);
-            adaptOnHoldTasks.deleteAllTasks();
+            adaptFinishedTasks.addRowS(tasks);
+            adaptOnHoldTasks.deleteAllRowS();
             dialog.dismiss();
         });
         builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
@@ -205,8 +205,8 @@ public class CategoryTasksActivity extends AppCompatActivity {
         builder.setPositiveButton("Sim", (dialog, which) -> {
             List<TaskModel> tasks = adaptFinishedTasks.getAllTasks();
             adaptOnHoldTasks.putTasksAsOnHold(tasks);
-            adaptOnHoldTasks.addAllTasks(tasks);
-            adaptFinishedTasks.deleteAllTasks();
+            adaptOnHoldTasks.addRowS(tasks);
+            adaptFinishedTasks.deleteAllRowS();
             dialog.dismiss();
         });
         builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());

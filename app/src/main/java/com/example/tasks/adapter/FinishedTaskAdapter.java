@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -97,7 +98,7 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
 
         TaskModel task = allTasks.get(position);
 
-        holder.tvTaskName.setText(task.getTittle());
+        holder.tvTittle.setText(task.getTittle());
 
         holder.itemView.setOnClickListener(v -> {
             if (!isActionMode) {
@@ -151,15 +152,23 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
     void setFinishedTaskLayout(TaskModel task, TaskViewHolder holder) {
         int green = activity.getColor(R.color.green);
         LocalDate finishedDate = LocalDate.parse(task.getFinishedDate());
+        int requiredQtd = myDB.getQtdOfRequiredTasks(task.getId());
         String dateFormatText = MyFunctions.getDateText(
                 finishedDate.getDayOfMonth(),
                 finishedDate.getMonthOfYear(),
                 finishedDate.getYear()
         );
 
+        if (requiredQtd > 0) {
+            holder.layQtdRequirements.setVisibility(View.VISIBLE);
+            holder.tvQtdRequirements.setText(String.valueOf(requiredQtd));
+        } else {
+            holder.layQtdRequirements.setVisibility(View.GONE);
+        }
+
         holder.itemView.setBackgroundColor(green);
         holder.background = green;
-        holder.tvExpirationTime.setText(activity.getString(R.string.finished_in_x, dateFormatText));
+        holder.tvFinishedDate.setText(activity.getString(R.string.finished_in_x, dateFormatText));
         holder.btnUndo.setText(R.string.undo);
     }
 
@@ -167,10 +176,10 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
         setFinishedTaskLayout(task, holder);
 
         holder.btnUndo.setOnClickListener(v -> {
-            if (myDB.canBeUndo(task.getId())) {
-                deleteTask(holder.getAdapterPosition());
+            if (myDB.taskCanBeUndo(task.getId())) {
+                deleteRow(holder.getAdapterPosition());
                 putTasksAsOnHold(task);
-                adaptOnHoldTasks.addTask(task);
+                adaptOnHoldTasks.addRow(task);
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                 builder.setMessage("Essa tarefa não pode ser desfeita pois é requisito de outra " +
@@ -236,10 +245,10 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
         builder.setMessage("Pelo menos uma tarefa selecionada é requisito de outra tarefa que já está concluida :(");
 
         if (!selectedTasks.isEmpty()) {
-            if (myDB.canBeUndo(selectedTasks)) {
-                deleteSelectedTasks(selectedTasks);
+            if (myDB.listCanBeUndo(selectedTasks)) {
+                deleteRowS(selectedTasks);
                 putTasksAsOnHold(selectedTasks);
-                adaptOnHoldTasks.addAllTasks(selectedTasks);
+                adaptOnHoldTasks.addRowS(selectedTasks);
                 putHoldersAsNotSelected(selectedHolders);
                 myActionMode.finish();
             } else {
@@ -252,9 +261,20 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage("Exluir " + selectedTasks.size() + " tarefa(s) selecionada(s)?");
         builder.setPositiveButton("Sim", (dialog, which) -> {
-            List<TaskModel> deletedTasks = myDB.deleteSelectedTasks(selectedTasks);
+            List<TaskModel> deletedTasks = new ArrayList<>();
 
-            deleteSelectedTasks(deletedTasks);
+            for (TaskModel task : selectedTasks) {
+                try {
+                    List<Integer> requirementsIDs = myDB.getAllRequirementsIDs(task.getId());
+                    myDB.deleteTaskInDB(task.getId());
+                    refreshRequirementRowS(requirementsIDs);
+                    deletedTasks.add(task);
+                } catch (Exception e) {
+                    System.out.println("Failed on delete task with id = " + task.getId());
+                }
+            }
+
+            deleteRowS(deletedTasks);
             activity.setResult(3, new Intent().putExtra("catAdaptPosition", catAdaptPosition));
 
             if (deletedTasks.size() != selectedTasks.size())
@@ -327,53 +347,78 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
         selectedHolders.clear();
     }
 
-    void addTask(TaskModel task) {
+    void addRow(TaskModel task) {
         allTasks.add(task);
         notifyItemInserted(getItemCount());
         activity.setResult(3, new Intent().putExtra("catAdaptPosition", catAdaptPosition));
     }
 
-    public void addAllTasks(List<TaskModel> tasks) {
+    public void addRowS(List<TaskModel> tasks) {
         int positionStart = getItemCount();
         allTasks.addAll(tasks);
         notifyItemRangeInserted(positionStart, tasks.size());
         activity.setResult(3, new Intent().putExtra("catAdaptPosition", catAdaptPosition));
     }
 
-    public void updateTask(int position, TaskModel task) {
+    public void updateRow(int position, TaskModel task) {
         allTasks.set(position, task);
         notifyItemChanged(position);
     }
 
-    void deleteTask(int position) {
+    void deleteRow(int position) {
         allTasks.remove(position);
         allHolders.remove(position);
         notifyItemRemoved(position);
     }
 
-    void deleteSelectedTasks(List<TaskModel> tasks) {
+    void deleteRowS(List<TaskModel> tasks) {
         for (TaskModel task : tasks) {
             int index = allTasks.indexOf(task);
-            deleteTask(index);
+            deleteRow(index);
         }
     }
 
-    public void deleteAllTasks() {
+    public void deleteAllRowS() {
         allTasks.clear();
         allHolders.clear();
         notifyDataSetChanged();
     }
 
+    void refreshRequirementRowS(List<Integer> requirementsIDs) {
+        for (int i = 0; i < requirementsIDs.size(); i++) {
+            for (int j = 0; j < allTasks.size(); j++) {
+                if (requirementsIDs.get(i).equals(allTasks.get(j).getId())) {
+                    notifyItemChanged(j);
+                    break;
+                }
+            }
+        }
+
+        List<TaskModel> tasksOnHold = adaptOnHoldTasks.getAllTasks();
+
+        for (int i = 0; i < requirementsIDs.size(); i++) {
+            for (int j = 0; j < tasksOnHold.size(); j++) {
+                if (requirementsIDs.get(i).equals(tasksOnHold.get(j).getId())) {
+                    adaptOnHoldTasks.notifyItemChanged(j);
+                    break;
+                }
+            }
+        }
+    }
+
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTaskName, tvExpirationTime;
+        LinearLayout layQtdRequirements;
+        TextView tvQtdRequirements, tvTittle, tvFinishedDate;
         Button btnUndo;
         boolean isSelected;
         int background;
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvTaskName = itemView.findViewById(R.id.tvTittle);
-            tvExpirationTime = itemView.findViewById(R.id.tvExpirationTime);
+            layQtdRequirements = itemView.findViewById(R.id.layQtdRequirements);
+            tvQtdRequirements = itemView.findViewById(R.id.tvQtdRequirements);
+            tvTittle = itemView.findViewById(R.id.tvTittle);
+            tvFinishedDate = itemView.findViewById(R.id.tvDate);
             btnUndo = itemView.findViewById(R.id.btnAction);
         }
     }

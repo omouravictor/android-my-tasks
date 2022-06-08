@@ -32,18 +32,19 @@ public class RequirementsAdapter extends RecyclerView.Adapter<RequirementsAdapte
 
     public RequirementsAdapter(
             SQLiteHelper myDB,
-            TaskModel task
+            TaskModel task,
+            List<Integer> requiredIDs
     ) {
-        requiredIDs = task.getRequiredIDs();
+        this.requiredIDs = requiredIDs;
         tasksList = new ArrayList<>();
 
         if (!requiredIDs.isEmpty())
             tasksList.addAll(myDB.getTasksByIdList(requiredIDs));
 
         if (task.isFinished())
-            tasksList.addAll(tasksList.size(), myDB.getPossibleRequirementsForFinishedTask(task));
+            tasksList.addAll(tasksList.size(), myDB.getPossibleRequirementsForFinishedTask(task, requiredIDs));
         else
-            tasksList.addAll(tasksList.size(), myDB.getPossibleRequirementsForOnHoldTask(task));
+            tasksList.addAll(tasksList.size(), myDB.getPossibleRequirementsForOnHoldTask(task, requiredIDs));
 
         tasksListFull = new ArrayList<>(tasksList);
     }

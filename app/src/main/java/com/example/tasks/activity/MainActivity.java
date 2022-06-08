@@ -77,13 +77,13 @@ public class MainActivity extends AppCompatActivity {
                     if (resultCode != Activity.RESULT_CANCELED) {
                         CategoryModel category = result.getData().getParcelableExtra("category");
                         if (resultCode == 1) {
-                            adaptCategory.addCategory(category);
+                            adaptCategory.addRow(category);
                         } else if (resultCode == 2) {
                             int catAdaptPosition = result.getData().getIntExtra("catAdaptPosition", 0);
-                            adaptCategory.updateCategory(catAdaptPosition, category);
+                            adaptCategory.updateRow(catAdaptPosition, category);
                         } else if (resultCode == 3) {
                             int position = result.getData().getIntExtra("catAdaptPosition", -1);
-                            adaptCategory.refreshCategory(position);
+                            adaptCategory.refreshRow(position);
                         }
                     }
                 }
@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.sortByName)
-            adaptCategory.sortCategoryByName();
+            adaptCategory.sortRowsByName();
         else if (id == R.id.deleteAll)
             startDeleteAllBuilder();
 
@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton("Sim", (dialog, which) -> {
             try {
                 myDB.deleteAllCategories();
-                adaptCategory.deleteAll();
+                adaptCategory.deleteAllRows();
             } catch (Exception e) {
                 Toast.makeText(this, "Houve um erro", Toast.LENGTH_SHORT).show();
             }

@@ -5,9 +5,6 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class TaskModel implements Parcelable {
 
     public static final Creator<TaskModel> CREATOR = new Creator<TaskModel>() {
@@ -28,7 +25,6 @@ public class TaskModel implements Parcelable {
     private int status;
     private String finishedDate;
     private Integer categoryId;
-    private List<Integer> requiredIDs = new ArrayList<>();
 
     public TaskModel(Integer categoryId) {
         this.categoryId = categoryId;
@@ -60,7 +56,6 @@ public class TaskModel implements Parcelable {
         expirationDate = in.readString();
         finishedDate = in.readString();
         categoryId = in.readInt();
-        requiredIDs = in.readArrayList(Integer.TYPE.getClassLoader());
     }
 
     @Override
@@ -79,7 +74,6 @@ public class TaskModel implements Parcelable {
         dest.writeString(expirationDate);
         dest.writeString(finishedDate);
         dest.writeInt(categoryId);
-        dest.writeList(requiredIDs);
     }
 
     public void finish(String finishedDate) {
@@ -94,10 +88,6 @@ public class TaskModel implements Parcelable {
 
     public boolean isFinished() {
         return status == 1;
-    }
-
-    public boolean hasRequirements() {
-        return !requiredIDs.isEmpty();
     }
 
     public Integer getId() {
@@ -155,15 +145,4 @@ public class TaskModel implements Parcelable {
         return categoryId;
     }
 
-    public void setCategoryId(Integer categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public List<Integer> getRequiredIDs() {
-        return requiredIDs;
-    }
-
-    public void setRequiredIDs(List<Integer> requiredIDs) {
-        this.requiredIDs = requiredIDs;
-    }
 }

@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -96,7 +97,7 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
 
         TaskModel task = allTasks.get(position);
 
-        holder.tvTaskName.setText(task.getTittle());
+        holder.tvTittle.setText(task.getTittle());
 
         holder.itemView.setOnClickListener(v -> {
             if (!isActionMode) {
@@ -149,8 +150,14 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
 
     void setOnHoldTaskLayout(TaskModel task, TaskViewHolder holder) {
         int days = Days.daysBetween(currentDate, LocalDate.parse(task.getExpirationDate())).getDays();
+        int requiredQtd = myDB.getQtdOfRequiredTasks(task.getId());
 
-        holder.btnComplete.setText(R.string.finish);
+        if (requiredQtd > 0) {
+            holder.layQtdRequirements.setVisibility(View.VISIBLE);
+            holder.tvQtdRequirements.setText(String.valueOf(requiredQtd));
+        } else {
+            holder.layQtdRequirements.setVisibility(View.GONE);
+        }
 
         if (days > 0) {
             int white = activity.getColor(R.color.white);
@@ -168,16 +175,18 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
             holder.background = red;
             holder.tvExpirationTime.setText(R.string.expired);
         }
+
+        holder.btnComplete.setText(R.string.finish);
     }
 
     void prepareOnHoldTasks(TaskModel task, TaskViewHolder holder) {
         setOnHoldTaskLayout(task, holder);
 
         holder.btnComplete.setOnClickListener(v -> {
-            if (myDB.canBeFinished(task.getId())) {
-                deleteTask(holder.getAdapterPosition());
+            if (myDB.taskCanBeFinished(task.getId())) {
+                deleteRow(holder.getAdapterPosition());
                 putTasksAsFinished(task);
-                adaptFinishedTasks.addTask(task);
+                adaptFinishedTasks.addRow(task);
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                 builder.setMessage("Tarefa possui requisitos não concluídos :(");
@@ -242,10 +251,10 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
         builder.setMessage("Pelo menos uma Tarefa selecionada possui requisitos não concluídos :(");
 
         if (!selectedTasks.isEmpty()) {
-            if (myDB.canBeFinished(selectedTasks)) {
-                deleteSelectedTasks(selectedTasks);
+            if (myDB.listCanBeFinished(selectedTasks)) {
+                deleteRowS(selectedTasks);
                 putTasksAsFinished(selectedTasks);
-                adaptFinishedTasks.addAllTasks(selectedTasks);
+                adaptFinishedTasks.addRowS(selectedTasks);
                 putHoldersAsNotSelected(selectedHolders);
                 myActionMode.finish();
             } else {
@@ -258,9 +267,20 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage("Exluir " + selectedTasks.size() + " tarefa(s) selecionada(s)?");
         builder.setPositiveButton("Sim", (dialog, which) -> {
-            List<TaskModel> deletedTasks = myDB.deleteSelectedTasks(selectedTasks);
+            List<TaskModel> deletedTasks = new ArrayList<>();
 
-            deleteSelectedTasks(deletedTasks);
+            for (TaskModel task : selectedTasks) {
+                try {
+                    List<Integer> requirementsIDs = myDB.getAllRequirementsIDs(task.getId());
+                    myDB.deleteTaskInDB(task.getId());
+                    refreshRequirementRowS(requirementsIDs);
+                    deletedTasks.add(task);
+                } catch (Exception e) {
+                    System.out.println("Failed on delete task with id = " + task.getId());
+                }
+            }
+
+            deleteRowS(deletedTasks);
             activity.setResult(3, new Intent().putExtra("catAdaptPosition", catAdaptPosition));
 
             if (deletedTasks.size() != selectedTasks.size())
@@ -333,53 +353,67 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
         selectedHolders.clear();
     }
 
-    public void addTask(TaskModel task) {
+    public void addRow(TaskModel task) {
         allTasks.add(task);
         notifyItemInserted(getItemCount());
         activity.setResult(3, new Intent().putExtra("catAdaptPosition", catAdaptPosition));
     }
 
-    public void addAllTasks(List<TaskModel> tasks) {
+    public void addRowS(List<TaskModel> tasks) {
         int positionStart = getItemCount();
         allTasks.addAll(tasks);
         notifyItemRangeInserted(positionStart, tasks.size());
         activity.setResult(3, new Intent().putExtra("catAdaptPosition", catAdaptPosition));
     }
 
-    public void updateTask(int position, TaskModel task) {
+    public void updateRow(int position, TaskModel task) {
         allTasks.set(position, task);
         notifyItemChanged(position);
     }
 
-    void deleteTask(int position) {
+    void deleteRow(int position) {
         allTasks.remove(position);
         allHolders.remove(position);
         notifyItemRemoved(position);
     }
 
-    void deleteSelectedTasks(List<TaskModel> tasks) {
+    void deleteRowS(List<TaskModel> tasks) {
         for (TaskModel task : tasks) {
             int index = allTasks.indexOf(task);
-            deleteTask(index);
+            deleteRow(index);
         }
     }
 
-    public void deleteAllTasks() {
+    public void deleteAllRowS() {
         allTasks.clear();
         allHolders.clear();
         notifyDataSetChanged();
     }
 
+    void refreshRequirementRowS(List<Integer> requirementsIDs) {
+        for (int i = 0; i < requirementsIDs.size(); i++) {
+            for (int j = 0; j < allTasks.size(); j++) {
+                if (requirementsIDs.get(i).equals(allTasks.get(j).getId())) {
+                    notifyItemChanged(j);
+                    break;
+                }
+            }
+        }
+    }
+
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTaskName, tvExpirationTime;
+        LinearLayout layQtdRequirements;
+        TextView tvQtdRequirements, tvTittle, tvExpirationTime;
         Button btnComplete;
         boolean isSelected;
         int background;
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvTaskName = itemView.findViewById(R.id.tvTittle);
-            tvExpirationTime = itemView.findViewById(R.id.tvExpirationTime);
+            layQtdRequirements = itemView.findViewById(R.id.layQtdRequirements);
+            tvQtdRequirements = itemView.findViewById(R.id.tvQtdRequirements);
+            tvTittle = itemView.findViewById(R.id.tvTittle);
+            tvExpirationTime = itemView.findViewById(R.id.tvDate);
             btnComplete = itemView.findViewById(R.id.btnAction);
         }
     }

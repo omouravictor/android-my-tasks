@@ -55,8 +55,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     public void onBindViewHolder(@NonNull CategoryAdapter.CategoryViewHolder holder, int position) {
         CategoryModel category = allCategories.get(position);
         Context context = holder.itemView.getContext();
-        int qtdOnHold = myDB.getQtdOnHoldTask(category.getId());
-        int qtdFinished = myDB.getQtdFinishedTask(category.getId());
+        int qtdOnHold = myDB.getQtdOnHoldTaskOfCategory(category.getId());
+        int qtdFinished = myDB.getQtdFinishedTaskOfCategory(category.getId());
 
         holder.tvCategoryName.setText(category.getName());
 
@@ -105,26 +105,26 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         return allCategories.size();
     }
 
-    public void addCategory(CategoryModel category) {
+    public void addRow(CategoryModel category) {
         allCategories.add(category);
         notifyItemInserted(getItemCount());
     }
 
-    public void updateCategory(int position, CategoryModel category) {
+    public void updateRow(int position, CategoryModel category) {
         allCategories.set(position, category);
         notifyItemChanged(position);
     }
 
-    public void deleteAll() {
+    public void deleteAllRows() {
         allCategories.clear();
         notifyDataSetChanged();
     }
 
-    public void refreshCategory(int position) {
+    public void refreshRow(int position) {
         notifyItemChanged(position);
     }
 
-    public void sortCategoryByName() {
+    public void sortRowsByName() {
         allCategories.sort(Comparator.comparing(CategoryModel::getName));
         notifyItemRangeChanged(0, getItemCount());
     }

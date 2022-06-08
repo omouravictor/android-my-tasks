@@ -25,6 +25,7 @@ import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,9 +58,9 @@ public class CreateTaskActivity extends AppCompatActivity {
         initMyFunctions();
 
         btnRequirements.setOnClickListener(v -> {
-            newTask.setRequiredIDs(requiredIDs);
-            newTask.setTittle(etTittle.getText().toString());
             taskRequirementsIntent.putExtra("task", newTask);
+            taskRequirementsIntent.putExtra("taskTittle", etTittle.getText().toString());
+            taskRequirementsIntent.putExtra("requiredIDs", (Serializable) requiredIDs);
             actResult.launch(taskRequirementsIntent);
         });
 
@@ -69,8 +70,8 @@ public class CreateTaskActivity extends AppCompatActivity {
                 try {
                     SQLiteHelper myDB = new SQLiteHelper(this);
                     fillNewTask(myDB, newTask);
-                    if (newTask.hasRequirements())
-                        myDB.createRequirement(newTask);
+                    if (!requiredIDs.isEmpty())
+                        myDB.createRequirement(newTask.getId(), requiredIDs);
                     finishCreate(newTask);
                 } catch (Exception e) {
                     Toast.makeText(this, "Houve um erro", Toast.LENGTH_SHORT).show();
@@ -121,7 +122,6 @@ public class CreateTaskActivity extends AppCompatActivity {
         task.setExpirationDate(date.toString());
         task.setDescription(etDescription.getText().toString());
         task.setStatus(0);
-        task.setRequiredIDs(requiredIDs);
     }
 
     void fillNewTask(SQLiteHelper myDB, TaskModel newTask) {

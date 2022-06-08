@@ -24,6 +24,7 @@ import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.io.Serializable;
 import java.util.List;
 
 public class UpdateOnHoldTaskActivity extends AppCompatActivity {
@@ -59,8 +60,9 @@ public class UpdateOnHoldTaskActivity extends AppCompatActivity {
         setTaskData(task);
 
         btnRequirements.setOnClickListener(v -> {
-            task.setRequiredIDs(requiredIDs);
             taskRequirementsIntent.putExtra("task", task);
+            taskRequirementsIntent.putExtra("taskTittle", etTittle.getText().toString());
+            taskRequirementsIntent.putExtra("requiredIDs", (Serializable) requiredIDs);
             actResult.launch(taskRequirementsIntent);
         });
 
@@ -69,9 +71,9 @@ public class UpdateOnHoldTaskActivity extends AppCompatActivity {
             if (!MyFunctions.isEmpty(this, etTittle, etExpirationDate)) {
                 try {
                     TaskModel updatedTask = updateTask(myDB, task);
-                    if (updatedTask.hasRequirements()) {
+                    if (!requiredIDs.isEmpty()) {
                         myDB.deleteRequirementsOfTask(updatedTask);
-                        myDB.createRequirement(updatedTask);
+                        myDB.createRequirement(updatedTask.getId(), requiredIDs);
                     } else {
                         myDB.deleteRequirementsOfTask(updatedTask);
                     }
@@ -137,7 +139,6 @@ public class UpdateOnHoldTaskActivity extends AppCompatActivity {
         task.setTittle(etTittle.getText().toString());
         task.setExpirationDate(expirationDate.toString());
         task.setDescription(etDescription.getText().toString());
-        task.setRequiredIDs(requiredIDs);
     }
 
     TaskModel updateTask(SQLiteHelper myDB, TaskModel task) {
