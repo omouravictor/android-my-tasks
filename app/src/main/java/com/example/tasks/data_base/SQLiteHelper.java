@@ -189,15 +189,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         );
     }
 
-    public List<TaskModel> getAllOnHoldTasksOfCategory(Integer categoryID) {
-        String query = "SELECT *" +
-                " FROM tb_task" +
-                " WHERE status = 0 AND category_id = " + categoryID +
-                " ORDER BY expiration_date ASC";
-
-        return getTasksFromDB(query);
-    }
-
     public List<TaskModel> getTasksByIdList(List<Integer> idList) {
         List<TaskModel> tasks = new ArrayList<>();
         TaskModel task;
@@ -238,15 +229,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 " FROM tb_task" +
                 " WHERE category_id = " + task.getCategoryId() + IDClause +
                 " ORDER BY expiration_date ASC";
-
-        return getTasksFromDB(query);
-    }
-
-    public List<TaskModel> getAllFinishedTasksOfCategory(Integer categoryID) {
-        String query = "SELECT *" +
-                " FROM tb_task" +
-                " WHERE status = 1 AND category_id = " + categoryID +
-                " ORDER BY finished_date DESC";
 
         return getTasksFromDB(query);
     }
@@ -293,6 +275,24 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return qtd;
     }
 
+    public List<TaskModel> getAllOnHoldTasksOfCategory(Integer categoryID) {
+        String query = "SELECT *" +
+                " FROM tb_task" +
+                " WHERE status = 0 AND category_id = " + categoryID +
+                " ORDER BY expiration_date ASC, tittle ASC";
+
+        return getTasksFromDB(query);
+    }
+
+    public List<TaskModel> getAllFinishedTasksOfCategory(Integer categoryID) {
+        String query = "SELECT *" +
+                " FROM tb_task" +
+                " WHERE status = 1 AND category_id = " + categoryID +
+                " ORDER BY finished_date DESC";
+
+        return getTasksFromDB(query);
+    }
+
     public List<CategoryModel> getAllCategories() {
         String query = "SELECT *" +
                 " FROM tb_category" +
@@ -335,16 +335,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return qtd == 0;
     }
 
-    public boolean listCanBeFinished(List<TaskModel> array) {
-
-        for (TaskModel task : array) {
-            if (!taskCanBeFinished(task.getId()))
-                return false;
-        }
-
-        return true;
-    }
-
     public boolean taskCanBeUndo(Integer taskID) {
         // Conta quantas tarefas que precisam de taskID como requisito e ESTÃO concluídas
         String query = "SELECT COUNT(id) " +
@@ -361,6 +351,16 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         cursor.close();
 
         return qtd == 0;
+    }
+
+    public boolean listCanBeFinished(List<TaskModel> array) {
+
+        for (TaskModel task : array) {
+            if (!taskCanBeFinished(task.getId()))
+                return false;
+        }
+
+        return true;
     }
 
     public boolean listCanBeUndo(List<TaskModel> array) {

@@ -29,7 +29,6 @@ import org.joda.time.Days;
 import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +39,7 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
     private final Activity activity;
     private final ActivityResultLauncher<Intent> actResult;
     private final SQLiteHelper myDB;
-    private final List<TaskModel> allTasks;
+    private List<TaskModel> allTasks;
     private final LocalDate currentDate;
     private final Intent updateActivityIntent;
     private final List<TaskModel> selectedTasks;
@@ -80,6 +79,11 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
 
     public void setFinishedTasksAdapter(FinishedTaskAdapter adaptFinishedTasks) {
         this.adaptFinishedTasks = adaptFinishedTasks;
+    }
+
+    public void setAllTasks(List<TaskModel> allTasks) {
+        deleteAllRowS();
+        this.allTasks = allTasks;
     }
 
     public List<TaskModel> getAllTasks() {
@@ -204,16 +208,6 @@ public class OnHoldTaskAdapter extends RecyclerView.Adapter<OnHoldTaskAdapter.Ta
                 builder.show();
             }
         });
-    }
-
-    public void sortTasksArrayBySlaDate() {
-        allTasks.sort(Comparator.comparingInt(
-                task -> Days.daysBetween(
-                        currentDate,
-                        LocalDate.parse(task.getExpirationDate())
-                ).getDays()
-        ));
-        notifyItemRangeChanged(0, getItemCount());
     }
 
     void myOnCreateActionMode(ActionMode mode, Menu menu, TaskModel task) {

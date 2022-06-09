@@ -150,14 +150,14 @@ public class CategoryTasksActivity extends AppCompatActivity {
         if (isFirstTabSelected()) {
             builder.setMessage("Deseja ordenar por data de expiração?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
-                adaptOnHoldTasks.sortTasksArrayBySlaDate();
+                adaptOnHoldTasks.setAllTasks(myDB.getAllOnHoldTasksOfCategory(category.getId()));
                 dialog.dismiss();
             });
             builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());
         } else {
             builder.setMessage("Deseja ordenar por data de conclusão?");
             builder.setPositiveButton("Sim", (dialog, which) -> {
-                adaptFinishedTasks.sortTasksArrayByFinishedDate();
+                adaptFinishedTasks.setAllTasks(myDB.getAllFinishedTasksOfCategory(category.getId()));
                 dialog.dismiss();
             });
             builder.setNegativeButton("Não", (dialog, which) -> dialog.dismiss());

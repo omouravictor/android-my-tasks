@@ -41,7 +41,7 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
     private final Activity activity;
     private final ActivityResultLauncher<Intent> actResult;
     private final SQLiteHelper myDB;
-    private final List<TaskModel> allTasks;
+    private List<TaskModel> allTasks;
     private final LocalDate currentDate;
     private final Intent updateActivityIntent;
     private final List<TaskModel> selectedTasks;
@@ -81,6 +81,11 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
 
     public void setOnHoldTaskAdapter(OnHoldTaskAdapter adaptOnHoldTasks) {
         this.adaptOnHoldTasks = adaptOnHoldTasks;
+    }
+
+    public void setAllTasks(List<TaskModel> allTasks) {
+        deleteAllRowS();
+        this.allTasks = allTasks;
     }
 
     public List<TaskModel> getAllTasks() {
@@ -198,16 +203,6 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
                 builder.show();
             }
         });
-    }
-
-    public void sortTasksArrayByFinishedDate() {
-        allTasks.sort(Comparator.comparingInt(
-                task -> Days.daysBetween(
-                        LocalDate.parse(task.getFinishedDate()),
-                        currentDate
-                ).getDays()
-        ));
-        notifyItemRangeChanged(0, getItemCount());
     }
 
     void myOnCreateActionMode(ActionMode mode, Menu menu, TaskModel task) {
