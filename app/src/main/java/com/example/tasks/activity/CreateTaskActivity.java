@@ -66,7 +66,7 @@ public class CreateTaskActivity extends AppCompatActivity {
 
         layCreate.setOnClickListener(v -> {
             layCreate.setClickable(false);
-            if (!MyFunctions.isEmpty(this, etTittle, etExpirationDate)) {
+            if (MyFunctions.isNotEmpty(this, etTittle, etExpirationDate)) {
                 try {
                     SQLiteHelper myDB = new SQLiteHelper(this);
                     fillNewTask(myDB, newTask);

@@ -68,7 +68,7 @@ public class UpdateFinishedTaskActivity extends AppCompatActivity {
 
         layUpdate.setOnClickListener((v) -> {
             layUpdate.setClickable(false);
-            if (!MyFunctions.isEmpty(this, etTittle, etExpirationDate, etFinishedDate)) {
+            if (MyFunctions.isNotEmpty(this, etTittle, etExpirationDate, etFinishedDate)) {
                 try {
                     TaskModel updatedTask = updateTask(myDB, task);
                     if (!requiredIDs.isEmpty()) {

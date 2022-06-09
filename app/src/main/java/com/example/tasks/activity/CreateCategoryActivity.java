@@ -32,7 +32,7 @@ public class CreateCategoryActivity extends AppCompatActivity {
         initMyFunctions();
 
         layCreate.setOnClickListener(v -> {
-            if (!MyFunctions.isEmpty(this, etCategory))
+            if (MyFunctions.isNotEmpty(this, etCategory))
                 createCategory();
         });
     }

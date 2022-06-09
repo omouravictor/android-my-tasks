@@ -68,7 +68,7 @@ public class UpdateOnHoldTaskActivity extends AppCompatActivity {
 
         layUpdate.setOnClickListener((v) -> {
             layUpdate.setClickable(false);
-            if (!MyFunctions.isEmpty(this, etTittle, etExpirationDate)) {
+            if (MyFunctions.isNotEmpty(this, etTittle, etExpirationDate)) {
                 try {
                     TaskModel updatedTask = updateTask(myDB, task);
                     if (!requiredIDs.isEmpty()) {

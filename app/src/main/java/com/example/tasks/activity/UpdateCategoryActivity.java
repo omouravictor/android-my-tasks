@@ -37,7 +37,7 @@ public class UpdateCategoryActivity extends AppCompatActivity {
         setCategoryData(category);
 
         layUpdate.setOnClickListener(v -> {
-            if (!MyFunctions.isEmpty(this, etCategory))
+            if (MyFunctions.isNotEmpty(this, etCategory))
                 updateCategory(category, catAdaptPosition);
         });
 

@@ -61,27 +61,27 @@ public class MyFunctions {
         editText.setRawInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
     }
 
-    public static boolean isEmpty(Context context, EditText et1) {
+    public static boolean isNotEmpty(Context context, EditText et1) {
         if (et1.getText().toString().isEmpty()) {
             Toast.makeText(context, "Preencha os campos requeridos", Toast.LENGTH_SHORT).show();
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
-    public static boolean isEmpty(Context context, EditText et1, EditText et2) {
+    public static boolean isNotEmpty(Context context, EditText et1, EditText et2) {
         if (et1.getText().toString().isEmpty() || et2.getText().toString().isEmpty()) {
             Toast.makeText(context, "Preencha os campos requeridos", Toast.LENGTH_SHORT).show();
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
-    public static boolean isEmpty(Context context, EditText et1, EditText et2, EditText et3) {
+    public static boolean isNotEmpty(Context context, EditText et1, EditText et2, EditText et3) {
         if (et1.getText().toString().isEmpty() || et2.getText().toString().isEmpty() || et3.getText().toString().isEmpty()) {
             Toast.makeText(context, "Preencha os campos requeridos", Toast.LENGTH_SHORT).show();
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 }
