@@ -15,7 +15,5 @@
         <item name="popupMenuBackground">@color/darkWhite</item>
         <!-- Action mode -->
         <item name="actionModeBackground">@color/darkPrimary</item>
-        <!-- Cursor color on SearchView -->
-        <item name="colorControlActivated">@color/white</item>
     </style>
 </resources>
