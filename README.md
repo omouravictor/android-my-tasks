@@ -20,6 +20,12 @@ _"Manage tasks with an expiration date."_
 
 **PS:** There's a big market behind this context that can be extended to other areas, I'll be so glad if you could find any idea based on this project to build your own business!
 
+- [Java](https://developer.android.com/reference/java/lang/package-summary) - Language
+- [Android](https://developer.android.com) - Platform
+- [Material Design](https://material.io/design) - App design
+- [RecyclerView](https://developer.android.com/guide/topics/ui/layout/recyclerview) - List Creation
+- [SQLite](https://developer.android.com/reference/android/database/sqlite/SQLiteOpenHelper) - Database
+
 ## Why?
 
 This project is part of my personal portfolio, so, I'll be happy if you could provide me any feedback about the project, code, structure or anything that you can report that could make me a better developer!
