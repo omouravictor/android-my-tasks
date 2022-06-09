@@ -320,11 +320,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public boolean taskCanBeFinished(Integer taskID) {
         // Conta quantas tarefas são requisito de taskID e NÃO foram concluídas
         String query = "SELECT COUNT(id) " +
-                "FROM tb_task " +
-                "WHERE status = 0 AND id IN " +
-                "(SELECT required_task_id " +
-                "FROM tb_requirement " +
-                "WHERE requirement_task_id = " + taskID + ")";
+                "FROM tb_task, tb_requirement " +
+                "WHERE status = 0 AND id = required_task_id AND requirement_task_id = " + taskID;
+
         Cursor cursor = db.rawQuery(query, null);
         int qtd;
 
@@ -338,11 +336,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public boolean taskCanBeUndo(Integer taskID) {
         // Conta quantas tarefas que precisam de taskID como requisito e ESTÃO concluídas
         String query = "SELECT COUNT(id) " +
-                "FROM tb_task " +
-                "WHERE status = 1 AND id IN " +
-                "(SELECT requirement_task_id " +
-                "FROM tb_requirement " +
-                "WHERE required_task_id = " + taskID + ")";
+                "FROM tb_task, tb_requirement " +
+                "WHERE status = 1 AND id = requirement_task_id AND required_task_id = " + taskID;
+
         Cursor cursor = db.rawQuery(query, null);
         int qtd;
 
