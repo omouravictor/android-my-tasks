@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/icon.png" width="140px" />
+  <img src="https://github.com/omouravictor/assets/blob/main/assets/my-tasks/icon.png" alt="app-icon">
 </p>
 
 <h1 align="center">My Tasks</h1>
@@ -9,8 +9,7 @@
 
 Some application screens:
 
-<img src="./assets/app-screens-1.png" />
-<img src="./assets/app-screens-2.png" />
+<img src="https://github.com/omouravictor/assets/blob/main/assets/my-tasks/app-screens-1.png" alt="app-screens">
 
 ## About this Project
 
