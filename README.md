@@ -15,7 +15,8 @@ Some application screens:
 
 In this application you can:
 
-  - 
+  - Create and manager deadline tasks.
+  - Create and manager task categories.
 
 ## Why?
 
