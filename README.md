@@ -13,9 +13,10 @@ Some application screens:
 
 ## About this Project
 
-The idea of the App is:
+In this application you can:
 
-_"Manage tasks with an expiration date."_
+  - Create and manager deadline tasks.
+  - Create and manager task categories.
 
 ## Why?
 
