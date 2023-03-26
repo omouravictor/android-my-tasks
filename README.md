@@ -17,7 +17,7 @@ The idea of the App is:
 
 _"Manage tasks with an expiration date."_
 
-**PS:** There's a big market behind this context that can be extended to other areas, I'll be so glad if you could find any idea based on this project to build your own business!
+## Technologies
 
 - [Java](https://developer.android.com/reference/java/lang/package-summary) - Language
 - [Android](https://developer.android.com) - Platform
