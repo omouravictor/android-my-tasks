@@ -11,7 +11,7 @@ Some application screens:
 
 <img src="https://github.com/omouravictor/assets/blob/main/assets/my-tasks/app-screens-1.png" alt="app-screens">
 
-## Techs Used
+## Techs used
 
 - [Joda-Time](https://www.joda.org/joda-time/)
 - [SQLiteOpenHelper](https://developer.android.com/reference/android/database/sqlite/SQLiteOpenHelper)
