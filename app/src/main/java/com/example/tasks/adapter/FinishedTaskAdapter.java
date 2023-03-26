@@ -165,7 +165,7 @@ public class FinishedTaskAdapter extends RecyclerView.Adapter<FinishedTaskAdapte
     }
 
     void setFinishedTaskLayout(TaskModel task, TaskViewHolder holder) {
-        int green = activity.getColor(R.color.green);
+        int green = Color.parseColor("#AEFFA7");
         LocalDate finishedDate = LocalDate.parse(task.getFinishedDate());
         int requiredQtd = myDB.getQtdOfRequiredTasks(task.getId());
         String dateFormatText = MyFunctions.getDateText(

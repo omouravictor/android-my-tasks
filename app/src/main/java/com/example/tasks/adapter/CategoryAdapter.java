@@ -20,6 +20,7 @@ import com.example.tasks.activity.UpdateCategoryActivity;
 import com.example.tasks.data_base.SQLiteHelper;
 import com.example.tasks.model.CategoryModel;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -125,7 +126,12 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     }
 
     public void sortRowsByName() {
-        allCategories.sort(Comparator.comparing(CategoryModel::getName));
+        Collections.sort(allCategories, new Comparator<CategoryModel>() {
+            @Override
+            public int compare(CategoryModel o1, CategoryModel o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
         notifyItemRangeChanged(0, getItemCount());
     }
 
