@@ -17,14 +17,6 @@ The idea of the App is:
 
 _"Manage tasks with an expiration date."_
 
-## Technologies
-
-- [Java](https://developer.android.com/reference/java/lang/package-summary) - Language
-- [Android](https://developer.android.com) - Platform
-- [Material Design](https://material.io/design) - App design
-- [RecyclerView](https://developer.android.com/guide/topics/ui/layout/recyclerview) - List Creation
-- [SQLite](https://developer.android.com/reference/android/database/sqlite/SQLiteOpenHelper) - Database
-
 ## Why?
 
 This project is part of my personal portfolio, so, I'll be happy if you could provide me any feedback about the project, code, structure or anything that you can report that could make me a better developer!
