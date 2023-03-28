@@ -13,7 +13,8 @@
 
         <activity
             android:name=".activity.RequirementsActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:windowSoftInputMode="adjustNothing"/>
         <activity
             android:name=".activity.UpdateFinishedTaskActivity"
             android:exported="true"
