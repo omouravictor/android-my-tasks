@@ -11,6 +11,13 @@ Some application screens:
 
 <img src="https://github.com/omouravictor/assets/blob/main/assets/my-tasks/app-screens-1.png" alt="app-screens">
 
+## Techs used
+
+- [Joda-Time](https://www.joda.org/joda-time/)
+- [SQLiteOpenHelper](https://developer.android.com/reference/android/database/sqlite/SQLiteOpenHelper)
+- [Intent](https://developer.android.com/reference/android/content/Intent)
+- [RecyclerView.Adapter](https://developer.android.com/reference/androidx/recyclerview/widget/RecyclerView.Adapter)
+
 ## About this Project
 
 In this application you can:
