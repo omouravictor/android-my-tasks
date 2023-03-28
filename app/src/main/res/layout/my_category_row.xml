@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/myRow"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -9,71 +10,59 @@
     android:baselineAligned="false"
     android:padding="12dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <TextView
+        android:id="@+id/tvCategoryName"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        android:text="@string/category"
+        android:textColor="@color/darkGray"
+        android:textSize="17.5sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/tvQtdOnHoldTask"
+        app:layout_constraintEnd_toStartOf="@+id/imbEditCategory"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/tvCategoryName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:text="@string/category"
-            android:textColor="@color/darkGray"
-            android:textSize="17.5sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/tvQtdOnHoldTask"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/tvQtdOnHoldTask"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Em espera: 5"
+        android:textColor="@color/darkGray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <TextView
-            android:id="@+id/tvQtdOnHoldTask"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Em espera: 5"
-            android:textColor="@color/darkGray"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+    <TextView
+        android:id="@+id/tvQtdFinishedTask"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:text="Concluídas: 5"
+        android:textColor="@color/darkGray"
+        app:layout_constraintBottom_toBottomOf="@+id/tvQtdOnHoldTask"
+        app:layout_constraintStart_toEndOf="@+id/tvQtdOnHoldTask"
+        app:layout_constraintTop_toTopOf="@+id/tvQtdOnHoldTask" />
 
-        <TextView
-            android:id="@+id/tvQtdFinishedTask"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:text="Concluídas: 5"
-            android:textColor="@color/darkGray"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/tvQtdOnHoldTask" />
+    <ImageButton
+        android:id="@+id/imbEditCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/darkWhite"
+        android:contentDescription="@string/update"
+        app:layout_constraintEnd_toStartOf="@+id/imbDeleteCategory"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_blue_edit" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <ImageButton
+        android:id="@+id/imbDeleteCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/darkWhite"
+        android:contentDescription="@string/delete"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_blue_delete" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="0.34">
-
-        <ImageButton
-            android:id="@+id/imbEditCategory"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/darkWhite"
-            android:contentDescription="@string/update"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_blue_edit" />
-
-        <ImageButton
-            android:id="@+id/imbDeleteCategory"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/darkWhite"
-            android:contentDescription="@string/delete"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_blue_delete" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
