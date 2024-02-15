@@ -3,7 +3,7 @@
 </p>
 
 <h1 align="center">My Tasks</h1>
-<p align="center">A deadline task management app.</p>
+<p align="center">A deadline task management app</p>
 
 ## Preview
 
