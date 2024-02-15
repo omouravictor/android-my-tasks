@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="/images/icon.png" alt="app-icon">
+  <img src="/images/icon.png" alt="app-icon" width=15%>
 </p>
 
 <h1 align="center">My Tasks</h1>
